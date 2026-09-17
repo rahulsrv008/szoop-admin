@@ -1,0 +1,182 @@
+@if (loading() && !customer()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+@if (customer(); as c) {
+  <header class="page-head">
+    <div>
+      <h2 class="page-head__title">{{ c.name | orDash: 'Unnamed customer' }}</h2>
+      <p class="page-head__sub">{{ c.mobile }} · joined {{ c.createdAt | date: 'dd MMM yyyy' }}</p>
+    </div>
+
+    <div class="page-head__actions row-actions">
+      <a matButton="outlined" [routerLink]="['/customers', c.customerId, 'bookings']">
+        <mat-icon>event_note</mat-icon>
+        Bookings
+      </a>
+      @if (c.isActive) {
+        <button matButton="outlined" (click)="block()">
+          <mat-icon>block</mat-icon>
+          Block
+        </button>
+      } @else {
+        <button matButton="filled" (click)="unblock()">
+          <mat-icon>lock_open</mat-icon>
+          Unblock
+        </button>
+      }
+      @if (!editing()) {
+        <button matButton="filled" (click)="startEdit()">
+          <mat-icon>edit</mat-icon>
+          Edit profile
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" class="loader" />
+  }
+
+  <div class="stack">
+    <section class="card-panel">
+      <h3 class="card-panel__title">Profile</h3>
+
+      @if (editing()) {
+        <form class="edit-form" [formGroup]="form" (ngSubmit)="save()">
+          <div class="edit-form__grid">
+            <mat-form-field appearance="outline">
+              <mat-label>First name</mat-label>
+              <input matInput formControlName="firstName" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Last name</mat-label>
+              <input matInput formControlName="lastName" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Gender</mat-label>
+              <mat-select formControlName="gender">
+                <mat-option value="">Not set</mat-option>
+                @for (gender of genderOptions; track gender) {
+                  <mat-option [value]="gender">{{ gender }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Date of birth</mat-label>
+              <input matInput type="date" formControlName="dateOfBirth" />
+            </mat-form-field>
+          </div>
+          <div class="row-actions">
+            <button matButton type="button" (click)="cancelEdit()" [disabled]="saving()">
+              Cancel
+            </button>
+            <button matButton="filled" type="submit" [disabled]="saving()">
+              Save changes
+            </button>
+          </div>
+        </form>
+      } @else {
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-item__label">Mobile</span>
+            <span class="detail-item__value">{{ c.mobile }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-item__label">Email</span>
+            <span class="detail-item__value">{{ c.email | orDash }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-item__label">Gender</span>
+            <span class="detail-item__value">{{ c.gender | orDash }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-item__label">Date of birth</span>
+            <span class="detail-item__value">
+              {{ (c.dateOfBirth | date: 'dd MMM yyyy') || '—' }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-item__label">Account</span>
+            <span class="detail-item__value">
+              <app-status-badge
+                [status]="c.isActive ? 'ACTIVE' : 'SUSPENDED'"
+                [label]="c.isActive ? 'Active' : 'Blocked'"
+              />
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-item__label">Total spent</span>
+            <span class="detail-item__value">{{ c.counts?.totalSpent ?? 0 | inr }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-item__label">Total bookings</span>
+            <span class="detail-item__value">{{ c.counts?.totalBookings ?? 0 }}</span>
+          </div>
+        </div>
+      }
+    </section>
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Bookings by status</h3>
+      <div class="status-chips">
+        @for (entry of bookingCountEntries(); track entry.status) {
+          <div class="status-chip">
+            <app-status-badge [status]="entry.status" />
+            <strong>{{ entry.count }}</strong>
+          </div>
+        } @empty {
+          <p class="muted">No bookings yet</p>
+        }
+      </div>
+    </section>
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Addresses</h3>
+      <div class="address-list">
+        @for (address of c.addresses ?? []; track address.id) {
+          <div class="address-row">
+            <div>
+              <strong>{{ address.addressType | orDash: 'Address' }}</strong>
+              @if (address.isDefault) {
+                <span class="muted"> · Default</span>
+              }
+              <p>{{ addressLine(address) }}</p>
+            </div>
+          </div>
+        } @empty {
+          <p class="muted">No saved addresses</p>
+        }
+      </div>
+    </section>
+
+    <section class="card-panel">
+      <div class="panel-head">
+        <h3 class="card-panel__title">Recent bookings</h3>
+        <a matButton [routerLink]="['/customers', c.customerId, 'bookings']">View all</a>
+      </div>
+      <div class="recent-list">
+        @for (booking of c.recentBookings ?? []; track booking.id) {
+          <button type="button" class="recent-row" (click)="openBooking(booking)">
+            <div>
+              <strong>{{ booking.bookingNumber }}</strong>
+              <p class="muted">
+                {{ booking.bookingDate | date: 'dd MMM yyyy' }} · {{ booking.startTime }}
+              </p>
+            </div>
+            <div class="recent-row__meta">
+              <app-status-badge [status]="booking.status" />
+              <span>{{ booking.totalAmount | inr }}</span>
+            </div>
+          </button>
+        } @empty {
+          <p class="muted">No recent bookings</p>
+        }
+      </div>
+    </section>
+  </div>
+}

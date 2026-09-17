@@ -1,0 +1,37 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Service categories</h2>
+    <p class="page-head__sub">Group services for the customer app</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/services">
+      <mat-icon>arrow_back</mat-icon>
+      Services
+    </a>
+    <button matButton="filled" type="button" (click)="openCreate()">
+      <mat-icon>add</mat-icon>
+      New category
+    </button>
+  </div>
+</header>
+
+<div class="filters">
+  <mat-form-field class="filters__search">
+    <mat-label>Search</mat-label>
+    <input matInput [formControl]="searchControl" placeholder="Category name" />
+    <mat-icon matIconPrefix>search</mat-icon>
+  </mat-form-field>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No categories yet"
+  (pageChange)="onPageChange($event)"
+  (actionClick)="onAction($event)"
+/>

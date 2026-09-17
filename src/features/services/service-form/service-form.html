@@ -1,0 +1,71 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">
+      {{ isEdit() ? 'Edit service' : 'New service' }}
+    </h2>
+    <p class="page-head__sub">Name, category and default duration</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/services">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </a>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+} @else if (notFound()) {
+  <div class="card-panel">
+    <h3 class="card-panel__title">Service not found</h3>
+    <p class="muted">
+      This service may have been deleted, or the link is out of date.
+    </p>
+    <a matButton="filled" routerLink="/services">Return to services</a>
+  </div>
+} @else {
+  <form class="card-panel stack" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <mat-error>Enter a service name</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="categoryId">
+        <mat-option value="">Uncategorised</mat-option>
+        @for (option of categoryOptions(); track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <textarea matInput rows="3" formControlName="description"></textarea>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Duration (minutes)</mat-label>
+      <input matInput type="number" formControlName="durationMinutes" min="15" />
+      @if (
+        form.controls.durationMinutes.touched &&
+        form.controls.durationMinutes.invalid
+      ) {
+        <mat-error>Enter at least 15 minutes</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="isActive">Active</mat-slide-toggle>
+
+    <div class="row-actions">
+      <button matButton="filled" type="submit" [disabled]="submitting()">
+        {{ submitting() ? 'Saving…' : isEdit() ? 'Save changes' : 'Create service' }}
+      </button>
+      <a matButton="outlined" routerLink="/services">Cancel</a>
+    </div>
+  </form>
+}

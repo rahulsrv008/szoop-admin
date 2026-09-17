@@ -1,0 +1,121 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Reports</h2>
+    <p class="page-head__sub">Operational snapshot for the selected period</p>
+  </div>
+  <div class="page-head__actions">
+    <app-date-filter (rangeChange)="onRangeChange($event)" />
+    <button matButton="outlined" (click)="load()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+<nav class="tabs">
+  <a matButton="tonal" routerLink="/reports" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Overview</a>
+  <a matButton routerLink="/reports/bookings">Bookings</a>
+  <a matButton routerLink="/reports/revenue">Revenue</a>
+  <a matButton routerLink="/reports/agents">Agents</a>
+  <a matButton routerLink="/reports/customers">Customers</a>
+</nav>
+
+@if (data(); as report) {
+  <section class="grid">
+    <app-stat-card
+      label="Bookings"
+      icon="event_note"
+      tone="blue"
+      [value]="report.bookings.total"
+      [hint]="report.bookings.completed + ' completed · ' + report.bookings.cancelled + ' cancelled'"
+      link="/reports/bookings"
+    />
+    <app-stat-card
+      label="Completed revenue"
+      icon="payments"
+      tone="green"
+      [value]="report.bookings.completedRevenue | inr"
+      hint="From completed bookings"
+      link="/reports/revenue"
+    />
+    <app-stat-card
+      label="Collected"
+      icon="account_balance_wallet"
+      tone="green"
+      [value]="report.revenue.collected | inr"
+      [hint]="'Pending ' + (report.revenue.pending | inr)"
+      link="/reports/revenue"
+    />
+    <app-stat-card
+      label="Active agents"
+      icon="engineering"
+      tone="violet"
+      [value]="report.agents.activeAgents"
+      [hint]="report.agents.completedJobs + ' jobs · ' + report.agents.hours + ' hrs'"
+      link="/reports/agents"
+    />
+    <app-stat-card
+      label="New customers"
+      icon="person_add"
+      tone="blue"
+      [value]="report.customers.newCustomers"
+      [hint]="report.customers.repeatCustomers + ' repeat · ' + report.customers.payingCustomers + ' paying'"
+      link="/reports/customers"
+    />
+    <app-stat-card
+      label="Customer spend"
+      icon="savings"
+      tone="amber"
+      [value]="report.customers.totalSpend | inr"
+      hint="Paid payments in range"
+      link="/reports/customers"
+    />
+  </section>
+
+  <div class="panels">
+    <section class="card-panel">
+      <h3 class="card-panel__title">Top services by revenue</h3>
+      @if (serviceBars().length) {
+        <ul class="bars">
+          @for (slice of serviceBars(); track slice.label) {
+            <li class="bars__row">
+              <div class="bars__meta">
+                <span class="bars__label">{{ slice.label }}</span>
+                <span class="muted">{{ slice.hint }}</span>
+              </div>
+              <div class="bars__track">
+                <span class="bars__fill" [style.width.%]="slice.percent"></span>
+              </div>
+              <span class="bars__value">{{ slice.value | inr }}</span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="muted">No completed service revenue in this period.</p>
+      }
+    </section>
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Top agents</h3>
+      @if (report.agents.topAgents.length) {
+        <ul class="rank">
+          @for (agent of report.agents.topAgents; track agent.agentId) {
+            <li>
+              <span class="rank__name">{{ agent.name || 'Unnamed agent' }}</span>
+              <span class="rank__meta">
+                {{ agent.completedJobs }} jobs · {{ agent.averageRating.toFixed(1) }}★
+              </span>
+              <span class="rank__value">{{ agent.revenueGenerated | inr }}</span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="muted">No agent earnings in this period.</p>
+      }
+    </section>
+  </div>
+}

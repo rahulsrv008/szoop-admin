@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>Edit salary</h2>
+
+<mat-dialog-content>
+  <p class="muted">
+    {{ data.row.agentName || 'Agent' }} · net currently
+    {{ data.row.netSalary }}
+  </p>
+  <form class="stack" [formGroup]="form" (ngSubmit)="save()">
+    <mat-form-field>
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        @for (option of statusOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Deductions (₹)</mat-label>
+      <input matInput type="number" formControlName="deductions" min="0" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Remarks</mat-label>
+      <textarea matInput rows="2" formControlName="remarks"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton type="button" (click)="cancel()">Cancel</button>
+  <button matButton="filled" type="button" (click)="save()">Save</button>
+</mat-dialog-actions>

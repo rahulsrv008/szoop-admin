@@ -1,0 +1,26 @@
+.shell {
+  height: 100vh;
+  background: #f4f6fa;
+
+  &__nav {
+    width: 248px;
+    border-right: none;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  &__main {
+    flex: 1 1 auto;
+    padding: 20px 24px 32px;
+  }
+}
+
+@media (max-width: 720px) {
+  .shell__main {
+    padding: 16px 12px 24px;
+  }
+}

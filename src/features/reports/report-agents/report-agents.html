@@ -1,0 +1,35 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Agents report</h2>
+    <p class="page-head__sub">Jobs, hours, revenue, ratings and attendance per agent</p>
+  </div>
+  <div class="page-head__actions">
+    <app-date-filter (rangeChange)="onRangeChange($event)" />
+    <button matButton="outlined" (click)="load()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+<nav class="tabs">
+  <a matButton routerLink="/reports">Overview</a>
+  <a matButton routerLink="/reports/bookings">Bookings</a>
+  <a matButton routerLink="/reports/revenue">Revenue</a>
+  <a matButton="tonal" routerLink="/reports/agents" routerLinkActive="active">Agents</a>
+  <a matButton routerLink="/reports/customers">Customers</a>
+</nav>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="data()?.items ?? []"
+  [loading]="loading()"
+  [total]="data()?.items?.length ?? 0"
+  [page]="1"
+  [limit]="tableLimit()"
+  emptyMessage="No agent activity in this period"
+/>

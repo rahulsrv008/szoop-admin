@@ -1,0 +1,58 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit society' : 'New society' }}</h2>
+
+<mat-dialog-content>
+  <form class="stack" [formGroup]="form" (ngSubmit)="save()">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <mat-error>Enter a society name</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Address</mat-label>
+      <textarea matInput rows="2" formControlName="address"></textarea>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>City</mat-label>
+      <input matInput formControlName="city" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>State</mat-label>
+      <input matInput formControlName="state" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Pincode</mat-label>
+      <input matInput formControlName="pincode" maxlength="6" />
+    </mat-form-field>
+
+    <div class="coords">
+      <mat-form-field>
+        <mat-label>Latitude</mat-label>
+        <input matInput type="number" formControlName="latitude" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Longitude</mat-label>
+        <input matInput type="number" formControlName="longitude" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field>
+      <mat-label>Total units</mat-label>
+      <input matInput type="number" formControlName="totalUnits" min="0" />
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="isActive">Active</mat-slide-toggle>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton type="button" (click)="cancel()">Cancel</button>
+  <button matButton="filled" type="button" (click)="save()">
+    {{ isEdit ? 'Save' : 'Create' }}
+  </button>
+</mat-dialog-actions>

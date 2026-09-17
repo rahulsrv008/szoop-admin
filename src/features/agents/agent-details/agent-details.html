@@ -1,0 +1,146 @@
+@if (loading() && !agent()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+@if (agent(); as a) {
+  <header class="page-head">
+    <div>
+      <h2 class="page-head__title">{{ a.name | orDash: 'Unnamed agent' }}</h2>
+      <p class="page-head__sub">{{ a.mobile }} · {{ a.email | orDash }}</p>
+    </div>
+
+    <div class="page-head__actions row-actions">
+      <a matButton="outlined" [routerLink]="['/agents', a.agentId, 'location']">
+        <mat-icon>my_location</mat-icon>
+        Location
+      </a>
+      @if (canApprove()) {
+        <button matButton="filled" (click)="approve()">
+          <mat-icon>check_circle</mat-icon>
+          Approve
+        </button>
+      }
+      @if (canReject()) {
+        <button matButton="outlined" (click)="reject()">
+          <mat-icon>cancel</mat-icon>
+          Reject
+        </button>
+      }
+      @if (canSuspend()) {
+        <button matButton="outlined" (click)="suspend()">
+          <mat-icon>pause_circle</mat-icon>
+          Suspend
+        </button>
+      }
+      @if (canActivate()) {
+        <button matButton="filled" (click)="activate()">
+          <mat-icon>play_circle</mat-icon>
+          Activate
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" class="loader" />
+  }
+
+  <div class="stack">
+    <section class="card-panel">
+      <h3 class="card-panel__title">Profile</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-item__label">Approval</span>
+          <span class="detail-item__value">
+            <app-status-badge [status]="a.approvalStatus" />
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Status</span>
+          <span class="detail-item__value">
+            <app-status-badge [status]="a.status" />
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Gender</span>
+          <span class="detail-item__value">{{ a.gender | orDash }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Date of birth</span>
+          <span class="detail-item__value">
+            {{ (a.dateOfBirth | date: 'dd MMM yyyy') || '—' }}
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Joining date</span>
+          <span class="detail-item__value">
+            {{ (a.joiningDate | date: 'dd MMM yyyy') || '—' }}
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Rating</span>
+          <span class="detail-item__value">
+            {{ a.ratings?.average ?? 0 }} ({{ a.ratings?.count ?? 0 }})
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Earnings this month</span>
+          <span class="detail-item__value">{{ a.earnings?.thisMonth ?? 0 | inr }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Lifetime earnings</span>
+          <span class="detail-item__value">{{ a.earnings?.lifetime ?? 0 | inr }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Availability today</h3>
+      <div class="slot-list">
+        @for (slot of availabilitySlots(); track $index) {
+          <div class="slot-row">
+            <app-status-badge
+              [status]="slot.isAvailable === false ? 'SUSPENDED' : 'ACTIVE'"
+              [label]="slot.isAvailable === false ? 'Offline' : 'Available'"
+            />
+            <span>
+              {{ slot.startTime | orDash }} – {{ slot.endTime | orDash }}
+            </span>
+          </div>
+        } @empty {
+          <p class="muted">No availability windows for today</p>
+        }
+      </div>
+    </section>
+
+    <app-agent-documents
+      [agentId]="a.agentId"
+      [documents]="a.documents ?? []"
+      (changed)="load()"
+    />
+
+    <app-agent-bank-details [bankAccount]="a.bankAccount" />
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Recent bookings</h3>
+      <div class="recent-list">
+        @for (booking of a.recentBookings ?? []; track booking.id) {
+          <button type="button" class="recent-row" (click)="openBooking(booking)">
+            <div>
+              <strong>{{ booking.bookingNumber }}</strong>
+              <p class="muted">
+                {{ booking.bookingDate | date: 'dd MMM yyyy' }} · {{ booking.startTime }}
+              </p>
+            </div>
+            <div class="recent-row__meta">
+              <app-status-badge [status]="booking.status" />
+              <span>{{ booking.totalAmount | inr }}</span>
+            </div>
+          </button>
+        } @empty {
+          <p class="muted">No recent bookings</p>
+        }
+      </div>
+    </section>
+  </div>
+}

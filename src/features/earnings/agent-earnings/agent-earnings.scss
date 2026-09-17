@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.total-card {
+  background: #fff;
+  border: 1px solid #e3e7ec;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &__label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #90a4ae;
+  }
+
+  strong {
+    font-size: 18px;
+    color: #16233a;
+  }
+}

@@ -1,0 +1,28 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">{{ customerName() }} · bookings</h2>
+    <p class="page-head__sub">Every booking placed by this customer</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" [routerLink]="['/customers', customerId]">
+      <mat-icon>arrow_back</mat-icon>
+      Profile
+    </a>
+    <app-date-filter label="Booking date" (rangeChange)="onRangeChange($event)" />
+  </div>
+</header>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  [clickableRows]="true"
+  emptyMessage="This customer has no bookings in the selected period"
+  (pageChange)="onPageChange($event)"
+  (rowClick)="onRowClick($event)"
+  (actionClick)="onAction($event)"
+/>

@@ -1,0 +1,33 @@
+.card {
+  width: 100%;
+  max-width: 420px;
+  padding-bottom: 8px;
+
+  &__header {
+    margin-top: 12px;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 8px;
+}
+
+.submit {
+  margin-top: 8px;
+  height: 44px;
+}
+
+.forgot {
+  align-self: center;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #1c60d8;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

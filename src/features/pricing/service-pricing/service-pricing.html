@@ -1,0 +1,67 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Service pricing</h2>
+    <p class="page-head__sub">Customer prices and agent payouts by service</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/pricing/areas">
+      <mat-icon>map</mat-icon>
+      By area
+    </a>
+    <button matButton="filled" type="button" (click)="openCreate()">
+      <mat-icon>add</mat-icon>
+      New price
+    </button>
+  </div>
+</header>
+
+<div class="filters">
+  <mat-form-field>
+    <mat-label>Service</mat-label>
+    <mat-select
+      [value]="serviceId()"
+      (selectionChange)="onServiceChange($event.value)"
+    >
+      @for (option of serviceOptions(); track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Area</mat-label>
+    <mat-select
+      [value]="areaId()"
+      (selectionChange)="onAreaChange($event.value)"
+    >
+      @for (option of areaOptions(); track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Status</mat-label>
+    <mat-select
+      [value]="status()"
+      (selectionChange)="onStatusChange($event.value)"
+    >
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No prices match these filters"
+  (pageChange)="onPageChange($event)"
+  (actionClick)="onAction($event)"
+/>

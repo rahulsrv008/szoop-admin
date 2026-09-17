@@ -1,0 +1,42 @@
+<div class="date-filter">
+  <mat-form-field appearance="outline" class="preset">
+    <mat-label>{{ label() }}</mat-label>
+    <mat-select
+      [value]="preset()"
+      (valueChange)="onPresetChange($event)"
+    >
+      @for (option of presets; track option.id) {
+        <mat-option [value]="option.id">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (preset() === 'custom') {
+    <mat-form-field appearance="outline" class="date">
+      <mat-label>From</mat-label>
+      <input
+        matInput
+        [matDatepicker]="fromPicker"
+        [ngModel]="from()"
+        (ngModelChange)="from.set($event)"
+      />
+      <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+      <mat-datepicker #fromPicker />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="date">
+      <mat-label>To</mat-label>
+      <input
+        matInput
+        [matDatepicker]="toPicker"
+        [ngModel]="to()"
+        (ngModelChange)="to.set($event)"
+      />
+      <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
+      <mat-datepicker #toPicker />
+    </mat-form-field>
+
+    <button matButton="filled" (click)="applyCustom()">Apply</button>
+    <button matButton (click)="clear()">Clear</button>
+  }
+</div>

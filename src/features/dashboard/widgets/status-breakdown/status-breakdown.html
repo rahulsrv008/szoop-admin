@@ -1,0 +1,22 @@
+<section class="panel">
+  <header class="panel__head">
+    <h3>{{ title() }}</h3>
+    <span class="panel__total">{{ total() }} total</span>
+  </header>
+
+  @if (slices().length) {
+    <ul class="rows">
+      @for (slice of slices(); track slice.status) {
+        <li class="row">
+          <app-status-badge [status]="slice.status" />
+          <div class="row__bar">
+            <span class="row__fill" [style.width.%]="slice.percent"></span>
+          </div>
+          <span class="row__count">{{ slice.count }}</span>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="empty">{{ emptyMessage() }}</p>
+  }
+</section>

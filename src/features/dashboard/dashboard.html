@@ -1,0 +1,109 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Business overview</h2>
+    <p class="page-head__sub">Bookings, revenue and workforce health at a glance</p>
+  </div>
+
+  <div class="page-head__actions">
+    <app-date-filter (rangeChange)="onRangeChange($event)" />
+    <button matButton="outlined" (click)="load()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+<section class="grid">
+  <app-stat-card
+    label="Bookings in period"
+    icon="event_note"
+    tone="blue"
+    [value]="summary().bookings?.inRange ?? 0"
+    [hint]="(summary().bookings?.total ?? 0) + ' lifetime'"
+    link="/bookings"
+  />
+  <app-stat-card
+    label="Active right now"
+    icon="sensors"
+    tone="violet"
+    [value]="summary().bookings?.activeNow ?? 0"
+    hint="Paid, assigned or in progress"
+    link="/bookings/live"
+  />
+  <app-stat-card
+    label="Revenue in period"
+    icon="payments"
+    tone="green"
+    [value]="summary().revenue?.inRange ?? 0 | inr"
+    [hint]="'Today ' + (summary().revenue?.today ?? 0 | inr)"
+    link="/payments"
+  />
+  <app-stat-card
+    label="Pending collection"
+    icon="hourglass_bottom"
+    tone="amber"
+    [value]="summary().revenue?.pendingCollection ?? 0 | inr"
+    hint="Unpaid bookings"
+    link="/payments"
+  />
+  <app-stat-card
+    label="Customers"
+    icon="people"
+    tone="blue"
+    [value]="summary().customers?.total ?? 0"
+    [hint]="(summary().customers?.newInRange ?? 0) + ' new · ' + (summary().customers?.blocked ?? 0) + ' blocked'"
+    link="/customers"
+  />
+  <app-stat-card
+    label="Agents approved"
+    icon="engineering"
+    tone="green"
+    [value]="summary().agents?.approved ?? 0"
+    [hint]="(summary().agents?.onlineToday ?? 0) + ' online today'"
+    link="/agents"
+  />
+  <app-stat-card
+    label="KYC waiting"
+    icon="verified_user"
+    tone="amber"
+    [value]="summary().agents?.pendingApproval ?? 0"
+    [hint]="(summary().kyc?.pendingDocuments ?? 0) + ' documents to review'"
+    link="/agents/pending"
+  />
+  <app-stat-card
+    label="Open complaints"
+    icon="support_agent"
+    tone="red"
+    [value]="summary().support?.open ?? 0"
+    [hint]="(summary().support?.highPriority ?? 0) + ' high priority'"
+    link="/complaints"
+  />
+</section>
+
+<section class="panels">
+  <app-status-breakdown
+    title="Bookings by status"
+    [data]="summary().bookings?.byStatus"
+    emptyMessage="No bookings in this period"
+  />
+
+  <div class="panel">
+    <header class="panel__head">
+      <h3>Service quality</h3>
+    </header>
+    <div class="rating">
+      <div class="rating__score">
+        {{ (summary().ratings?.average ?? 0).toFixed(1) }}
+        <mat-icon>star</mat-icon>
+      </div>
+      <p class="rating__count">
+        from {{ summary().ratings?.count ?? 0 }} customer ratings
+      </p>
+      <a matButton="outlined" href="/ratings">Review ratings</a>
+    </div>
+  </div>
+</section>

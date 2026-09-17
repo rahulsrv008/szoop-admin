@@ -1,0 +1,49 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Settings</h2>
+    <p class="page-head__sub">System knobs that drive tax, payouts and cancellations</p>
+  </div>
+</header>
+
+<nav class="tabs">
+  <a matButton="tonal" routerLink="/settings/general" routerLinkActive="active">General</a>
+  <a matButton routerLink="/settings/users">Users</a>
+  <a matButton routerLink="/settings/roles">Roles & permissions</a>
+</nav>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+<section class="card-panel">
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div formArrayName="rows" class="stack">
+      @for (group of rows.controls; track group.value.key; let i = $index) {
+        <div class="setting" [formGroupName]="i">
+          <div class="setting__head">
+            <code>{{ group.value.key }}</code>
+            <span class="muted">{{ group.value.description || 'No description' }}</span>
+          </div>
+          <mat-form-field appearance="outline" class="setting__value">
+            <mat-label>Value</mat-label>
+            <input matInput formControlName="value" />
+          </mat-form-field>
+        </div>
+      } @empty {
+        <p class="muted">No system settings found.</p>
+      }
+    </div>
+
+    @if (rows.length) {
+      <div class="row-actions">
+        <button matButton="filled" type="submit" [disabled]="saving()">
+          {{ saving() ? 'Saving…' : 'Save settings' }}
+        </button>
+        <button matButton="outlined" type="button" (click)="load()" [disabled]="loading()">
+          <mat-icon>refresh</mat-icon>
+          Reload
+        </button>
+      </div>
+    }
+  </form>
+</section>

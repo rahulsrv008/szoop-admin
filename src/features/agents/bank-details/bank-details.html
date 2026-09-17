@@ -1,0 +1,35 @@
+<section class="card-panel">
+  <h3 class="card-panel__title">Bank details</h3>
+
+  @if (bankAccount(); as bank) {
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-item__label">Account holder</span>
+        <span class="detail-item__value">{{ bank.accountHolderName | orDash }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-item__label">Account number</span>
+        <span class="detail-item__value">{{ bank.accountNumber | orDash }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-item__label">IFSC</span>
+        <span class="detail-item__value">{{ bank.ifscCode | orDash }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-item__label">Bank</span>
+        <span class="detail-item__value">{{ bank.bankName | orDash }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-item__label">Verified</span>
+        <span class="detail-item__value">
+          <app-status-badge
+            [status]="bank.isVerified ? 'VERIFIED' : 'PENDING'"
+            [label]="bank.isVerified ? 'Verified' : 'Unverified'"
+          />
+        </span>
+      </div>
+    </div>
+  } @else {
+    <p class="muted">No payout account on file</p>
+  }
+</section>

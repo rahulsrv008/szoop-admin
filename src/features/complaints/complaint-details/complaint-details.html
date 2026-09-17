@@ -1,0 +1,137 @@
+<header class="page-head">
+  <div>
+    <a matButton routerLink="/complaints">
+      <mat-icon>arrow_back</mat-icon>
+      All complaints
+    </a>
+    <h2 class="page-head__title">{{ ticket()?.subject | orDash: 'Support ticket' }}</h2>
+    <p class="page-head__sub">Update status, priority, and send a resolution note</p>
+  </div>
+  @if (ticket(); as current) {
+    <div class="page-head__actions">
+      <app-status-badge [status]="current.priority" />
+      <app-status-badge [status]="current.status" />
+    </div>
+  }
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+@if (ticket(); as current) {
+  <div class="stack layout">
+    <section class="card-panel">
+      <h3 class="card-panel__title">Ticket</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-item__label">Opened</span>
+          <span class="detail-item__value">{{ current.createdAt | date: 'medium' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Updated</span>
+          <span class="detail-item__value">
+            {{ current.updatedAt ? (current.updatedAt | date: 'medium') : '—' }}
+          </span>
+        </div>
+      </div>
+      <p class="description">{{ current.description | orDash: 'No description provided.' }}</p>
+    </section>
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Raised by</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-item__label">Name</span>
+          <span class="detail-item__value">{{ current.raisedBy.name | orDash }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Mobile</span>
+          <span class="detail-item__value">{{ current.raisedBy.mobile | orDash }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Email</span>
+          <span class="detail-item__value">{{ current.raisedBy.email | orDash }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Role</span>
+          <span class="detail-item__value">
+            <app-status-badge [status]="current.raisedBy.userType" />
+          </span>
+        </div>
+      </div>
+    </section>
+
+    @if (current.booking; as booking) {
+      <section class="card-panel">
+        <h3 class="card-panel__title">Linked booking</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-item__label">Booking</span>
+            <span class="detail-item__value">{{ booking.bookingNumber }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-item__label">Date</span>
+            <span class="detail-item__value">
+              {{ booking.bookingDate | orDash }}
+              @if (booking.startTime) {
+                <span class="muted"> · {{ booking.startTime }}</span>
+              }
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-item__label">Status</span>
+            <span class="detail-item__value">
+              <app-status-badge [status]="booking.status" />
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-item__label">Amount</span>
+            <span class="detail-item__value">{{ booking.totalAmount ?? 0 | inr }}</span>
+          </div>
+        </div>
+      </section>
+    }
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Resolve</h3>
+      <form class="form" [formGroup]="form" (ngSubmit)="save()">
+        <div class="form__row">
+          <mat-form-field appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              @for (option of statusOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Priority</mat-label>
+            <mat-select formControlName="priority">
+              @for (option of priorityOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="form__note">
+          <mat-label>Resolution note (optional)</mat-label>
+          <textarea
+            matInput
+            rows="4"
+            formControlName="resolutionNote"
+            placeholder="Sent to the raiser as a notification"
+          ></textarea>
+        </mat-form-field>
+
+        <div class="row-actions">
+          <button matButton="filled" type="submit" [disabled]="saving()">
+            {{ saving() ? 'Saving…' : 'Save changes' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+}

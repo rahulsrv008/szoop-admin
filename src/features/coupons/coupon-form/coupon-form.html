@@ -1,0 +1,105 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">
+      {{ isEdit() ? 'Edit coupon' : 'New coupon' }}
+    </h2>
+    <p class="page-head__sub">Discount rules and validity window</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/coupons">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </a>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+} @else if (notFound()) {
+  <div class="card-panel">
+    <h3 class="card-panel__title">Coupon not found</h3>
+    <a matButton="filled" routerLink="/coupons">Return to coupons</a>
+  </div>
+} @else {
+  <form class="card-panel stack" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field>
+      <mat-label>Code</mat-label>
+      <input
+        matInput
+        formControlName="code"
+        (input)="onCodeInput($event)"
+        placeholder="CLEAN100"
+      />
+      @if (form.controls.code.touched && form.controls.code.invalid) {
+        <mat-error>Enter a code (min 3 characters)</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Discount type</mat-label>
+      <mat-select formControlName="discountType">
+        @for (option of typeOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Discount value</mat-label>
+      <input matInput type="number" formControlName="discountValue" min="0" />
+      @if (
+        form.controls.discountValue.touched &&
+        form.controls.discountValue.invalid
+      ) {
+        <mat-error>Enter a valid discount value</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Max discount (₹)</mat-label>
+      <input matInput type="number" formControlName="maxDiscount" min="0" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Min order amount (₹)</mat-label>
+      <input matInput type="number" formControlName="minOrderAmount" min="0" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Usage limit</mat-label>
+      <input matInput type="number" formControlName="usageLimit" min="1" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Valid from</mat-label>
+      <input matInput [matDatepicker]="fromPicker" formControlName="validFrom" />
+      <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+      <mat-datepicker #fromPicker />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Valid until</mat-label>
+      <input matInput [matDatepicker]="untilPicker" formControlName="validUntil" />
+      <mat-datepicker-toggle matIconSuffix [for]="untilPicker" />
+      <mat-datepicker #untilPicker />
+      @if (form.hasError('dateRange')) {
+        <mat-error>End date must be after the start date</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="isActive">Active</mat-slide-toggle>
+
+    <div class="row-actions">
+      <button matButton="filled" type="submit" [disabled]="submitting()">
+        {{
+          submitting()
+            ? 'Saving…'
+            : isEdit()
+              ? 'Save changes'
+              : 'Create coupon'
+        }}
+      </button>
+      <a matButton="outlined" routerLink="/coupons">Cancel</a>
+    </div>
+  </form>
+}

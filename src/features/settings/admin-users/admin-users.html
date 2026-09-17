@@ -1,0 +1,195 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Admin users</h2>
+    <p class="page-head__sub">Manage Admin Web accounts and your own password</p>
+  </div>
+</header>
+
+<nav class="tabs">
+  <a matButton routerLink="/settings/general">General</a>
+  <a matButton="tonal" routerLink="/settings/users" routerLinkActive="active">Users</a>
+  <a matButton routerLink="/settings/roles">Roles & permissions</a>
+</nav>
+
+@if (loading() || creating() || savingEdit() || changingPassword()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+@if (editing(); as admin) {
+  <section class="card-panel edit-panel">
+    <h3 class="card-panel__title">Edit {{ admin.email }}</h3>
+    <form class="form" [formGroup]="editForm" (ngSubmit)="saveEdit()">
+      <div class="form__row">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Role</mat-label>
+          <mat-select formControlName="role">
+            @for (option of roleOptions; track option.value) {
+              @if (option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+              }
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="form__row">
+        <mat-form-field appearance="outline">
+          <mat-label>First name</mat-label>
+          <input matInput formControlName="firstName" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Last name</mat-label>
+          <input matInput formControlName="lastName" />
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Reset password (optional)</mat-label>
+        <input matInput type="password" formControlName="password" />
+      </mat-form-field>
+      <div class="row-actions">
+        <button matButton="filled" type="submit" [disabled]="savingEdit()">
+          {{ savingEdit() ? 'Saving…' : 'Save changes' }}
+        </button>
+        <button matButton="outlined" type="button" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+  </section>
+}
+
+<div class="layout">
+  <section class="card-panel">
+    <h3 class="card-panel__title">Create admin</h3>
+    <form class="form" [formGroup]="createForm" (ngSubmit)="create()">
+      <div class="form__row">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Temporary password</mat-label>
+          <input matInput type="password" formControlName="password" />
+        </mat-form-field>
+      </div>
+      <div class="form__row">
+        <mat-form-field appearance="outline">
+          <mat-label>First name</mat-label>
+          <input matInput formControlName="firstName" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Last name</mat-label>
+          <input matInput formControlName="lastName" />
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role">
+          @for (option of roleOptions; track option.value) {
+            @if (option.value) {
+              <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            }
+          }
+        </mat-select>
+      </mat-form-field>
+      <button matButton="filled" type="submit" [disabled]="creating()">
+        {{ creating() ? 'Creating…' : 'Create admin' }}
+      </button>
+    </form>
+  </section>
+
+  <section class="card-panel">
+    <h3 class="card-panel__title">Change my password</h3>
+    <form class="form" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+      <mat-form-field appearance="outline">
+        <mat-label>Current password</mat-label>
+        <input
+          matInput
+          [type]="hideCurrent() ? 'password' : 'text'"
+          formControlName="currentPassword"
+          autocomplete="current-password"
+        />
+        <button
+          matIconButton
+          type="button"
+          matSuffix
+          (click)="hideCurrent.set(!hideCurrent())"
+        >
+          <mat-icon>{{ hideCurrent() ? 'visibility' : 'visibility_off' }}</mat-icon>
+        </button>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>New password</mat-label>
+        <input
+          matInput
+          [type]="hideNew() ? 'password' : 'text'"
+          formControlName="newPassword"
+          autocomplete="new-password"
+        />
+        <button
+          matIconButton
+          type="button"
+          matSuffix
+          (click)="hideNew.set(!hideNew())"
+        >
+          <mat-icon>{{ hideNew() ? 'visibility' : 'visibility_off' }}</mat-icon>
+        </button>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Confirm new password</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="confirmPassword"
+          autocomplete="new-password"
+        />
+        @if (passwordForm.hasError('mismatch') && passwordForm.touched) {
+          <mat-error>Passwords do not match</mat-error>
+        }
+      </mat-form-field>
+      <button matButton="filled" type="submit" [disabled]="changingPassword()">
+        {{ changingPassword() ? 'Updating…' : 'Update password' }}
+      </button>
+    </form>
+  </section>
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="filters__search">
+    <mat-label>Search name or email</mat-label>
+    <input matInput [formControl]="searchControl" />
+    <mat-icon matIconPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Role</mat-label>
+    <mat-select [value]="role()" (selectionChange)="onRoleChange($event.value)">
+      @for (option of roleOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Status</mat-label>
+    <mat-select [value]="status()" (selectionChange)="onStatusChange($event.value)">
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No admin users found"
+  (pageChange)="onPageChange($event)"
+  (actionClick)="onAction($event)"
+/>

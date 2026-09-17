@@ -1,0 +1,61 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Services</h2>
+    <p class="page-head__sub">Catalog of bookable home services</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/services/categories">
+      <mat-icon>category</mat-icon>
+      Categories
+    </a>
+    <a matButton="filled" routerLink="/services/new">
+      <mat-icon>add</mat-icon>
+      New service
+    </a>
+  </div>
+</header>
+
+<div class="filters">
+  <mat-form-field class="filters__search">
+    <mat-label>Search</mat-label>
+    <input matInput [formControl]="searchControl" placeholder="Service name" />
+    <mat-icon matIconPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Category</mat-label>
+    <mat-select
+      [value]="categoryId()"
+      (selectionChange)="onCategoryChange($event.value)"
+    >
+      @for (option of categoryOptions(); track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Status</mat-label>
+    <mat-select
+      [value]="status()"
+      (selectionChange)="onStatusChange($event.value)"
+    >
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No services match these filters"
+  (pageChange)="onPageChange($event)"
+  (actionClick)="onAction($event)"
+/>

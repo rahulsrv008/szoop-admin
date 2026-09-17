@@ -1,0 +1,77 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Ratings</h2>
+    <p class="page-head__sub">Customer feedback across completed bookings</p>
+  </div>
+  <div class="page-head__actions">
+    <button matButton="outlined" (click)="load()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+<section class="summary">
+  <div class="summary__score card-panel">
+    <p class="summary__label">Average rating</p>
+    <div class="summary__value">
+      {{ summary().average.toFixed(1) }}
+      <mat-icon>star</mat-icon>
+    </div>
+    <p class="muted">from {{ summary().count }} ratings in this filter</p>
+  </div>
+
+  <div class="summary__breakdown card-panel">
+    <h3 class="card-panel__title">Star breakdown</h3>
+    <ul class="bars">
+      @for (slice of breakdown(); track slice.star) {
+        <li class="bars__row">
+          <span class="bars__label">{{ slice.star }} ★</span>
+          <div class="bars__track">
+            <span class="bars__fill" [style.width.%]="slice.percent"></span>
+          </div>
+          <span class="bars__count">{{ slice.count }}</span>
+        </li>
+      }
+    </ul>
+  </div>
+</section>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="filters__search">
+    <mat-label>Search booking number</mat-label>
+    <input matInput [formControl]="searchControl" />
+    <mat-icon matIconPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Minimum stars</mat-label>
+    <mat-select
+      [value]="minRating() ?? ''"
+      (selectionChange)="onMinRatingChange($event.value)"
+    >
+      @for (option of minRatingOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <app-date-filter (rangeChange)="onRangeChange($event)" />
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No ratings match these filters"
+  (pageChange)="onPageChange($event)"
+  (actionClick)="onAction($event)"
+/>

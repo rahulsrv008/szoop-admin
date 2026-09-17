@@ -1,0 +1,98 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Payment detail</h2>
+    <p class="page-head__sub">Booking, customer and gateway transactions</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/payments">
+      <mat-icon>arrow_back</mat-icon>
+      Payments
+    </a>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+} @else if (notFound() || !payment()) {
+  <div class="card-panel">
+    <h3 class="card-panel__title">Payment not found</h3>
+    <a matButton="filled" routerLink="/payments">Back to payments</a>
+  </div>
+} @else {
+  <section class="card-panel stack">
+    <h3 class="card-panel__title">Summary</h3>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-item__label">Amount</span>
+        <span class="detail-item__value">{{ payment()!.amount | inr }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-item__label">Status</span>
+        <span class="detail-item__value">
+          <app-status-badge [status]="payment()!.paymentStatus" />
+        </span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-item__label">Method</span>
+        <span class="detail-item__value">
+          {{ payment()!.paymentMethod || '—' }}
+        </span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-item__label">Paid at</span>
+        <span class="detail-item__value">
+          {{
+            payment()!.paidAt
+              ? (payment()!.paidAt | date: 'medium')
+              : '—'
+          }}
+        </span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-item__label">Booking</span>
+        <span class="detail-item__value">
+          @if (payment()!.booking?.id) {
+            <a [routerLink]="['/bookings', payment()!.booking!.id]">
+              {{ payment()!.booking!.bookingNumber }}
+            </a>
+          } @else {
+            —
+          }
+        </span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-item__label">Customer</span>
+        <span class="detail-item__value">
+          {{ payment()!.customer?.name || '—' }}
+          @if (payment()!.customer?.mobile) {
+            <span class="muted"> · {{ payment()!.customer!.mobile }}</span>
+          }
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="card-panel" style="margin-top: 14px">
+    <h3 class="card-panel__title">Gateway transactions</h3>
+    <app-data-table
+      [columns]="txnColumns"
+      [rows]="payment()!.transactions ?? []"
+      [total]="(payment()!.transactions ?? []).length"
+      [page]="1"
+      [limit]="(payment()!.transactions ?? []).length || 20"
+      emptyMessage="No gateway transactions recorded"
+    />
+
+    @for (txn of payment()!.transactions ?? []; track txn.id) {
+      <mat-expansion-panel class="txn-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ txn.gatewayName || 'Gateway' }} ·
+            {{ txn.gatewayTransactionId || txn.id }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <pre class="json">{{ pretty(txn.gatewayResponse) }}</pre>
+      </mat-expansion-panel>
+    }
+  </section>
+}

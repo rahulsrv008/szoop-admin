@@ -1,0 +1,45 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Coupons</h2>
+    <p class="page-head__sub">Promo codes for customer bookings</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="filled" routerLink="/coupons/new">
+      <mat-icon>add</mat-icon>
+      New coupon
+    </a>
+  </div>
+</header>
+
+<div class="filters">
+  <mat-form-field class="filters__search">
+    <mat-label>Search code</mat-label>
+    <input matInput [formControl]="searchControl" placeholder="CLEAN100" />
+    <mat-icon matIconPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Status</mat-label>
+    <mat-select
+      [value]="status()"
+      (selectionChange)="onStatusChange($event.value)"
+    >
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No coupons match these filters"
+  (pageChange)="onPageChange($event)"
+  (actionClick)="onAction($event)"
+/>

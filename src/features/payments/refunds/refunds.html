@@ -1,0 +1,39 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Refunds</h2>
+    <p class="page-head__sub">
+      Refunds are created when bookings are cancelled — there is no manual refund
+      action here
+    </p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/payments">
+      <mat-icon>arrow_back</mat-icon>
+      Payments
+    </a>
+  </div>
+</header>
+
+<section class="card-panel" style="margin-bottom: 14px">
+  <div class="detail-item">
+    <span class="detail-item__label">Total refunded (filtered)</span>
+    <span class="detail-item__value">{{ refundedTotal() | inr }}</span>
+  </div>
+</section>
+
+<div class="filters">
+  <app-date-filter (rangeChange)="onRangeChange($event)" />
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  [clickableRows]="true"
+  emptyMessage="No refunds in this period"
+  (pageChange)="onPageChange($event)"
+  (rowClick)="onRowClick($event)"
+/>

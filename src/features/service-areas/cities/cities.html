@@ -1,0 +1,28 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Cities</h2>
+    <p class="page-head__sub">
+      Aggregated from service areas (no separate cities API)
+    </p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/service-areas">
+      <mat-icon>arrow_back</mat-icon>
+      Areas
+    </a>
+  </div>
+</header>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="rows().length"
+  [page]="1"
+  [limit]="rows().length || 20"
+  [clickableRows]="true"
+  emptyMessage="No cities configured yet"
+  (actionClick)="onAction($event)"
+  (rowClick)="onRowClick($event)"
+/>

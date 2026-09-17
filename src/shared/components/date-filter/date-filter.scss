@@ -1,0 +1,18 @@
+.date-filter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.preset {
+  min-width: 180px;
+}
+
+.date {
+  min-width: 160px;
+}
+
+mat-form-field {
+  margin-bottom: -18px;
+}

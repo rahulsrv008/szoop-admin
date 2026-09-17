@@ -1,0 +1,47 @@
+<mat-toolbar class="header">
+  <button
+    matIconButton
+    class="header__toggle"
+    aria-label="Toggle navigation"
+    (click)="toggleSidebar.emit()"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <span class="header__title">{{ title() }}</span>
+  <span class="header__spacer"></span>
+
+  <button matIconButton aria-label="Send notification" routerLink="/notifications">
+    <mat-icon>campaign</mat-icon>
+  </button>
+
+  <button
+    matButton
+    class="header__profile"
+    [matMenuTriggerFor]="profileMenu"
+    aria-label="Account menu"
+  >
+    <span class="header__avatar">{{ initials() }}</span>
+    <span class="header__name">{{ displayName() }}</span>
+    <mat-icon iconPositionEnd>expand_more</mat-icon>
+  </button>
+
+  <mat-menu #profileMenu>
+    <div class="menu-head">
+      <p class="menu-head__name">{{ displayName() }}</p>
+      <p class="menu-head__role">{{ role() }}</p>
+    </div>
+    <a mat-menu-item routerLink="/settings/general">
+      <mat-icon>settings</mat-icon>
+      <span>System settings</span>
+    </a>
+    <a mat-menu-item routerLink="/settings/users">
+      <mat-icon>manage_accounts</mat-icon>
+      <span>Admin users</span>
+    </a>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Sign out</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>

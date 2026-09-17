@@ -1,0 +1,13 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 24px;
+  border-top: 1px solid #e3e7ec;
+  color: #78889c;
+  font-size: 12px;
+
+  &__api {
+    font-family: 'SFMono-Regular', Menlo, monospace;
+  }
+}

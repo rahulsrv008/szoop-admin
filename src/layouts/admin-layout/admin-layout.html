@@ -1,0 +1,20 @@
+<mat-sidenav-container class="shell" autosize>
+  <mat-sidenav
+    class="shell__nav"
+    mode="side"
+    [opened]="sidebarOpen()"
+    disableClose
+  >
+    <app-sidebar />
+  </mat-sidenav>
+
+  <mat-sidenav-content class="shell__content">
+    <app-header [title]="pageTitle()" (toggleSidebar)="toggleSidebar()" />
+
+    <main class="shell__main">
+      <router-outlet />
+    </main>
+
+    <app-footer />
+  </mat-sidenav-content>
+</mat-sidenav-container>

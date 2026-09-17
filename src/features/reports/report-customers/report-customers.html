@@ -1,0 +1,78 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Customers report</h2>
+    <p class="page-head__sub">New signups, repeat buyers and top spenders</p>
+  </div>
+  <div class="page-head__actions">
+    <app-date-filter (rangeChange)="onRangeChange($event)" />
+    <button matButton="outlined" (click)="load()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+<nav class="tabs">
+  <a matButton routerLink="/reports">Overview</a>
+  <a matButton routerLink="/reports/bookings">Bookings</a>
+  <a matButton routerLink="/reports/revenue">Revenue</a>
+  <a matButton routerLink="/reports/agents">Agents</a>
+  <a matButton="tonal" routerLink="/reports/customers" routerLinkActive="active">Customers</a>
+</nav>
+
+@if (data(); as report) {
+  <section class="totals">
+    <div class="card-panel total">
+      <span class="total__label">New customers</span>
+      <strong>{{ report.totals.newCustomers }}</strong>
+    </div>
+    <div class="card-panel total">
+      <span class="total__label">Repeat customers</span>
+      <strong>{{ report.totals.repeatCustomers }}</strong>
+    </div>
+    <div class="card-panel total">
+      <span class="total__label">Paying customers</span>
+      <strong>{{ report.totals.payingCustomers }}</strong>
+    </div>
+    <div class="card-panel total">
+      <span class="total__label">Total spend</span>
+      <strong>{{ report.totals.totalSpend | inr }}</strong>
+    </div>
+  </section>
+
+  <section class="card-panel chart">
+    <h3 class="card-panel__title">New customers per day</h3>
+    @if (signupBars().length) {
+      <ul class="bars">
+        @for (slice of signupBars(); track slice.label) {
+          <li class="bars__row">
+            <span class="bars__label">{{ slice.label }}</span>
+            <div class="bars__track">
+              <span class="bars__fill" [style.width.%]="slice.percent"></span>
+            </div>
+            <span class="bars__count">{{ slice.value }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="muted">No new customers in this period.</p>
+    }
+  </section>
+
+  <section class="table-wrap">
+    <h3 class="section-title">Top customers by spend</h3>
+    <app-data-table
+      [columns]="columns"
+      [rows]="report.topCustomers"
+      [loading]="loading()"
+      [total]="report.topCustomers.length"
+      [page]="1"
+      [limit]="tableLimit()"
+      emptyMessage="No paying customers in this period"
+    />
+  </section>
+}

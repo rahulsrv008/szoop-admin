@@ -1,0 +1,24 @@
+@if (link()) {
+  <a class="stat" [class]="'stat--' + tone()" [routerLink]="link()">
+    <span class="stat__icon"><mat-icon>{{ icon() }}</mat-icon></span>
+    <span class="stat__body">
+      <span class="stat__label">{{ label() }}</span>
+      <span class="stat__value">{{ value() }}</span>
+      @if (hint()) {
+        <span class="stat__hint">{{ hint() }}</span>
+      }
+    </span>
+    <mat-icon class="stat__chevron">chevron_right</mat-icon>
+  </a>
+} @else {
+  <div class="stat" [class]="'stat--' + tone()">
+    <span class="stat__icon"><mat-icon>{{ icon() }}</mat-icon></span>
+    <span class="stat__body">
+      <span class="stat__label">{{ label() }}</span>
+      <span class="stat__value">{{ value() }}</span>
+      @if (hint()) {
+        <span class="stat__hint">{{ hint() }}</span>
+      }
+    </span>
+  </div>
+}

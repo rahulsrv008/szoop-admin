@@ -1,0 +1,43 @@
+:host {
+  display: block;
+}
+
+.loader {
+  margin-bottom: 12px;
+}
+
+.item-list,
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-row,
+.history-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e3e7ec;
+  border-radius: 10px;
+}
+
+.history-row {
+  justify-content: flex-start;
+
+  p {
+    margin: 0;
+  }
+
+  .muted {
+    margin-top: 4px;
+    font-size: 12px;
+  }
+}
+
+.item-row p {
+  margin: 4px 0 0;
+  font-size: 13px;
+}

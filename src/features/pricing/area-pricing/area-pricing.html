@@ -1,0 +1,45 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Area pricing</h2>
+    <p class="page-head__sub">
+      Compare active prices for one service area at a time
+    </p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/pricing">
+      <mat-icon>arrow_back</mat-icon>
+      All prices
+    </a>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+<div class="filters">
+  <mat-form-field>
+    <mat-label>Service area</mat-label>
+    <mat-select
+      [value]="areaId()"
+      (selectionChange)="onAreaChange($event.value)"
+    >
+      @for (option of areaOptions(); track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<section class="card-panel">
+  <h3 class="card-panel__title">{{ selectedAreaLabel() }}</h3>
+  <app-data-table
+    [columns]="columns"
+    [rows]="filteredRows()"
+    [loading]="loading()"
+    [total]="filteredRows().length"
+    [page]="1"
+    [limit]="filteredRows().length || 20"
+    emptyMessage="No active prices for this area"
+  />
+</section>

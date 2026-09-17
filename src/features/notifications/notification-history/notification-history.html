@@ -1,0 +1,33 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Notification history</h2>
+    <p class="page-head__sub">Recently delivered messages and read state</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="filled" routerLink="/notifications">
+      <mat-icon>campaign</mat-icon>
+      Compose
+    </a>
+  </div>
+</header>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="filters__search">
+    <mat-label>Search title or message</mat-label>
+    <input matInput [formControl]="searchControl" />
+    <mat-icon matIconPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <app-date-filter (rangeChange)="onRangeChange($event)" />
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No notifications found"
+  (pageChange)="onPageChange($event)"
+/>

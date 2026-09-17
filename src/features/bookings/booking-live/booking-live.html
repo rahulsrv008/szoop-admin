@@ -1,0 +1,39 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Live bookings</h2>
+    <p class="page-head__sub">
+      Paid, assigned and in-progress jobs
+      @if (lastRefreshed(); as at) {
+        · refreshed {{ at | date: 'h:mm:ss a' }}
+      }
+    </p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/bookings">
+      <mat-icon>arrow_back</mat-icon>
+      All bookings
+    </a>
+    <button matButton="filled" (click)="refresh()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="rows().length"
+  [page]="1"
+  [limit]="rows().length || 20"
+  [clickableRows]="true"
+  emptyMessage="No live bookings right now"
+  (rowClick)="onRowClick($event)"
+  (actionClick)="onAction($event)"
+/>

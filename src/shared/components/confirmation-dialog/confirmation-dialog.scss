@@ -1,0 +1,15 @@
+.message {
+  margin: 0 0 12px;
+  color: rgba(0, 0, 0, 0.72);
+  white-space: pre-line;
+}
+
+.reason {
+  width: 100%;
+  min-width: 360px;
+}
+
+.confirm--danger {
+  --mat-button-filled-container-color: #c62828;
+  --mat-button-filled-label-text-color: #fff;
+}

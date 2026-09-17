@@ -1,0 +1,36 @@
+.loader {
+  margin-bottom: 12px;
+}
+
+.layout {
+  max-width: 920px;
+}
+
+.description {
+  margin: 14px 0 0;
+  color: #26313f;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  &__note {
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .form__row {
+    grid-template-columns: 1fr;
+  }
+}

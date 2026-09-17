@@ -1,0 +1,157 @@
+// Angular Material 3 theming: defines the CSS variables every component reads.
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+body {
+  color-scheme: light;
+  background-color: #f4f6fa;
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// ---------------------------------------------------------------------------
+// Small global design system shared by every feature screen.
+// ---------------------------------------------------------------------------
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+
+  &__title {
+    margin: 0;
+    font-size: 20px;
+    color: #16233a;
+  }
+
+  &__sub {
+    margin: 4px 0 0;
+    color: #78889c;
+    font-size: 13px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+}
+
+/** Filter bar above data tables. */
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  background: #fff;
+  border: 1px solid #e3e7ec;
+  border-radius: 12px;
+
+  mat-form-field {
+    min-width: 180px;
+    margin-bottom: -18px;
+  }
+
+  .filters__search {
+    min-width: 260px;
+    flex: 1 1 260px;
+  }
+}
+
+.card-panel {
+  background: #fff;
+  border: 1px solid #e3e7ec;
+  border-radius: 12px;
+  padding: 16px 18px 18px;
+
+  &__title {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: #16233a;
+  }
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px 24px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &__label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #90a4ae;
+  }
+
+  &__value {
+    font-size: 14px;
+    color: #26313f;
+    word-break: break-word;
+  }
+}
+
+.muted {
+  color: #78889c;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+// Snackbar tones used by NotificationService.
+.snack-success {
+  --mat-snack-bar-button-color: #fff;
+  --mdc-snackbar-container-color: #2e7d32;
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+
+.snack-error {
+  --mat-snack-bar-button-color: #fff;
+  --mdc-snackbar-container-color: #c62828;
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+
+.snack-info {
+  --mat-snack-bar-button-color: #fff;
+  --mdc-snackbar-container-color: #10233f;
+  --mdc-snackbar-supporting-text-color: #fff;
+}

@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.txn-panel {
+  margin-top: 10px;
+}
+
+.json {
+  margin: 0;
+  padding: 12px;
+  background: #f6f8fb;
+  border-radius: 8px;
+  font-size: 12px;
+  overflow: auto;
+  max-height: 280px;
+}

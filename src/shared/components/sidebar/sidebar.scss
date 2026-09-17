@@ -1,0 +1,75 @@
+:host {
+  display: block;
+  height: 100%;
+  background: #10233f;
+  color: #cfd8e3;
+  overflow-y: auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  background: #10233f;
+  z-index: 1;
+
+  &__icon {
+    color: #4fc3f7;
+  }
+
+  &__name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.2px;
+  }
+}
+
+.nav {
+  padding: 12px 8px 32px;
+
+  &__section {
+    margin-bottom: 14px;
+  }
+
+  &__title {
+    margin: 12px 12px 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7b8ca6;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    color: #cfd8e3;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 20px;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+
+    &--active {
+      background: #1c60d8;
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+}

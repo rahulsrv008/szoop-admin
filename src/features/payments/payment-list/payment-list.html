@@ -1,0 +1,66 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Payments</h2>
+    <p class="page-head__sub">Gateway collections across bookings</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/payments/refunds">
+      <mat-icon>undo</mat-icon>
+      Refunds
+    </a>
+  </div>
+</header>
+
+<section class="totals">
+  <div class="total-card">
+    <span class="total-card__label">Collected</span>
+    <strong>{{ totals().collected | inr }}</strong>
+  </div>
+  <div class="total-card">
+    <span class="total-card__label">Pending</span>
+    <strong>{{ totals().pending | inr }}</strong>
+  </div>
+  <div class="total-card">
+    <span class="total-card__label">Refunded</span>
+    <strong>{{ totals().refunded | inr }}</strong>
+  </div>
+  <div class="total-card">
+    <span class="total-card__label">Payments</span>
+    <strong>{{ totals().count | number }}</strong>
+  </div>
+</section>
+
+<div class="filters">
+  <mat-form-field class="filters__search">
+    <mat-label>Search booking</mat-label>
+    <input matInput [formControl]="searchControl" placeholder="Booking number" />
+    <mat-icon matIconPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Status</mat-label>
+    <mat-select
+      [value]="status()"
+      (selectionChange)="onStatusChange($event.value)"
+    >
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <app-date-filter (rangeChange)="onRangeChange($event)" />
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  [clickableRows]="true"
+  emptyMessage="No payments match these filters"
+  (pageChange)="onPageChange($event)"
+  (rowClick)="onRowClick($event)"
+/>

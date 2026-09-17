@@ -1,0 +1,28 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">
+      Coupon usage
+      @if (coupon()?.code) {
+        · {{ coupon()!.code }}
+      }
+    </h2>
+    <p class="page-head__sub">Redemptions for this promo code</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/coupons">
+      <mat-icon>arrow_back</mat-icon>
+      Coupons
+    </a>
+  </div>
+</header>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No redemptions yet"
+  (pageChange)="onPageChange($event)"
+/>

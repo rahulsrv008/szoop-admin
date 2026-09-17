@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>Rating detail</h2>
+
+<mat-dialog-content class="content">
+  <div class="score">
+    <span class="score__value">{{ data.rating }}</span>
+    <span class="score__stars">
+      @for (filled of stars(data.rating); track $index) {
+        <mat-icon [class.score__star--on]="filled">star</mat-icon>
+      }
+    </span>
+  </div>
+
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-item__label">Booking</span>
+      <span class="detail-item__value">{{ data.booking?.bookingNumber | orDash }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-item__label">Customer</span>
+      <span class="detail-item__value">
+        {{ data.customer?.name | orDash }}
+        @if (data.customer?.mobile) {
+          <span class="muted"> · {{ data.customer?.mobile }}</span>
+        }
+      </span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-item__label">Agent</span>
+      <span class="detail-item__value">
+        {{ data.agent?.name | orDash }}
+        @if (data.agent?.mobile) {
+          <span class="muted"> · {{ data.agent?.mobile }}</span>
+        }
+      </span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-item__label">Submitted</span>
+      <span class="detail-item__value">{{ data.createdAt | date: 'medium' }}</span>
+    </div>
+  </div>
+
+  <section class="reviews">
+    <h3>Reviews</h3>
+    @if (data.reviews.length) {
+      <ul>
+        @for (review of data.reviews; track review.id) {
+          <li>
+            <p>{{ review.reviewText | orDash }}</p>
+            <time>{{ review.createdAt | date: 'medium' }}</time>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="muted">No written review on this rating.</p>
+    }
+  </section>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton (click)="close()">Close</button>
+</mat-dialog-actions>

@@ -1,0 +1,47 @@
+.loader {
+  margin-bottom: 12px;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.setting {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.2fr) minmax(180px, 280px);
+  gap: 12px 18px;
+  align-items: start;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eef2f7;
+
+  &:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 8px;
+
+    code {
+      font-size: 13px;
+      color: #16233a;
+      font-weight: 600;
+    }
+  }
+
+  &__value {
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .setting {
+    grid-template-columns: 1fr;
+  }
+}

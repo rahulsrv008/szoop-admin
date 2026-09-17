@@ -1,0 +1,59 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit price' : 'New price' }}</h2>
+
+<mat-dialog-content>
+  <form class="stack" [formGroup]="form" (ngSubmit)="save()">
+    <mat-form-field>
+      <mat-label>Service</mat-label>
+      <mat-select formControlName="serviceId">
+        @for (option of data.serviceOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.serviceId.touched && form.controls.serviceId.invalid) {
+        <mat-error>Pick a service</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Service area</mat-label>
+      <mat-select formControlName="serviceAreaId">
+        <mat-option value="">All areas (default)</mat-option>
+        @for (option of data.areaOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Price per hour (₹)</mat-label>
+      <input matInput type="number" formControlName="pricePerHour" min="0" />
+      @if (
+        form.controls.pricePerHour.touched && form.controls.pricePerHour.invalid
+      ) {
+        <mat-error>Enter a valid price</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Agent payout per hour (₹)</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="agentPayoutPerHour"
+        min="0"
+      />
+      @if (form.hasError('payoutAbovePrice')) {
+        <mat-error>Payout cannot exceed the customer price</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="isActive">Active</mat-slide-toggle>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton type="button" (click)="cancel()">Cancel</button>
+  <button matButton="filled" type="button" (click)="save()">
+    {{ isEdit ? 'Save' : 'Create' }}
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,94 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Agent earnings</h2>
+    <p class="page-head__sub">Per-booking payouts and monthly summaries</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/earnings/incentives">Incentives</a>
+    <a matButton="outlined" routerLink="/earnings/salary">Salary</a>
+  </div>
+</header>
+
+<section class="totals">
+  <div class="total-card">
+    <span class="total-card__label">Earnings</span>
+    <strong>{{ totals().earnings | inr }}</strong>
+  </div>
+  <div class="total-card">
+    <span class="total-card__label">Revenue</span>
+    <strong>{{ totals().revenue | inr }}</strong>
+  </div>
+  <div class="total-card">
+    <span class="total-card__label">Hours</span>
+    <strong>{{ totals().hours | number: '1.0-2' }}</strong>
+  </div>
+</section>
+
+<div class="filters">
+  <mat-form-field>
+    <mat-label>Agent</mat-label>
+    <mat-select
+      [value]="agentId()"
+      (selectionChange)="onAgentChange($event.value)"
+    >
+      @for (option of agentOptions(); track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <app-date-filter (rangeChange)="onRangeChange($event)" />
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No earnings in this period"
+  (pageChange)="onPageChange($event)"
+/>
+
+<section class="card-panel" style="margin-top: 18px">
+  <header class="page-head" style="margin-bottom: 12px">
+    <div>
+      <h3 class="card-panel__title" style="margin: 0">Monthly summary</h3>
+      <p class="page-head__sub">Per-agent totals for the selected month</p>
+    </div>
+    <div class="page-head__actions">
+      <mat-form-field>
+        <mat-label>Month</mat-label>
+        <mat-select
+          [value]="month()"
+          (selectionChange)="onMonthChange($event.value)"
+        >
+          @for (option of monthOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Year</mat-label>
+        <mat-select
+          [value]="year()"
+          (selectionChange)="onYearChange($event.value)"
+        >
+          @for (option of yearOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </header>
+
+  <app-data-table
+    [columns]="summaryColumns"
+    [rows]="summaryRows()"
+    [loading]="summaryLoading()"
+    [total]="summaryRows().length"
+    [page]="1"
+    [limit]="summaryRows().length || 20"
+    emptyMessage="No summary rows for this month"
+  />
+</section>

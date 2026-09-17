@@ -1,0 +1,46 @@
+<h2 mat-dialog-title>
+  {{ data.reassign ? 'Reassign agent' : 'Assign agent' }}
+</h2>
+
+<mat-dialog-content>
+  <p class="muted">
+    Booking {{ data.bookingNumber }}
+    @if (data.reassign && data.currentAgentName) {
+      · currently {{ data.currentAgentName }}
+    }
+  </p>
+
+  <form class="form" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Agent</mat-label>
+      <mat-select formControlName="agentId">
+        @for (agent of agents(); track agent.agentId) {
+          <mat-option [value]="agent.agentId">
+            {{ agent.name || agent.mobile }} · {{ agent.mobile }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (data.reassign) {
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Reason</mat-label>
+        <textarea matInput rows="3" formControlName="reason"></textarea>
+      </mat-form-field>
+    } @else {
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Remarks (optional)</mat-label>
+        <textarea matInput rows="3" formControlName="remarks"></textarea>
+      </mat-form-field>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton type="button" (click)="cancel()" [disabled]="loading()">
+    Cancel
+  </button>
+  <button matButton="filled" type="button" (click)="submit()" [disabled]="loading()">
+    {{ data.reassign ? 'Reassign' : 'Assign' }}
+  </button>
+</mat-dialog-actions>

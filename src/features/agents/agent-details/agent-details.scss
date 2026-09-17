@@ -1,0 +1,50 @@
+:host {
+  display: block;
+}
+
+.loader {
+  margin-bottom: 12px;
+}
+
+.slot-list,
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.slot-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.recent-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e3e7ec;
+  border-radius: 10px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+
+  p {
+    margin: 4px 0 0;
+    font-size: 13px;
+  }
+
+  &:hover {
+    border-color: #c5ced8;
+    background: #f8fafc;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}

@@ -1,0 +1,65 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Agents</h2>
+    <p class="page-head__sub">Workforce roster, KYC status and performance</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="filled" routerLink="/agents/pending">
+      <mat-icon>verified_user</mat-icon>
+      Pending KYC
+    </a>
+  </div>
+</header>
+
+<section class="filters">
+  <mat-form-field class="filters__search" appearance="outline">
+    <mat-label>Search</mat-label>
+    <input
+      matInput
+      [formControl]="searchControl"
+      placeholder="Name or mobile"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Approval</mat-label>
+    <mat-select
+      [value]="approvalStatus()"
+      (selectionChange)="onApprovalChange($event.value)"
+    >
+      @for (opt of approvalOptions; track opt.value) {
+        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Status</mat-label>
+    <mat-select
+      [value]="status()"
+      (selectionChange)="onStatusChange($event.value)"
+    >
+      @for (opt of statusOptions; track opt.value) {
+        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <app-date-filter label="Joined" (rangeChange)="onRangeChange($event)" />
+</section>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  [clickableRows]="true"
+  emptyMessage="No agents match these filters"
+  (pageChange)="onPageChange($event)"
+  (rowClick)="onRowClick($event)"
+  (actionClick)="onAction($event)"
+/>

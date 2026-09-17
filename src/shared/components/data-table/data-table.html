@@ -1,0 +1,120 @@
+<div class="table-wrapper">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <table mat-table [dataSource]="rows()" matSort (matSortChange)="onSort($event)">
+    @for (column of columns(); track column.key) {
+      <ng-container [matColumnDef]="column.key">
+        @if (column.sortable) {
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            [style.width]="column.width"
+            [class]="'align-' + (column.align ?? 'left')"
+          >
+            {{ column.label }}
+          </th>
+        } @else {
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            [style.width]="column.width"
+            [class]="'align-' + (column.align ?? 'left')"
+          >
+            {{ column.label }}
+          </th>
+        }
+
+        <td
+          mat-cell
+          *matCellDef="let row"
+          [class]="'align-' + (column.align ?? 'left')"
+        >
+          @switch (column.type) {
+            @case ('currency') {
+              {{ numeric(row, column) | inr: column.fallback ?? '—' }}
+            }
+            @case ('number') {
+              {{ (numeric(row, column) | number: '1.0-2') ?? column.fallback ?? '—' }}
+            }
+            @case ('date') {
+              {{ (asDate(row, column) | date: 'dd MMM yyyy') ?? column.fallback ?? '—' }}
+            }
+            @case ('datetime') {
+              {{ (asDate(row, column) | date: 'dd MMM yyyy, h:mm a') ?? column.fallback ?? '—' }}
+            }
+            @case ('badge') {
+              <app-status-badge [status]="text(row, column)" />
+            }
+            @case ('boolean') {
+              <app-status-badge
+                [status]="isTruthy(row, column) ? 'ACTIVE' : 'SUSPENDED'"
+                [label]="isTruthy(row, column) ? 'Yes' : 'No'"
+              />
+            }
+            @case ('chips') {
+              <span class="chips">
+                @for (chip of chips(row, column); track chip) {
+                  <span class="chip">{{ chip }}</span>
+                } @empty {
+                  <span class="muted">—</span>
+                }
+              </span>
+            }
+            @default {
+              {{ text(row, column) }}
+            }
+          }
+        </td>
+      </ng-container>
+    }
+
+    @if (actions().length) {
+      <ng-container matColumnDef="__actions">
+        <th mat-header-cell *matHeaderCellDef class="align-right actions-header">
+          Actions
+        </th>
+        <td mat-cell *matCellDef="let row" class="align-right">
+          @for (action of visibleActions(row); track action.id) {
+            <button
+              matIconButton
+              [attr.aria-label]="action.label"
+              [matTooltip]="action.label"
+              [disabled]="isDisabled(action, row)"
+              [class]="'action action--' + (action.color ?? 'primary')"
+              (click)="onAction(action, row, $event)"
+            >
+              <mat-icon>{{ action.icon }}</mat-icon>
+            </button>
+          }
+        </td>
+      </ng-container>
+    }
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns()"
+      [class.clickable]="clickableRows()"
+      (click)="onRowClick(row)"
+    ></tr>
+  </table>
+
+  @if (!rows().length && !loading()) {
+    <div class="empty">
+      <mat-icon>inbox</mat-icon>
+      <p>{{ emptyMessage() }}</p>
+    </div>
+  }
+
+  <mat-paginator
+    [length]="total()"
+    [pageSize]="limit()"
+    [pageIndex]="pageIndex()"
+    [pageSizeOptions]="pageSizeOptions()"
+    showFirstLastButtons
+    (page)="onPage($event)"
+  />
+</div>

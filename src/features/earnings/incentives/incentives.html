@@ -1,0 +1,76 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Incentives</h2>
+    <p class="page-head__sub">Monthly agent incentive runs</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/earnings">
+      <mat-icon>arrow_back</mat-icon>
+      Earnings
+    </a>
+    <button matButton="filled" type="button" (click)="generate()">
+      <mat-icon>auto_awesome</mat-icon>
+      Generate incentives
+    </button>
+  </div>
+</header>
+
+<div class="filters">
+  <mat-form-field>
+    <mat-label>Agent</mat-label>
+    <mat-select
+      [value]="agentId()"
+      (selectionChange)="onAgentChange($event.value)"
+    >
+      @for (option of agentOptions(); track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Month</mat-label>
+    <mat-select
+      [value]="month()"
+      (selectionChange)="onMonthChange($event.value)"
+    >
+      @for (option of monthOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Year</mat-label>
+    <mat-select [value]="year()" (selectionChange)="onYearChange($event.value)">
+      @for (option of yearOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Status</mat-label>
+    <mat-select
+      [value]="status()"
+      (selectionChange)="onStatusChange($event.value)"
+    >
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No incentives for this period"
+  (pageChange)="onPageChange($event)"
+  (actionClick)="onAction($event)"
+/>

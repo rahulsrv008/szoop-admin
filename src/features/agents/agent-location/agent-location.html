@@ -1,0 +1,74 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Agent location</h2>
+    <p class="page-head__sub">Latest GPS ping and recent history</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" [routerLink]="['/agents', agentId]">
+      <mat-icon>arrow_back</mat-icon>
+      Profile
+    </a>
+    <button matButton="filled" (click)="load()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+@if (view(); as v) {
+  <div class="stack">
+    <section class="card-panel">
+      <h3 class="card-panel__title">Latest ping</h3>
+      @if (v.latest; as latest) {
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-item__label">Recorded</span>
+            <span class="detail-item__value">
+              {{ latest.recordedAt | date: 'dd MMM yyyy, h:mm a' }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-item__label">Coordinates</span>
+            <span class="detail-item__value">
+              {{ latest.latitude }}, {{ latest.longitude }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-item__label">Booking</span>
+            <span class="detail-item__value">{{ latest.bookingId | orDash }}</span>
+          </div>
+        </div>
+        <div class="row-actions">
+          <a
+            matButton="filled"
+            [href]="mapsUrl(latest.latitude, latest.longitude)"
+            target="_blank"
+            rel="noopener"
+          >
+            <mat-icon>map</mat-icon>
+            Open in Maps
+          </a>
+        </div>
+      } @else {
+        <p class="muted">No location pings recorded for this agent</p>
+      }
+    </section>
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Recent pings</h3>
+      <app-data-table
+        [columns]="columns"
+        [rows]="v.recent"
+        [loading]="false"
+        [total]="v.recent.length"
+        [page]="1"
+        [limit]="v.recent.length || 10"
+        emptyMessage="No recent location history"
+      />
+    </section>
+  </div>
+}

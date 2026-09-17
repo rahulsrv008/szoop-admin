@@ -1,0 +1,52 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Complaints</h2>
+    <p class="page-head__sub">Support tickets from customers and agents</p>
+  </div>
+</header>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="filters__search">
+    <mat-label>Search subject</mat-label>
+    <input matInput [formControl]="searchControl" />
+    <mat-icon matIconPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Status</mat-label>
+    <mat-select [value]="status()" (selectionChange)="onStatusChange($event.value)">
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Priority</mat-label>
+    <mat-select
+      [value]="priority()"
+      (selectionChange)="onPriorityChange($event.value)"
+    >
+      @for (option of priorityOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <app-date-filter (rangeChange)="onRangeChange($event)" />
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  [clickableRows]="true"
+  emptyMessage="No support tickets match these filters"
+  (pageChange)="onPageChange($event)"
+  (rowClick)="onRowClick($event)"
+  (actionClick)="onAction($event)"
+/>

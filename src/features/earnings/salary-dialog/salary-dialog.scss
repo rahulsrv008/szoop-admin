@@ -1,0 +1,12 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 360px;
+  padding-top: 8px;
+}
+
+.muted {
+  color: #78889c;
+  margin: 0 0 8px;
+}

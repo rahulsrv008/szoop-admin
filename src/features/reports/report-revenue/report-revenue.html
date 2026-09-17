@@ -1,0 +1,89 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Revenue report</h2>
+    <p class="page-head__sub">Collected, pending and refunded payments by day</p>
+  </div>
+  <div class="page-head__actions">
+    <app-date-filter (rangeChange)="onRangeChange($event)" />
+    <button matButton="outlined" (click)="load()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+<nav class="tabs">
+  <a matButton routerLink="/reports">Overview</a>
+  <a matButton routerLink="/reports/bookings">Bookings</a>
+  <a matButton="tonal" routerLink="/reports/revenue" routerLinkActive="active">Revenue</a>
+  <a matButton routerLink="/reports/agents">Agents</a>
+  <a matButton routerLink="/reports/customers">Customers</a>
+</nav>
+
+@if (data(); as report) {
+  <section class="totals">
+    <div class="card-panel total">
+      <span class="total__label">Collected</span>
+      <strong>{{ report.totals.collected | inr }}</strong>
+    </div>
+    <div class="card-panel total">
+      <span class="total__label">Pending</span>
+      <strong>{{ report.totals.pending | inr }}</strong>
+    </div>
+    <div class="card-panel total">
+      <span class="total__label">Refunded</span>
+      <strong>{{ report.totals.refunded | inr }}</strong>
+    </div>
+    <div class="card-panel total">
+      <span class="total__label">Payments</span>
+      <strong>{{ report.totals.count }}</strong>
+    </div>
+  </section>
+
+  <div class="panels">
+    <section class="card-panel">
+      <h3 class="card-panel__title">Daily collected</h3>
+      @if (collectedBars().length) {
+        <ul class="bars">
+          @for (slice of collectedBars(); track slice.label) {
+            <li class="bars__row">
+              <span class="bars__label">{{ slice.label }}</span>
+              <div class="bars__track">
+                <span class="bars__fill bars__fill--green" [style.width.%]="slice.percent"></span>
+              </div>
+              <span class="bars__value">{{ slice.value | inr }}</span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="muted">No payment activity in this period.</p>
+      }
+    </section>
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Top services</h3>
+      @if (serviceBars().length) {
+        <ul class="bars">
+          @for (slice of serviceBars(); track slice.label) {
+            <li class="bars__row bars__row--service">
+              <div class="bars__meta">
+                <span class="bars__label">{{ slice.label }}</span>
+                <span class="muted">{{ slice.hint }}</span>
+              </div>
+              <div class="bars__track">
+                <span class="bars__fill" [style.width.%]="slice.percent"></span>
+              </div>
+              <span class="bars__value">{{ slice.value | inr }}</span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="muted">No completed service revenue yet.</p>
+      }
+    </section>
+  </div>
+}

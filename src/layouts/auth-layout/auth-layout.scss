@@ -1,0 +1,56 @@
+.auth {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  min-height: 100vh;
+  background: #f4f6fa;
+
+  &__pitch {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    padding: 56px;
+    background: linear-gradient(160deg, #10233f 0%, #1c60d8 100%);
+    color: #fff;
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.25;
+      max-width: 12em;
+    }
+
+    p {
+      margin: 0;
+      max-width: 34em;
+      color: rgba(255, 255, 255, 0.82);
+      line-height: 1.6;
+    }
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  &__panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+  }
+}
+
+@media (max-width: 900px) {
+  .auth {
+    grid-template-columns: 1fr;
+  }
+
+  .auth__pitch {
+    display: none;
+  }
+}

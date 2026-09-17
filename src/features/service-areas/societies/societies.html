@@ -1,0 +1,53 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Societies</h2>
+    <p class="page-head__sub">Residential societies served by ClearIt</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/service-areas">
+      <mat-icon>arrow_back</mat-icon>
+      Areas
+    </a>
+    <button matButton="filled" type="button" (click)="openCreate()">
+      <mat-icon>add</mat-icon>
+      New society
+    </button>
+  </div>
+</header>
+
+<div class="filters">
+  <mat-form-field class="filters__search">
+    <mat-label>Search</mat-label>
+    <input
+      matInput
+      [formControl]="searchControl"
+      placeholder="Name, city or pincode"
+    />
+    <mat-icon matIconPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Status</mat-label>
+    <mat-select
+      [value]="status()"
+      (selectionChange)="onStatusChange($event.value)"
+    >
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No societies match these filters"
+  (pageChange)="onPageChange($event)"
+  (actionClick)="onAction($event)"
+/>

@@ -1,0 +1,66 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Bookings report</h2>
+    <p class="page-head__sub">Daily volume, completions, cancellations and revenue</p>
+  </div>
+  <div class="page-head__actions">
+    <app-date-filter (rangeChange)="onRangeChange($event)" />
+    <button matButton="outlined" (click)="load()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+<nav class="tabs">
+  <a matButton routerLink="/reports">Overview</a>
+  <a matButton="tonal" routerLink="/reports/bookings" routerLinkActive="active">Bookings</a>
+  <a matButton routerLink="/reports/revenue">Revenue</a>
+  <a matButton routerLink="/reports/agents">Agents</a>
+  <a matButton routerLink="/reports/customers">Customers</a>
+</nav>
+
+@if (data(); as report) {
+  <section class="totals">
+    <div class="card-panel total">
+      <span class="total__label">Total bookings</span>
+      <strong>{{ report.totals.total }}</strong>
+    </div>
+    <div class="card-panel total">
+      <span class="total__label">Completed</span>
+      <strong>{{ report.totals.completed }}</strong>
+    </div>
+    <div class="card-panel total">
+      <span class="total__label">Cancelled</span>
+      <strong>{{ report.totals.cancelled }}</strong>
+    </div>
+    <div class="card-panel total">
+      <span class="total__label">Completed revenue</span>
+      <strong>{{ report.totals.revenue | inr }}</strong>
+    </div>
+  </section>
+
+  <section class="card-panel">
+    <h3 class="card-panel__title">Daily bookings</h3>
+    @if (volumeBars().length) {
+      <ul class="bars">
+        @for (slice of volumeBars(); track slice.label) {
+          <li class="bars__row">
+            <span class="bars__label">{{ slice.label }}</span>
+            <div class="bars__track">
+              <span class="bars__fill" [style.width.%]="slice.percent"></span>
+            </div>
+            <span class="bars__count">{{ slice.value }}</span>
+            <span class="bars__hint muted">{{ slice.hint }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="muted">No bookings in this period.</p>
+    }
+  </section>
+}

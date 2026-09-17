@@ -1,0 +1,70 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Attendance</h2>
+    <p class="page-head__sub">Daily check-ins across the workforce</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="filled" routerLink="/attendance/report">
+      <mat-icon>assessment</mat-icon>
+      Report
+    </a>
+  </div>
+</header>
+
+<section class="summary">
+  <div class="summary__card">
+    <span class="summary__label">Records</span>
+    <strong>{{ totals().records }}</strong>
+  </div>
+  <div class="summary__card">
+    <span class="summary__label">Present days</span>
+    <strong>{{ totals().presentDays }}</strong>
+  </div>
+  <div class="summary__card">
+    <span class="summary__label">Completed shifts</span>
+    <strong>{{ totals().completedShifts }}</strong>
+  </div>
+  <div class="summary__card">
+    <span class="summary__label">Total hours</span>
+    <strong>{{ totals().totalHours }}</strong>
+  </div>
+</section>
+
+<section class="filters">
+  <mat-form-field class="filters__search" appearance="outline">
+    <mat-label>Search</mat-label>
+    <input
+      matInput
+      [formControl]="searchControl"
+      placeholder="Agent name"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Status</mat-label>
+    <mat-select
+      [value]="status()"
+      (selectionChange)="onStatusChange($event.value)"
+    >
+      @for (opt of statusOptions; track opt.value) {
+        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <app-date-filter label="Attendance date" (rangeChange)="onRangeChange($event)" />
+</section>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No attendance records match these filters"
+  (pageChange)="onPageChange($event)"
+  (actionClick)="onAction($event)"
+/>

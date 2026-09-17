@@ -1,0 +1,71 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Send notification</h2>
+    <p class="page-head__sub">Broadcast a message to customers, agents, or specific users</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/notifications/history">
+      <mat-icon>history</mat-icon>
+      History
+    </a>
+  </div>
+</header>
+
+@if (submitting()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+<section class="card-panel form-panel">
+  <form class="form" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline">
+      <mat-label>Audience</mat-label>
+      <mat-select formControlName="audience">
+        @for (option of audienceOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (showUserIds) {
+      <mat-form-field appearance="outline">
+        <mat-label>User IDs</mat-label>
+        <textarea
+          matInput
+          rows="3"
+          formControlName="userIds"
+          placeholder="Paste UUID user ids, separated by commas or new lines"
+        ></textarea>
+        @if (form.controls.userIds.touched && form.controls.userIds.invalid) {
+          <mat-error>Enter at least one user id</mat-error>
+        }
+      </mat-form-field>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Title</mat-label>
+      <input matInput formControlName="title" maxlength="200" />
+      @if (form.controls.title.touched && form.controls.title.invalid) {
+        <mat-error>Title is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Message</mat-label>
+      <textarea matInput rows="5" formControlName="message" maxlength="2000"></textarea>
+      @if (form.controls.message.touched && form.controls.message.invalid) {
+        <mat-error>Message is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <input matInput formControlName="type" placeholder="general" />
+    </mat-form-field>
+
+    <div class="row-actions">
+      <button matButton="filled" type="submit" [disabled]="submitting()">
+        {{ submitting() ? 'Sending…' : 'Send notification' }}
+      </button>
+    </div>
+  </form>
+</section>

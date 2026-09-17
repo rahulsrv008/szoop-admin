@@ -1,0 +1,51 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Attendance report</h2>
+    <p class="page-head__sub">
+      Hours and present days per agent
+      @if (report()?.range; as range) {
+        · {{ range.from }} → {{ range.to }}
+      }
+    </p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/attendance">
+      <mat-icon>arrow_back</mat-icon>
+      Daily list
+    </a>
+    <app-date-filter
+      label="Period"
+      initialPreset="last30"
+      (rangeChange)="onRangeChange($event)"
+    />
+  </div>
+</header>
+
+@if (report(); as r) {
+  <section class="summary">
+    <div class="summary__card">
+      <span class="summary__label">Agents</span>
+      <strong>{{ r.totals.agents }}</strong>
+    </div>
+    <div class="summary__card">
+      <span class="summary__label">Present days</span>
+      <strong>{{ r.totals.presentDays }}</strong>
+    </div>
+    <div class="summary__card">
+      <span class="summary__label">Total hours</span>
+      <strong>{{ r.totals.totalHours }}</strong>
+    </div>
+  </section>
+}
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="rows().length"
+  [page]="1"
+  [limit]="rows().length || 20"
+  emptyMessage="No attendance in this period"
+  (actionClick)="onAction($event)"
+/>

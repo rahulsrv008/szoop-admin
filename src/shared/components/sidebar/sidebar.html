@@ -1,0 +1,23 @@
+<div class="brand">
+  <mat-icon class="brand__icon">cleaning_services</mat-icon>
+  <span class="brand__name">{{ appName }}</span>
+</div>
+
+<nav class="nav">
+  @for (section of sections(); track section.title) {
+    <div class="nav__section">
+      <p class="nav__title">{{ section.title }}</p>
+      @for (item of section.items; track item.path) {
+        <a
+          class="nav__item"
+          [routerLink]="item.path"
+          routerLinkActive="nav__item--active"
+          [routerLinkActiveOptions]="{ exact: !!item.exact }"
+        >
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </div>
+  }
+</nav>

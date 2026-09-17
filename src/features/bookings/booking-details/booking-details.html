@@ -1,0 +1,194 @@
+@if (loading() && !booking()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+@if (booking(); as b) {
+  <header class="page-head">
+    <div>
+      <h2 class="page-head__title">{{ b.bookingNumber }}</h2>
+      <p class="page-head__sub">
+        {{ b.bookingDate | date: 'dd MMM yyyy' }} · {{ b.startTime }}
+        @if (b.endTime) {
+          – {{ b.endTime }}
+        }
+      </p>
+    </div>
+
+    <div class="page-head__actions row-actions">
+      <a matButton="outlined" routerLink="/bookings">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+      </a>
+      @if (canAssign()) {
+        <button matButton="filled" (click)="openAssign(false)">
+          <mat-icon>person_add</mat-icon>
+          Assign agent
+        </button>
+      }
+      @if (canReassign()) {
+        <button matButton="outlined" (click)="openAssign(true)">
+          <mat-icon>swap_horiz</mat-icon>
+          Reassign
+        </button>
+      }
+      @if (canCancel()) {
+        <button matButton="outlined" (click)="cancelBooking()">
+          <mat-icon>cancel</mat-icon>
+          Cancel
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" class="loader" />
+  }
+
+  <div class="stack">
+    <section class="card-panel">
+      <h3 class="card-panel__title">Overview</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-item__label">Status</span>
+          <span class="detail-item__value"><app-status-badge [status]="b.status" /></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Payment</span>
+          <span class="detail-item__value">
+            <app-status-badge [status]="b.paymentStatus" />
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Duration</span>
+          <span class="detail-item__value">{{ b.durationMinutes | orDash }} min</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Total</span>
+          <span class="detail-item__value">{{ totalAmount() | inr }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Service area</span>
+          <span class="detail-item__value">{{ b.serviceArea?.name | orDash }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Tracking pings</span>
+          <span class="detail-item__value">{{ b.trackingPings ?? 0 }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Notes</span>
+          <span class="detail-item__value">{{ b.notes | orDash }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Customer & agent</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-item__label">Customer</span>
+          <span class="detail-item__value">
+            @if (b.customer?.customerId) {
+              <a [routerLink]="['/customers', b.customer?.customerId]">
+                {{ b.customer?.name | orDash }}
+              </a>
+            } @else {
+              {{ b.customer?.name | orDash }}
+            }
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Customer mobile</span>
+          <span class="detail-item__value">{{ b.customer?.mobile | orDash }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Agent</span>
+          <span class="detail-item__value">
+            @if (b.agent?.agentId) {
+              <a [routerLink]="['/agents', b.agent?.agentId]">
+                {{ b.agent?.name | orDash }}
+              </a>
+            } @else {
+              Unassigned
+            }
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Agent mobile</span>
+          <span class="detail-item__value">{{ b.agent?.mobile | orDash }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Address</span>
+          <span class="detail-item__value">{{ addressText(b.address) }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Amounts</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-item__label">Subtotal</span>
+          <span class="detail-item__value">{{ b.amounts?.subtotal ?? 0 | inr }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Discount</span>
+          <span class="detail-item__value">{{ b.amounts?.discount ?? 0 | inr }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Tax</span>
+          <span class="detail-item__value">{{ b.amounts?.tax ?? 0 | inr }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Total</span>
+          <span class="detail-item__value">{{ totalAmount() | inr }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Payment method</span>
+          <span class="detail-item__value">{{ b.payment?.paymentMethod | orDash }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Paid at</span>
+          <span class="detail-item__value">
+            {{ (b.payment?.paidAt | date: 'dd MMM yyyy, h:mm a') || '—' }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Services</h3>
+      <div class="item-list">
+        @for (item of b.items ?? []; track item.id) {
+          <div class="item-row">
+            <div>
+              <strong>{{ item.serviceName | orDash }}</strong>
+              <p class="muted">
+                Qty {{ item.quantity }} · {{ item.durationMinutes | orDash }} min
+              </p>
+            </div>
+            <span>{{ item.amount | inr }}</span>
+          </div>
+        } @empty {
+          <p class="muted">No line items</p>
+        }
+      </div>
+    </section>
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Status history</h3>
+      <div class="history-list">
+        @for (row of b.statusHistory ?? []; track row.id) {
+          <div class="history-row">
+            <app-status-badge [status]="row.status" />
+            <div>
+              <p>{{ row.remarks | orDash: 'Status updated' }}</p>
+              <p class="muted">{{ row.createdAt | date: 'dd MMM yyyy, h:mm a' }}</p>
+            </div>
+          </div>
+        } @empty {
+          <p class="muted">No status history yet</p>
+        }
+      </div>
+    </section>
+  </div>
+}

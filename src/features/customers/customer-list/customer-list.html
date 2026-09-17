@@ -1,0 +1,47 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Customers</h2>
+    <p class="page-head__sub">Search, filter and manage customer accounts</p>
+  </div>
+</header>
+
+<section class="filters">
+  <mat-form-field class="filters__search" appearance="outline">
+    <mat-label>Search</mat-label>
+    <input
+      matInput
+      [formControl]="searchControl"
+      placeholder="Name, mobile or email"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Account</mat-label>
+    <mat-select
+      [value]="status()"
+      (selectionChange)="onStatusChange($event.value)"
+    >
+      @for (opt of statusOptions; track opt.value) {
+        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <app-date-filter label="Joined" (rangeChange)="onRangeChange($event)" />
+</section>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  [clickableRows]="true"
+  emptyMessage="No customers match these filters"
+  (pageChange)="onPageChange($event)"
+  (rowClick)="onRowClick($event)"
+  (actionClick)="onAction($event)"
+/>

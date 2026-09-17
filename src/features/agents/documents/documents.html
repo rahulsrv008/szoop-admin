@@ -1,0 +1,40 @@
+<section class="card-panel">
+  <h3 class="card-panel__title">KYC documents</h3>
+
+  <div class="doc-list">
+    @for (doc of documents(); track doc.id) {
+      <div class="doc-row">
+        <div>
+          <strong>{{ label(doc.documentType) }}</strong>
+          <p class="muted">
+            {{ doc.documentNumber | orDash: 'No number' }}
+            @if (doc.verifiedAt) {
+              · verified {{ doc.verifiedAt | date: 'dd MMM yyyy' }}
+            }
+          </p>
+          @if (doc.documentUrl) {
+            <a matButton [href]="doc.documentUrl" target="_blank" rel="noopener">
+              <mat-icon>open_in_new</mat-icon>
+              Open file
+            </a>
+          }
+        </div>
+        <div class="doc-row__actions">
+          <app-status-badge [status]="doc.verificationStatus" />
+          @if (doc.verificationStatus !== 'VERIFIED') {
+            <button matButton="filled" type="button" (click)="verify(doc)">
+              Verify
+            </button>
+          }
+          @if (doc.verificationStatus !== 'REJECTED') {
+            <button matButton="outlined" type="button" (click)="reject(doc)">
+              Reject
+            </button>
+          }
+        </div>
+      </div>
+    } @empty {
+      <p class="muted">No documents uploaded yet</p>
+    }
+  </div>
+</section>

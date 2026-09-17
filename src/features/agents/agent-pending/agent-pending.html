@@ -1,0 +1,39 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Pending KYC</h2>
+    <p class="page-head__sub">Applications waiting for approval</p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/agents">
+      <mat-icon>arrow_back</mat-icon>
+      All agents
+    </a>
+  </div>
+</header>
+
+<section class="filters">
+  <mat-form-field class="filters__search" appearance="outline">
+    <mat-label>Search</mat-label>
+    <input
+      matInput
+      [formControl]="searchControl"
+      placeholder="Name or mobile"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+</section>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [actions]="actions"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  [clickableRows]="true"
+  emptyMessage="No pending applications"
+  (pageChange)="onPageChange($event)"
+  (rowClick)="onRowClick($event)"
+  (actionClick)="onAction($event)"
+/>

@@ -1,0 +1,51 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Roles & permissions</h2>
+    <p class="page-head__sub">
+      Read-only catalogue of intended access until fine-grained permissions ship
+    </p>
+  </div>
+</header>
+
+<nav class="tabs">
+  <a matButton routerLink="/settings/general">General</a>
+  <a matButton routerLink="/settings/users">Users</a>
+  <a matButton="tonal" routerLink="/settings/roles" routerLinkActive="active">
+    Roles & permissions
+  </a>
+</nav>
+
+<section class="card-panel">
+  <h3 class="card-panel__title">Admin roles</h3>
+  <ul class="catalogue">
+    @for (role of roles; track role.role) {
+      <li>
+        <div class="catalogue__head">
+          <strong>{{ role.label }}</strong>
+          <code>{{ role.role }}</code>
+        </div>
+        <p>{{ role.intent }}</p>
+        <ul class="chips">
+          @for (item of role.typicalAccess; track item) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+      </li>
+    }
+  </ul>
+</section>
+
+<section class="card-panel">
+  <h3 class="card-panel__title">Permission areas</h3>
+  <ul class="catalogue">
+    @for (entry of permissions; track entry.area) {
+      <li>
+        <div class="catalogue__head">
+          <strong>{{ entry.area }}</strong>
+        </div>
+        <p>{{ entry.intent }}</p>
+        <p class="muted">{{ entry.notes }}</p>
+      </li>
+    }
+  </ul>
+</section>

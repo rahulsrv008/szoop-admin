@@ -1,0 +1,36 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Pincodes</h2>
+    <p class="page-head__sub">
+      Derived from service area rows — there is no separate pincodes API
+    </p>
+  </div>
+  <div class="page-head__actions">
+    <a matButton="outlined" routerLink="/service-areas">
+      <mat-icon>arrow_back</mat-icon>
+      Areas
+    </a>
+  </div>
+</header>
+
+<div class="filters">
+  <mat-form-field class="filters__search">
+    <mat-label>Search</mat-label>
+    <input
+      matInput
+      [formControl]="searchControl"
+      placeholder="Pincode, area or city"
+    />
+    <mat-icon matIconPrefix>search</mat-icon>
+  </mat-form-field>
+</div>
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [loading]="loading()"
+  [total]="rows().length"
+  [page]="1"
+  [limit]="rows().length || 20"
+  emptyMessage="No pincodes configured on service areas"
+/>
