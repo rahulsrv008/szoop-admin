@@ -78,6 +78,7 @@ export class BookingList {
   readonly columns: TableColumn<BookingListItem>[] = [
     { key: 'bookingNumber', label: 'Booking', sortable: true },
     { key: 'customerName', label: 'Customer', fallback: '—' },
+    { key: 'planTitle', label: 'Service', fallback: '—' },
     { key: 'agentName', label: 'Agent', fallback: 'Unassigned' },
     { key: 'bookingDate', label: 'Date', type: 'date' },
     { key: 'startTime', label: 'Time' },

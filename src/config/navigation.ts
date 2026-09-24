@@ -37,6 +37,7 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Catalog',
     items: [
+      { label: 'App home', icon: 'phone_iphone', path: '/home-content' },
       { label: 'Services', icon: 'home_repair_service', path: '/services' },
       { label: 'Pricing', icon: 'sell', path: '/pricing' },
       { label: 'Service areas', icon: 'map', path: '/service-areas' },

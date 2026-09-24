@@ -11,6 +11,8 @@ export interface BookingListItem {
   paymentStatus: string;
   totalAmount: string | number;
   serviceNames?: string[];
+  /** Set for On Demand / monthly plan bookings from the customer home. */
+  planTitle?: string | null;
   createdAt?: string;
 }
 

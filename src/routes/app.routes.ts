@@ -78,6 +78,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'home-content',
+        loadChildren: () =>
+          import('@features/home-content/home-content.routes').then(
+            (m) => m.HOME_CONTENT_ROUTES,
+          ),
+      },
+      {
         path: 'notifications',
         loadChildren: () =>
           import('@features/notifications/notifications.routes').then(
