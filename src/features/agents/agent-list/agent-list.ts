@@ -15,6 +15,7 @@ import {
 } from '@config/constants';
 import { AgentListItem } from '@core/models';
 import { NotificationService } from '@core/services/notification.service';
+import { MatDialog } from '@angular/material/dialog';
 import { ConfirmService } from '@shared/components/confirmation-dialog/confirm.service';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DateFilter } from '@shared/components/date-filter/date-filter';
@@ -26,6 +27,7 @@ import {
   TablePageEvent,
 } from '@shared/models/table.model';
 import { AgentsService } from '../agents.service';
+import { openAgentZoneDialog } from '../agent-zone-dialog/agent-zone-dialog';
 
 @Component({
   selector: 'app-agent-list',
@@ -46,6 +48,7 @@ import { AgentsService } from '../agents.service';
 export class AgentList {
   private readonly agentsService = inject(AgentsService);
   private readonly confirm = inject(ConfirmService);
+  private readonly dialog = inject(MatDialog);
   private readonly notifications = inject(NotificationService);
   private readonly router = inject(Router);
 
@@ -93,6 +96,30 @@ export class AgentList {
       label: 'Jobs',
       type: 'number',
       align: 'right',
+    },
+    {
+      key: 'homeZone',
+      label: 'Home zone',
+      fallback: '—',
+      value: (row) => row.homeZone?.name || '—',
+    },
+    {
+      key: 'serviceAreas',
+      label: 'Service areas',
+      fallback: '—',
+      value: (row) =>
+        (row.serviceAreas ?? [])
+          .map((zone) => zone.code || zone.name)
+          .join(', ') || '—',
+    },
+    {
+      key: 'currentLocation',
+      label: 'Current location',
+      fallback: '—',
+      value: (row) =>
+        row.currentLocation
+          ? `${row.currentLocation.latitude}, ${row.currentLocation.longitude}`
+          : '—',
     },
     { key: 'joiningDate', label: 'Joined', type: 'date' },
   ];
@@ -217,23 +244,28 @@ export class AgentList {
   }
 
   private approve(row: AgentListItem) {
-    this.confirm
-      .ask({
-        title: 'Approve agent',
-        message: `${row.name ?? row.mobile} will be able to go online and take jobs.`,
-        confirmLabel: 'Approve',
-      })
-      .subscribe((result) => {
-        if (!result.confirmed) return;
-        this.loading.set(true);
-        this.agentsService.approve(row.agentId).subscribe({
+    openAgentZoneDialog(this.dialog, {
+      mode: 'approve',
+      agentName: row.name ?? row.mobile,
+      homeZoneId: row.homeZone?.id ?? null,
+      serviceAreaIds: (row.serviceAreas ?? []).map((zone) => zone.id),
+    }).subscribe((result) => {
+      if (!result || !('serviceAreaIds' in result)) return;
+      this.loading.set(true);
+      this.agentsService
+        .approve(row.agentId, {
+          homeZoneId: result.homeZoneId,
+          serviceAreaIds: result.serviceAreaIds,
+          remarks: result.remarks,
+        })
+        .subscribe({
           next: () => {
             this.notifications.success('Agent approved');
             this.load();
           },
           error: () => this.loading.set(false),
         });
-      });
+    });
   }
 
   private reject(row: AgentListItem) {

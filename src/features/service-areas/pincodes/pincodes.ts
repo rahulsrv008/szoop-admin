@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { TableColumn } from '@shared/models/table.model';
-import { PincodeRow } from '../service-areas.model';
+import { PincodeRow, zonePincodes } from '../service-areas.model';
 import { ServiceAreasService } from '../service-areas.service';
 
 @Component({
@@ -36,7 +36,8 @@ export class Pincodes {
 
   readonly columns: TableColumn<PincodeRow>[] = [
     { key: 'pincode', label: 'Pincode' },
-    { key: 'areaName', label: 'Area' },
+    { key: 'areaName', label: 'Covered area' },
+    { key: 'zoneName', label: 'Zone' },
     { key: 'city', label: 'City', fallback: '—' },
     { key: 'isActive', label: 'Active', type: 'boolean', align: 'center' },
   ];
@@ -48,6 +49,7 @@ export class Pincodes {
       (row) =>
         row.pincode.includes(q) ||
         row.areaName.toLowerCase().includes(q) ||
+        row.zoneName.toLowerCase().includes(q) ||
         (row.city ?? '').toLowerCase().includes(q),
     );
   });
@@ -66,14 +68,25 @@ export class Pincodes {
       next: (result) => {
         this.allRows.set(
           (result?.items ?? [])
-            .filter((area) => !!area.pincode)
-            .map((area) => ({
-              pincode: area.pincode!,
-              areaName: area.name,
-              city: area.city ?? null,
-              isActive: area.isActive,
-              areaId: area.id,
-            }))
+            .flatMap((area) => {
+              const nested = (area.areas ?? []).map((item) => ({
+                pincode: item.pincode,
+                areaName: item.area,
+                zoneName: area.name,
+                city: area.city ?? null,
+                isActive: area.isActive,
+                areaId: area.id,
+              }));
+              if (nested.length) return nested;
+              return zonePincodes(area).map((pincode) => ({
+                pincode,
+                areaName: area.name,
+                zoneName: area.name,
+                city: area.city ?? null,
+                isActive: area.isActive,
+                areaId: area.id,
+              }));
+            })
             .sort((a, b) => a.pincode.localeCompare(b.pincode)),
         );
         this.loading.set(false);

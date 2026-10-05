@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -17,6 +18,7 @@ import {
   AgentRecentBooking,
 } from '../agents.model';
 import { AgentsService } from '../agents.service';
+import { openAgentZoneDialog } from '../agent-zone-dialog/agent-zone-dialog';
 
 @Component({
   selector: 'app-agent-details',
@@ -38,6 +40,7 @@ import { AgentsService } from '../agents.service';
 export class AgentDetails implements OnInit {
   private readonly agentsService = inject(AgentsService);
   private readonly confirm = inject(ConfirmService);
+  private readonly dialog = inject(MatDialog);
   private readonly notifications = inject(NotificationService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -90,27 +93,71 @@ export class AgentDetails implements OnInit {
     return this.agent()?.status === 'SUSPENDED';
   }
 
+  locationText() {
+    const location = this.agent()?.currentLocation;
+    if (!location) return '—';
+    return `${location.latitude}, ${location.longitude}`;
+  }
+
+  serviceAreaText() {
+    const areas = this.agent()?.serviceAreas ?? [];
+    if (!areas.length) return '—';
+    return areas.map((zone) => zone.code || zone.name).join(', ');
+  }
+
   approve() {
     const agent = this.agent();
     if (!agent) return;
 
-    this.confirm
-      .ask({
-        title: 'Approve agent',
-        message: `${agent.name ?? agent.mobile} will be able to go online and take jobs.`,
-        confirmLabel: 'Approve',
-      })
-      .subscribe((result) => {
-        if (!result.confirmed) return;
-        this.loading.set(true);
-        this.agentsService.approve(this.agentId).subscribe({
+    openAgentZoneDialog(this.dialog, {
+      mode: 'approve',
+      agentName: agent.name ?? agent.mobile,
+      homeZoneId: agent.homeZone?.id ?? null,
+      serviceAreaIds: (agent.serviceAreas ?? []).map((zone) => zone.id),
+    }).subscribe((result) => {
+      if (!result || !('serviceAreaIds' in result)) return;
+      this.loading.set(true);
+      this.agentsService
+        .approve(this.agentId, {
+          homeZoneId: result.homeZoneId,
+          serviceAreaIds: result.serviceAreaIds,
+          remarks: result.remarks,
+        })
+        .subscribe({
           next: () => {
             this.notifications.success('Agent approved');
             this.load();
           },
           error: () => this.loading.set(false),
         });
-      });
+    });
+  }
+
+  assignZones() {
+    const agent = this.agent();
+    if (!agent) return;
+
+    openAgentZoneDialog(this.dialog, {
+      mode: 'assign',
+      agentName: agent.name ?? agent.mobile,
+      homeZoneId: agent.homeZone?.id ?? null,
+      serviceAreaIds: (agent.serviceAreas ?? []).map((zone) => zone.id),
+    }).subscribe((result) => {
+      if (!result || !('serviceAreaIds' in result)) return;
+      this.loading.set(true);
+      this.agentsService
+        .assignZones(this.agentId, {
+          homeZoneId: result.homeZoneId,
+          serviceAreaIds: result.serviceAreaIds,
+        })
+        .subscribe({
+          next: () => {
+            this.notifications.success('Service locations updated');
+            this.load();
+          },
+          error: () => this.loading.set(false),
+        });
+    });
   }
 
   reject() {

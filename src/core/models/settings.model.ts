@@ -20,4 +20,6 @@ export interface AdminUser {
   role: string;
   isActive: boolean;
   createdAt?: string;
+  unrestricted?: boolean;
+  zones?: { id: string; name: string; code?: string | null; city?: string | null }[];
 }

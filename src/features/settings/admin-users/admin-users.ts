@@ -28,6 +28,8 @@ import {
   TableColumn,
   TablePageEvent,
 } from '@shared/models/table.model';
+import { ServiceArea } from '@core/models';
+import { ServiceAreasService } from '@features/service-areas/service-areas.service';
 import { ADMIN_ROLE_OPTIONS } from '../settings.model';
 import { SettingsService } from '../settings.service';
 
@@ -50,6 +52,7 @@ import { SettingsService } from '../settings.service';
 })
 export class AdminUsers {
   private readonly settingsService = inject(SettingsService);
+  private readonly areasService = inject(ServiceAreasService);
   private readonly auth = inject(AuthService);
   private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
@@ -69,6 +72,7 @@ export class AdminUsers {
   readonly hideCurrent = signal(true);
   readonly hideNew = signal(true);
   readonly editing = signal<AdminUser | null>(null);
+  readonly zones = signal<ServiceArea[]>([]);
 
   readonly searchControl = new FormControl('', { nonNullable: true });
 
@@ -89,6 +93,7 @@ export class AdminUsers {
     firstName: [''],
     lastName: [''],
     role: ['ADMIN' as string, Validators.required],
+    zoneIds: [[] as string[]],
   });
 
   readonly editForm = this.formBuilder.nonNullable.group({
@@ -97,6 +102,7 @@ export class AdminUsers {
     lastName: [''],
     role: ['ADMIN' as string, Validators.required],
     password: [''],
+    zoneIds: [[] as string[]],
   });
 
   readonly passwordForm = this.formBuilder.nonNullable.group(
@@ -118,6 +124,14 @@ export class AdminUsers {
     },
     { key: 'email', label: 'Email' },
     { key: 'role', label: 'Role', type: 'badge' },
+    {
+      key: 'zones',
+      label: 'Zones',
+      value: (row) =>
+        row.role === 'SUPER_ADMIN'
+          ? 'All zones'
+          : (row.zones ?? []).map((zone) => zone.name).join(', ') || 'None',
+    },
     { key: 'isActive', label: 'Active', type: 'boolean', align: 'center' },
     { key: 'createdAt', label: 'Created', type: 'date' },
   ];
@@ -149,6 +163,9 @@ export class AdminUsers {
       });
 
     this.load();
+    this.areasService.list({ page: 1, limit: 100, isActive: true }).subscribe({
+      next: (result) => this.zones.set(result?.items ?? []),
+    });
   }
 
   load() {
@@ -204,6 +221,7 @@ export class AdminUsers {
       lastName: row.lastName ?? '',
       role: row.role,
       password: '',
+      zoneIds: (row.zones ?? []).map((zone) => zone.id),
     });
   }
 
@@ -215,7 +233,17 @@ export class AdminUsers {
       lastName: '',
       role: 'ADMIN',
       password: '',
+      zoneIds: [],
     });
+  }
+
+  private zonesFor(role: string, zoneIds: string[]) {
+    if (role === 'SUPER_ADMIN') return [];
+    if (!zoneIds.length) {
+      this.notifications.error('Assign at least one zone for this role');
+      return null;
+    }
+    return zoneIds;
   }
 
   saveEdit() {
@@ -226,6 +254,8 @@ export class AdminUsers {
     }
 
     const raw = this.editForm.getRawValue();
+    const zoneIds = this.zonesFor(raw.role, raw.zoneIds);
+    if (zoneIds === null) return;
     this.savingEdit.set(true);
     this.settingsService
       .updateAdmin(current.id, {
@@ -234,6 +264,7 @@ export class AdminUsers {
         lastName: raw.lastName.trim() || undefined,
         role: raw.role,
         password: raw.password.trim() || undefined,
+        zoneIds,
       })
       .subscribe({
         next: () => {
@@ -253,6 +284,8 @@ export class AdminUsers {
     }
 
     const raw = this.createForm.getRawValue();
+    const zoneIds = this.zonesFor(raw.role, raw.zoneIds);
+    if (zoneIds === null) return;
     this.creating.set(true);
     this.settingsService
       .createAdmin({
@@ -261,6 +294,7 @@ export class AdminUsers {
         firstName: raw.firstName.trim() || undefined,
         lastName: raw.lastName.trim() || undefined,
         role: raw.role,
+        zoneIds,
       })
       .subscribe({
         next: () => {
@@ -272,6 +306,7 @@ export class AdminUsers {
             firstName: '',
             lastName: '',
             role: 'ADMIN',
+            zoneIds: [],
           });
           this.load();
         },

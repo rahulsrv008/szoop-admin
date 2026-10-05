@@ -1,0 +1,232 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Customer app home</h2>
+    <p class="page-head__sub">
+      Service categories, their options and the Most Popular section. Changes show in the app on next open.
+    </p>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="progress" />
+}
+
+<mat-tab-group animationDuration="150ms">
+  <mat-tab label="Service categories">
+    <div class="layout">
+      <section class="list">
+        <div class="list-head">
+          <p class="muted">
+            Half-width tiles sit two per row; full-row tiles take the whole width. Order by sort order.
+          </p>
+          <button matButton="filled" type="button" (click)="addCategory()">
+            <mat-icon>add</mat-icon>
+            New category
+          </button>
+        </div>
+
+        @for (category of categories(); track category.id) {
+          <article class="card-panel category" [class.inactive]="!category.isActive">
+            <div class="category-head">
+              <div class="swatch" [style.background]="category.tileColor || '#EDE4F5'">
+                @if (isImageRef(category.imageUrl)) {
+                  <img [src]="category.imageUrl" alt="" />
+                }
+              </div>
+              <div class="category-meta">
+                <div class="title-row">
+                  <h3>{{ category.title }}</h3>
+                  @if (category.badge) {
+                    <span class="chip chip--gold">{{ category.badge }}</span>
+                  }
+                  @if (!category.isActive) {
+                    <span class="chip">Hidden</span>
+                  }
+                </div>
+                <p class="muted">{{ category.subtitle || '—' }}</p>
+                <div class="tags">
+                  <span class="chip">{{ category.layout === 'FULL' ? 'Full row' : '50% width' }}</span>
+                  <span class="chip">{{ actionLabels[category.actionType] }}</span>
+                  <span class="chip">Sort {{ category.sortOrder }}</span>
+                  @if (category.actionType === 'POPUP') {
+                    <span class="chip">{{ category.highlights.length }} popup line(s)</span>
+                    <span class="chip" [class.chip--warn]="!category.pricing.length">
+                      {{ category.pricing.length }} duration(s)
+                    </span>
+                  }
+                </div>
+              </div>
+              <div class="row-actions">
+                <button matIconButton type="button" matTooltip="Edit" (click)="editCategory(category)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  matIconButton
+                  type="button"
+                  [matTooltip]="category.isActive ? 'Hide in app' : 'Show in app'"
+                  (click)="toggleCategory(category)"
+                >
+                  <mat-icon>{{ category.isActive ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                <button matIconButton type="button" matTooltip="Delete" (click)="removeCategory(category)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            @if (category.actionType === 'OPTIONS') {
+              <div class="options">
+                <div class="options-head">
+                  <span>Options on the category page</span>
+                  <button matButton="tonal" type="button" (click)="addOption(category)">
+                    <mat-icon>add</mat-icon>
+                    Add option
+                  </button>
+                </div>
+                @for (option of category.options; track option.id) {
+                  <div class="option" [class.inactive]="!option.isActive">
+                    <div class="option-thumb">
+                      @if (isImageRef(option.imageUrl)) {
+                        <img [src]="option.imageUrl" alt="" />
+                      } @else {
+                        <mat-icon>widgets</mat-icon>
+                      }
+                    </div>
+                    <div class="option-meta">
+                      <strong>{{ option.title }}</strong>
+                      @if (option.badge) {
+                        <span class="chip chip--gold">{{ option.badge }}</span>
+                      }
+                      <span class="muted">
+                        {{ option.priceLabel || 'No price' }} · {{ option.highlights.length }} popup line(s) ·
+                        {{ option.pricing.length }} shift(s)
+                        @if (!option.isActive) {
+                          · hidden
+                        }
+                      </span>
+                    </div>
+                    <button matIconButton type="button" matTooltip="Edit" (click)="editOption(option)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button matIconButton type="button" matTooltip="Delete" (click)="removeOption(option)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                } @empty {
+                  <p class="muted empty">No options yet.</p>
+                }
+              </div>
+            }
+          </article>
+        } @empty {
+          @if (!loading()) {
+            <div class="card-panel empty">No categories yet — create the first one.</div>
+          }
+        }
+      </section>
+
+      <aside class="preview card-panel">
+        <h3 class="card-panel__title">App preview</h3>
+        <div class="phone">
+          @for (row of previewRows(); track $index) {
+            <div class="phone-row">
+              @for (category of row; track category.id) {
+                <div
+                  class="tile"
+                  [class.tile--full]="category.layout === 'FULL'"
+                  [style.background]="category.tileColor || '#EDE4F5'"
+                >
+                  @if (category.badge) {
+                    <span class="tile-badge">{{ category.badge }}</span>
+                  }
+                  <strong>{{ category.title }}</strong>
+                  <small>{{ category.subtitle }}</small>
+                </div>
+              }
+              @if (row.length === 1 && row[0].layout === 'HALF') {
+                <div class="tile tile--ghost"></div>
+              }
+            </div>
+          }
+          @if (popular().length) {
+            <div class="phone-section">Most Popular</div>
+            @for (item of popular(); track item.id) {
+              @if (item.isActive) {
+                <div class="phone-pop">
+                  <strong>{{ item.title }}</strong>
+                  <small>{{ item.priceLabel }}</small>
+                </div>
+              }
+            }
+          }
+        </div>
+      </aside>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Most popular">
+    <section class="list popular">
+      <div class="list-head">
+        <p class="muted">Cards in the Most Popular section. Link each card to the category or option it should open.</p>
+        <button matButton="filled" type="button" (click)="addPopular()">
+          <mat-icon>add</mat-icon>
+          Add card
+        </button>
+      </div>
+
+      @for (item of popular(); track item.id) {
+        <article class="card-panel pop" [class.inactive]="!item.isActive">
+          <div class="option-thumb pop-thumb">
+            @if (isImageRef(item.imageUrl)) {
+              <img [src]="item.imageUrl" alt="" />
+            } @else {
+              <mat-icon>local_fire_department</mat-icon>
+            }
+          </div>
+          <div class="option-meta">
+            <div class="title-row">
+              <h3>{{ item.title }}</h3>
+              @if (item.badge) {
+                <span class="chip chip--gold">{{ item.badge }}</span>
+              }
+              @if (!item.isActive) {
+                <span class="chip">Hidden</span>
+              }
+            </div>
+            <span class="muted">
+              {{ item.priceLabel || 'No price' }}
+              @if (item.rating !== null) {
+                · ★ {{ item.rating }}
+              }
+              · Sort {{ item.sortOrder }}
+            </span>
+            <span class="muted">
+              Opens:
+              {{ optionTitle(item.optionId) || categoryTitle(item.categoryId) || 'Booking screen' }}
+            </span>
+          </div>
+          <div class="row-actions">
+            <button matIconButton type="button" matTooltip="Edit" (click)="editPopular(item)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              matIconButton
+              type="button"
+              [matTooltip]="item.isActive ? 'Hide in app' : 'Show in app'"
+              (click)="togglePopular(item)"
+            >
+              <mat-icon>{{ item.isActive ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+            <button matIconButton type="button" matTooltip="Remove" (click)="removePopular(item)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </article>
+      } @empty {
+        @if (!loading()) {
+          <div class="card-panel empty">No popular cards yet.</div>
+        }
+      }
+    </section>
+  </mat-tab>
+</mat-tab-group>

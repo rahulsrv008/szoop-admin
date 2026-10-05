@@ -66,7 +66,12 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     title: 'System',
     items: [
-      { label: 'Settings', icon: 'settings', path: '/settings' },
+      {
+        label: 'Settings',
+        icon: 'settings',
+        path: '/settings',
+        roles: ['SUPER_ADMIN'],
+      },
     ],
   },
 ];

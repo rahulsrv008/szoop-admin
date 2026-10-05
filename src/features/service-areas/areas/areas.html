@@ -1,7 +1,9 @@
 <header class="page-head">
   <div>
-    <h2 class="page-head__title">Service areas</h2>
-    <p class="page-head__sub">Neighbourhoods where ClearIt operates</p>
+    <h2 class="page-head__title">Service zones</h2>
+    <p class="page-head__sub">
+      Coverage zones, pincodes and societies where ClearIt operates
+    </p>
   </div>
   <div class="page-head__actions">
     <a matButton="outlined" routerLink="/service-areas/cities">Cities</a>
@@ -9,7 +11,7 @@
     <a matButton="outlined" routerLink="/service-areas/societies">Societies</a>
     <button matButton="filled" type="button" (click)="openCreate()">
       <mat-icon>add</mat-icon>
-      New area
+      New zone
     </button>
   </div>
 </header>
@@ -20,7 +22,7 @@
     <input
       matInput
       [formControl]="searchControl"
-      placeholder="Name, city or pincode"
+      placeholder="Zone, city, region or pincode"
     />
     <mat-icon matIconPrefix>search</mat-icon>
   </mat-form-field>

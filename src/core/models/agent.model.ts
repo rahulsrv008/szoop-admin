@@ -17,6 +17,20 @@ export interface AgentBankAccount {
   isVerified?: boolean;
 }
 
+export interface ZoneRef {
+  id: string;
+  code?: string | null;
+  name: string;
+  city?: string | null;
+  region?: string | null;
+}
+
+export interface AgentCurrentLocation {
+  latitude: number;
+  longitude: number;
+  recordedAt: string;
+}
+
 export interface AgentListItem {
   agentId: string;
   userId?: string;
@@ -29,6 +43,9 @@ export interface AgentListItem {
   completedBookings?: number;
   joiningDate?: string | null;
   createdAt?: string;
+  homeZone?: ZoneRef | null;
+  serviceAreas?: ZoneRef[];
+  currentLocation?: AgentCurrentLocation | null;
 }
 
 export interface AgentDetail extends AgentListItem {
@@ -48,6 +65,15 @@ export interface AgentDetail extends AgentListItem {
   ratings?: { average?: number; count?: number };
   earnings?: { thisMonth?: number; lifetime?: number };
   recentBookings?: unknown[];
+  address?: {
+    addressLine1?: string | null;
+    locality?: string | null;
+    city?: string | null;
+    state?: string | null;
+    pincode?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+  } | null;
 }
 
 export interface AgentLocationPing {

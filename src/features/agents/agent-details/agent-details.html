@@ -20,6 +20,10 @@
           Approve
         </button>
       }
+      <button matButton="outlined" (click)="assignZones()">
+        <mat-icon>map</mat-icon>
+        Service locations
+      </button>
       @if (canReject()) {
         <button matButton="outlined" (click)="reject()">
           <mat-icon>cancel</mat-icon>
@@ -90,6 +94,18 @@
         <div class="detail-item">
           <span class="detail-item__label">Lifetime earnings</span>
           <span class="detail-item__value">{{ a.earnings?.lifetime ?? 0 | inr }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Home zone</span>
+          <span class="detail-item__value">{{ a.homeZone?.name | orDash }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Service areas</span>
+          <span class="detail-item__value">{{ serviceAreaText() }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item__label">Current location</span>
+          <span class="detail-item__value">{{ locationText() }}</span>
         </div>
       </div>
     </section>

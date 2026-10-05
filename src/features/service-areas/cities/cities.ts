@@ -8,7 +8,7 @@ import {
   TableActionEvent,
   TableColumn,
 } from '@shared/models/table.model';
-import { CityAggregate } from '../service-areas.model';
+import { CityAggregate, zonePincodes } from '../service-areas.model';
 import { ServiceAreasService } from '../service-areas.service';
 
 @Component({
@@ -26,8 +26,9 @@ export class Cities {
 
   readonly columns: TableColumn<CityAggregate>[] = [
     { key: 'city', label: 'City' },
+    { key: 'region', label: 'Region', fallback: '—' },
     { key: 'state', label: 'State', fallback: '—' },
-    { key: 'areaCount', label: 'Areas', type: 'number', align: 'right' },
+    { key: 'areaCount', label: 'Zones', type: 'number', align: 'right' },
     {
       key: 'activeAreaCount',
       label: 'Active areas',
@@ -78,6 +79,7 @@ export class Cities {
           if (!entry) {
             entry = {
               city,
+              region: area.region ?? null,
               state: area.state ?? null,
               areaCount: 0,
               activeAreaCount: 0,
@@ -88,7 +90,7 @@ export class Cities {
           }
           entry.areaCount += 1;
           if (area.isActive) entry.activeAreaCount += 1;
-          if (area.pincode) entry.pincodes.add(area.pincode);
+          for (const pin of zonePincodes(area)) entry.pincodes.add(pin);
         }
 
         this.rows.set(

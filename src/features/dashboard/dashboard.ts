@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { DashboardSummary } from '@core/models';
+import { DashboardSummary, DashboardTeamRow } from '@core/models';
 import { InrPipe } from '@shared/pipes/inr.pipe';
 import { DateFilter } from '@shared/components/date-filter/date-filter';
 import { DateRange } from '@shared/models/filter.model';
@@ -38,6 +38,12 @@ export class Dashboard {
   onRangeChange(range: DateRange) {
     this.range.set(range);
     this.load();
+  }
+
+  zoneNames(person: DashboardTeamRow) {
+    return (person.zones ?? [])
+      .map((zone) => (zone.city ? `${zone.name} (${zone.city})` : zone.name))
+      .join(', ');
   }
 
   load() {

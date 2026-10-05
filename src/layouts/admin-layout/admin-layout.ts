@@ -11,6 +11,7 @@ import { filter, map, startWith } from 'rxjs';
 import { Header } from '@shared/components/header/header';
 import { Sidebar } from '@shared/components/sidebar/sidebar';
 import { Footer } from '@shared/components/footer/footer';
+import { AuthService } from '@core/services/auth.service';
 
 /** Shell for every authenticated screen: sidebar + header + content + footer. */
 @Component({
@@ -21,6 +22,11 @@ import { Footer } from '@shared/components/footer/footer';
 })
 export class AdminLayout {
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
+
+  constructor() {
+    this.auth.loadProfile().subscribe();
+  }
 
   readonly sidebarOpen = signal(true);
 

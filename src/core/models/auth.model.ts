@@ -1,3 +1,10 @@
+export interface AdminZoneRef {
+  id: string;
+  name: string;
+  code?: string | null;
+  city?: string | null;
+}
+
 export interface AdminProfile {
   id: string;
   email: string;
@@ -6,6 +13,8 @@ export interface AdminProfile {
   role: string;
   isActive?: boolean;
   createdAt?: string;
+  unrestricted?: boolean;
+  zones?: AdminZoneRef[];
 }
 
 export interface LoginPayload {

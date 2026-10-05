@@ -22,7 +22,7 @@ import {
   TablePageEvent,
 } from '@shared/models/table.model';
 import { AreaDialog } from '../area-dialog/area-dialog';
-import { RemoveOutcome } from '../service-areas.model';
+import { RemoveOutcome, zonePincodes } from '../service-areas.model';
 import { ServiceAreasService } from '../service-areas.service';
 
 @Component({
@@ -64,12 +64,42 @@ export class Areas {
   ];
 
   readonly columns: TableColumn<ServiceArea>[] = [
-    { key: 'name', label: 'Area' },
-    { key: 'city', label: 'City' },
-    { key: 'state', label: 'State' },
-    { key: 'pincode', label: 'Pincode' },
+    { key: 'name', label: 'Zone name' },
+    {
+      key: 'code',
+      label: 'Code',
+      fallback: '—',
+      value: (row) => row.code || '—',
+    },
+    { key: 'city', label: 'City', fallback: '—' },
+    { key: 'region', label: 'Region', fallback: '—' },
+    {
+      key: 'areas',
+      label: 'Covered areas',
+      value: (row) =>
+        (row.areas ?? []).map((item) => item.area).join(', ') || '—',
+    },
+    {
+      key: 'serviceRadiusKm',
+      label: 'Radius (km)',
+      type: 'number',
+      align: 'right',
+      fallback: '—',
+    },
+    {
+      key: 'coords',
+      label: 'Lat, Lng',
+      value: (row) =>
+        row.latitude != null && row.longitude != null
+          ? `${row.latitude}, ${row.longitude}`
+          : '—',
+    },
+    {
+      key: 'pincodes',
+      label: 'Pincodes',
+      value: (row) => zonePincodes(row).join(', ') || '—',
+    },
     { key: 'isActive', label: 'Active', type: 'boolean', align: 'center' },
-    { key: 'createdAt', label: 'Created', type: 'date' },
   ];
 
   readonly actions: TableAction<ServiceArea>[] = [
@@ -142,7 +172,7 @@ export class Areas {
 
   private openDialog(area?: ServiceArea) {
     this.dialog
-      .open(AreaDialog, { width: '480px', data: { area: area ?? null } })
+      .open(AreaDialog, { width: '720px', data: { area: area ?? null } })
       .afterClosed()
       .subscribe((payload) => {
         if (!payload) return;

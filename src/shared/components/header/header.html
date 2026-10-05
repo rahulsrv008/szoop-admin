@@ -30,15 +30,18 @@
     <div class="menu-head">
       <p class="menu-head__name">{{ displayName() }}</p>
       <p class="menu-head__role">{{ role() }}</p>
+      <p class="menu-head__role">{{ zoneLabel() }}</p>
     </div>
-    <a mat-menu-item routerLink="/settings/general">
-      <mat-icon>settings</mat-icon>
-      <span>System settings</span>
-    </a>
-    <a mat-menu-item routerLink="/settings/users">
-      <mat-icon>manage_accounts</mat-icon>
-      <span>Admin users</span>
-    </a>
+    @if (isSuperAdmin()) {
+      <a mat-menu-item routerLink="/settings/general">
+        <mat-icon>settings</mat-icon>
+        <span>System settings</span>
+      </a>
+      <a mat-menu-item routerLink="/settings/users">
+        <mat-icon>manage_accounts</mat-icon>
+        <span>Admin users</span>
+      </a>
+    }
     <button mat-menu-item (click)="logout()">
       <mat-icon>logout</mat-icon>
       <span>Sign out</span>
