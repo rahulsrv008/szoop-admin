@@ -63,6 +63,78 @@ export interface HomePopularItem {
   isActive: boolean;
 }
 
+export interface HomeScreenBanner {
+  id: string;
+  kicker: string;
+  headline: string;
+  title: string;
+  sub: string;
+  color: string;
+  opens: 'express' | 'cook';
+}
+
+export interface HomeScreenTrust {
+  icon: string;
+  label: string;
+}
+
+export interface HomeScreenStep {
+  n: string;
+  title: string;
+  body: string;
+}
+
+export interface HomeScreenConfig {
+  searchPlaceholder: string;
+  gridTitle: string;
+  banners: HomeScreenBanner[];
+  trust: HomeScreenTrust[];
+  howTitle: string;
+  howSteps: HomeScreenStep[];
+  bottomTitle: string;
+  bottomSub: string;
+  bottomButton: string;
+}
+
+export const DEFAULT_HOME_SCREEN: HomeScreenConfig = {
+  searchPlaceholder: 'Search kitchen, bathroom, laundry…',
+  gridTitle: 'What are you looking for?',
+  banners: [
+    {
+      id: 'b1',
+      kicker: 'LIMITED OFFER',
+      headline: '30% OFF',
+      title: "Today's Special!",
+      sub: 'Get discount for every order, only valid for today.',
+      color: '#6B21A8',
+      opens: 'express',
+    },
+    {
+      id: 'b-cook',
+      kicker: 'FREE TRIAL',
+      headline: '3 days',
+      title: 'Healthy Cook, on us',
+      sub: 'Healthy home-style meals. Try 3 days free, then pick a plan.',
+      color: '#059669',
+      opens: 'cook',
+    },
+  ],
+  trust: [
+    { icon: 'shield-checkmark', label: 'Verified pros' },
+    { icon: 'leaf', label: 'Healthy meals' },
+    { icon: 'flash', label: '15-min arrival' },
+  ],
+  howTitle: 'How Oseedy works',
+  howSteps: [
+    { n: '1', title: 'Pick a service', body: 'Cleaning, cook, diet meals…' },
+    { n: '2', title: 'Choose time & duration', body: 'Right now or any slot you like' },
+    { n: '3', title: 'Relax & track', body: 'Expert arrives with OTP' },
+  ],
+  bottomTitle: 'Need help right now?',
+  bottomSub: 'An expert at your door in about 15 minutes.',
+  bottomButton: 'Book',
+};
+
 export type HomeCategoryPayload = Omit<HomeCategory, 'id' | 'options'>;
 export type HomeCategoryOptionPayload = Omit<HomeCategoryOption, 'id' | 'categoryId'>;
 export type HomePopularPayload = Omit<HomePopularItem, 'id' | 'rating'> & {

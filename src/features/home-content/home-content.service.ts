@@ -7,6 +7,7 @@ import {
   HomeCategoryPayload,
   HomePopularItem,
   HomePopularPayload,
+  HomeScreenConfig,
 } from './home-content.model';
 
 const BASE = 'admin/home-content';
@@ -15,6 +16,14 @@ const BASE = 'admin/home-content';
 @Injectable({ providedIn: 'root' })
 export class HomeContentService {
   private readonly api = inject(ApiService);
+
+  screen() {
+    return this.api.get<HomeScreenConfig>(`${BASE}/screen`);
+  }
+
+  saveScreen(payload: HomeScreenConfig) {
+    return this.api.put<HomeScreenConfig>(`${BASE}/screen`, payload);
+  }
 
   categories() {
     return this.api.get<HomeCategory[]>(`${BASE}/categories`);

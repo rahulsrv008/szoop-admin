@@ -16,6 +16,9 @@ import {
   HomeCategoryPayload,
   HomePopularItem,
   HomePopularPayload,
+  HomePricingTier,
+  HomeScreenConfig,
+  DEFAULT_HOME_SCREEN,
 } from '../home-content.model';
 import { HomeContentService } from '../home-content.service';
 import {
@@ -43,8 +46,10 @@ export class HomeContentPage {
   private readonly notifications = inject(NotificationService);
 
   readonly loading = signal(false);
+  readonly savingScreen = signal(false);
   readonly categories = signal<HomeCategory[]>([]);
   readonly popular = signal<HomePopularItem[]>([]);
+  readonly screen = signal<HomeScreenConfig>(structuredClone(DEFAULT_HOME_SCREEN));
   readonly actionLabels = ACTION_LABELS;
   readonly isImageRef = isImageRef;
 
@@ -87,6 +92,163 @@ export class HomeContentPage {
         });
       },
       error: () => this.loading.set(false),
+    });
+    this.homeContent.screen().subscribe({
+      next: (screen) => this.screen.set(screen ?? structuredClone(DEFAULT_HOME_SCREEN)),
+      error: () => this.screen.set(structuredClone(DEFAULT_HOME_SCREEN)),
+    });
+  }
+
+  readonly previewServices = computed(() => {
+    const items: { title: string; badge: string | null; price: string }[] = [];
+    for (const category of this.categories()) {
+      if (!category.isActive) continue;
+      if (!category.options.length) {
+        items.push({
+          title: category.title,
+          badge: category.badge,
+          price: this.startingPrice(category.pricing),
+        });
+        continue;
+      }
+      for (const option of category.options) {
+        if (!option.isActive) continue;
+        items.push({
+          title: option.title,
+          badge: option.badge,
+          price: option.priceLabel || this.startingPrice(option.pricing),
+        });
+      }
+    }
+    return items.slice(0, 6);
+  });
+
+  startingPrice(tiers: HomePricingTier[]) {
+    if (!tiers.length) return '';
+    return `₹${Math.min(...tiers.map((tier) => tier.price))}`;
+  }
+
+  patchScreen(patch: Partial<HomeScreenConfig>) {
+    this.screen.update((current) => ({ ...current, ...patch }));
+  }
+
+  patchBanner(index: number, patch: Partial<HomeScreenConfig['banners'][number]>) {
+    this.screen.update((current) => ({
+      ...current,
+      banners: current.banners.map((banner, i) => (i === index ? { ...banner, ...patch } : banner)),
+    }));
+  }
+
+  addBanner() {
+    this.screen.update((current) => {
+      if (current.banners.length >= 6) return current;
+      return {
+        ...current,
+        banners: [
+          ...current.banners,
+          {
+            id: `b-${Date.now()}`,
+            kicker: 'OFFER',
+            headline: 'New',
+            title: 'New offer',
+            sub: 'Shown on the customer home carousel.',
+            color: '#6B21A8',
+            opens: 'express' as const,
+          },
+        ],
+      };
+    });
+  }
+
+  removeBanner(index: number) {
+    this.screen.update((current) => ({
+      ...current,
+      banners: current.banners.filter((_, i) => i !== index),
+    }));
+  }
+
+  patchTrust(index: number, patch: Partial<HomeScreenConfig['trust'][number]>) {
+    this.screen.update((current) => ({
+      ...current,
+      trust: current.trust.map((item, i) => (i === index ? { ...item, ...patch } : item)),
+    }));
+  }
+
+  addTrust() {
+    this.screen.update((current) => {
+      if (current.trust.length >= 8) return current;
+      return { ...current, trust: [...current.trust, { icon: 'star', label: 'New promise' }] };
+    });
+  }
+
+  removeTrust(index: number) {
+    this.screen.update((current) => ({
+      ...current,
+      trust: current.trust.filter((_, i) => i !== index),
+    }));
+  }
+
+  patchStep(index: number, patch: Partial<HomeScreenConfig['howSteps'][number]>) {
+    this.screen.update((current) => ({
+      ...current,
+      howSteps: current.howSteps.map((step, i) => (i === index ? { ...step, ...patch } : step)),
+    }));
+  }
+
+  saveScreen() {
+    this.savingScreen.set(true);
+    this.homeContent.saveScreen(this.screen()).subscribe({
+      next: (screen) => {
+        this.screen.set(screen);
+        this.savingScreen.set(false);
+        this.notifications.success('Front page saved. Customers see it on the next home refresh.');
+      },
+      error: () => {
+        this.savingScreen.set(false);
+        this.notifications.error('Could not save the front page');
+      },
+    });
+  }
+
+  saveTierPrice(option: HomeCategoryOption, index: number, raw: string) {
+    const price = Number(raw);
+    if (!Number.isFinite(price) || price < 1) {
+      this.notifications.error('Enter a price of at least ₹1');
+      return;
+    }
+    const pricing = option.pricing.map((tier, i) => (i === index ? { ...tier, price } : tier));
+    this.homeContent.updateOption(option.id, { pricing }).subscribe({
+      next: (updated) => {
+        this.replaceOption(updated);
+        this.notifications.success(`${option.title} is now ₹${price}`);
+      },
+      error: () => this.notifications.error('Could not update the price'),
+    });
+  }
+
+  savePopularPrice(item: HomePopularItem, raw: string) {
+    const priceLabel = raw.trim();
+    this.homeContent.updatePopular(item.id, { priceLabel: priceLabel || null }).subscribe({
+      next: (updated) => {
+        this.popular.update((rows) => rows.map((row) => (row.id === updated.id ? { ...row, ...updated } : row)));
+        this.notifications.success(`${item.title} price is now ${priceLabel || 'cleared'}`);
+      },
+      error: () => this.notifications.error('Could not update the price'),
+    });
+  }
+
+  saveCategoryTierPrice(category: HomeCategory, index: number, raw: string) {
+    const price = Number(raw);
+    if (!Number.isFinite(price) || price < 1) return;
+    const pricing = category.pricing.map((tier, i) => (i === index ? { ...tier, price } : tier));
+    this.homeContent.updateCategory(category.id, { pricing }).subscribe({
+      next: (updated) => {
+        this.categories.update((rows) =>
+          rows.map((row) => (row.id === updated.id ? { ...row, ...updated, options: row.options } : row)),
+        );
+        this.notifications.success(`${category.title} is now ₹${price}`);
+      },
+      error: () => this.notifications.error('Could not update the price'),
     });
   }
 
@@ -225,6 +387,17 @@ export class HomeContentPage {
       },
       error: () => this.loading.set(false),
     });
+  }
+
+  private replaceOption(updated: HomeCategoryOption) {
+    this.categories.update((rows) =>
+      rows.map((category) => ({
+        ...category,
+        options: category.options.map((option) =>
+          option.id === updated.id ? { ...option, ...updated } : option,
+        ),
+      })),
+    );
   }
 
   private nextSort(list: { sortOrder: number }[]) {

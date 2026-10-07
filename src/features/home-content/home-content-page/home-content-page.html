@@ -1,8 +1,8 @@
 <header class="page-head">
   <div>
-    <h2 class="page-head__title">Customer app home</h2>
+    <h2 class="page-head__title">Customer app</h2>
     <p class="page-head__sub">
-      Service categories, their options and the Most Popular section. Changes show in the app on next open.
+      Configure the front page section by section, set prices, and check the phone preview before customers see it.
     </p>
   </div>
 </header>
@@ -12,7 +12,192 @@
 }
 
 <mat-tab-group animationDuration="150ms">
-  <mat-tab label="Service categories">
+  <mat-tab label="Front page">
+    <div class="layout">
+      <section class="list">
+        <div class="list-head">
+          <p class="muted">Offers, the service grid title, trust chips, how it works, and the bottom button. Save when the phone looks right.</p>
+          <button matButton="filled" type="button" [disabled]="savingScreen()" (click)="saveScreen()">
+            <mat-icon>save</mat-icon>
+            {{ savingScreen() ? 'Saving…' : 'Save front page' }}
+          </button>
+        </div>
+
+        <article class="card-panel section-card">
+          <h3 class="card-panel__title">Search and grid</h3>
+          <label class="field">
+            <span>Search placeholder</span>
+            <input [value]="screen().searchPlaceholder" (input)="patchScreen({ searchPlaceholder: $any($event.target).value })" />
+          </label>
+          <label class="field">
+            <span>Grid heading</span>
+            <input [value]="screen().gridTitle" (input)="patchScreen({ gridTitle: $any($event.target).value })" />
+          </label>
+        </article>
+
+        <article class="card-panel section-card">
+          <div class="options-head">
+            <h3 class="card-panel__title">Offers</h3>
+            <button matButton="tonal" type="button" (click)="addBanner()" [disabled]="screen().banners.length >= 6">
+              <mat-icon>add</mat-icon>
+              Add offer
+            </button>
+          </div>
+          @for (banner of screen().banners; track banner.id; let i = $index) {
+            <div class="offer-edit">
+              <label class="field">
+                <span>Kicker</span>
+                <input [value]="banner.kicker" (input)="patchBanner(i, { kicker: $any($event.target).value })" />
+              </label>
+              <label class="field">
+                <span>Headline</span>
+                <input [value]="banner.headline" (input)="patchBanner(i, { headline: $any($event.target).value })" />
+              </label>
+              <label class="field">
+                <span>Title</span>
+                <input [value]="banner.title" (input)="patchBanner(i, { title: $any($event.target).value })" />
+              </label>
+              <label class="field field--wide">
+                <span>Subtitle</span>
+                <input [value]="banner.sub" (input)="patchBanner(i, { sub: $any($event.target).value })" />
+              </label>
+              <label class="field">
+                <span>Colour</span>
+                <input type="color" [value]="banner.color" (input)="patchBanner(i, { color: $any($event.target).value })" />
+              </label>
+              <label class="field">
+                <span>Opens</span>
+                <select [value]="banner.opens" (change)="patchBanner(i, { opens: $any($event.target).value })">
+                  <option value="express">Express booking</option>
+                  <option value="cook">Healthy cook</option>
+                </select>
+              </label>
+              <button matIconButton type="button" matTooltip="Remove offer" (click)="removeBanner(i)" [disabled]="screen().banners.length < 2">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+        </article>
+
+        <article class="card-panel section-card">
+          <div class="options-head">
+            <h3 class="card-panel__title">Trust chips</h3>
+            <button matButton="tonal" type="button" (click)="addTrust()" [disabled]="screen().trust.length >= 8">
+              <mat-icon>add</mat-icon>
+              Add chip
+            </button>
+          </div>
+          @for (item of screen().trust; track $index; let i = $index) {
+            <div class="inline-edit">
+              <label class="field">
+                <span>Icon name</span>
+                <input [value]="item.icon" (input)="patchTrust(i, { icon: $any($event.target).value })" />
+              </label>
+              <label class="field">
+                <span>Label</span>
+                <input [value]="item.label" (input)="patchTrust(i, { label: $any($event.target).value })" />
+              </label>
+              <button matIconButton type="button" matTooltip="Remove" (click)="removeTrust(i)" [disabled]="screen().trust.length < 2">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+        </article>
+
+        <article class="card-panel section-card">
+          <h3 class="card-panel__title">How it works</h3>
+          <label class="field">
+            <span>Section title</span>
+            <input [value]="screen().howTitle" (input)="patchScreen({ howTitle: $any($event.target).value })" />
+          </label>
+          @for (step of screen().howSteps; track step.n; let i = $index) {
+            <div class="inline-edit">
+              <label class="field field--n">
+                <span>No.</span>
+                <input [value]="step.n" (input)="patchStep(i, { n: $any($event.target).value })" />
+              </label>
+              <label class="field">
+                <span>Title</span>
+                <input [value]="step.title" (input)="patchStep(i, { title: $any($event.target).value })" />
+              </label>
+              <label class="field">
+                <span>Detail</span>
+                <input [value]="step.body" (input)="patchStep(i, { body: $any($event.target).value })" />
+              </label>
+            </div>
+          }
+        </article>
+
+        <article class="card-panel section-card">
+          <h3 class="card-panel__title">Bottom call to action</h3>
+          <label class="field">
+            <span>Title</span>
+            <input [value]="screen().bottomTitle" (input)="patchScreen({ bottomTitle: $any($event.target).value })" />
+          </label>
+          <label class="field">
+            <span>Subtitle</span>
+            <input [value]="screen().bottomSub" (input)="patchScreen({ bottomSub: $any($event.target).value })" />
+          </label>
+          <label class="field">
+            <span>Button</span>
+            <input [value]="screen().bottomButton" (input)="patchScreen({ bottomButton: $any($event.target).value })" />
+          </label>
+        </article>
+      </section>
+
+      <aside class="preview card-panel">
+        <h3 class="card-panel__title">Front page</h3>
+        <div class="phone phone--live">
+          <div class="live-top">
+            <strong>Good morning</strong>
+            <span>Your location</span>
+            <div class="live-search">{{ screen().searchPlaceholder }}</div>
+          </div>
+          @if (screen().banners[0]; as banner) {
+            <div class="live-offer" [style.background]="banner.color">
+              <small>{{ banner.kicker }}</small>
+              <strong>{{ banner.headline }}</strong>
+              <span>{{ banner.title }}</span>
+            </div>
+          }
+          <div class="live-grid">
+            <p>{{ screen().gridTitle }}</p>
+            <div class="live-tiles">
+              @for (item of previewServices(); track item.title) {
+                <div class="live-tile">
+                  @if (item.badge) {
+                    <em>{{ item.badge }}</em>
+                  }
+                  <strong>{{ item.title }}</strong>
+                  @if (item.price) {
+                    <span>{{ item.price }}</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+          <div class="live-trust">
+            @for (item of screen().trust; track item.label) {
+              <span>{{ item.label }}</span>
+            }
+          </div>
+          <div class="live-how">
+            <p>{{ screen().howTitle }}</p>
+            @for (step of screen().howSteps; track step.n) {
+              <div><b>{{ step.n }}</b> {{ step.title }}</div>
+            }
+          </div>
+          <div class="live-cta">
+            <strong>{{ screen().bottomTitle }}</strong>
+            <span>{{ screen().bottomSub }}</span>
+            <em>{{ screen().bottomButton }}</em>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Services & prices">
     <div class="layout">
       <section class="list">
         <div class="list-head">
@@ -55,6 +240,21 @@
                     </span>
                   }
                 </div>
+                @if (category.pricing.length) {
+                  <div class="prices">
+                    @for (tier of category.pricing; track $index; let i = $index) {
+                      <label class="price-field">
+                        <span>{{ tier.label }}</span>
+                        <input
+                          type="number"
+                          min="1"
+                          [value]="tier.price"
+                          (change)="saveCategoryTierPrice(category, i, $any($event.target).value)"
+                        />
+                      </label>
+                    }
+                  </div>
+                }
               </div>
               <div class="row-actions">
                 <button matIconButton type="button" matTooltip="Edit" (click)="editCategory(category)">
@@ -104,6 +304,21 @@
                           · hidden
                         }
                       </span>
+                      @if (option.pricing.length) {
+                        <div class="prices">
+                          @for (tier of option.pricing; track $index; let i = $index) {
+                            <label class="price-field">
+                              <span>{{ tier.label }}</span>
+                              <input
+                                type="number"
+                                min="1"
+                                [value]="tier.price"
+                                (change)="saveTierPrice(option, i, $any($event.target).value)"
+                              />
+                            </label>
+                          }
+                        </div>
+                      }
                     </div>
                     <button matIconButton type="button" matTooltip="Edit" (click)="editOption(option)">
                       <mat-icon>edit</mat-icon>
@@ -193,8 +408,11 @@
                 <span class="chip">Hidden</span>
               }
             </div>
+            <label class="price-field">
+              <span>Shown price</span>
+              <input [value]="item.priceLabel ?? ''" (change)="savePopularPrice(item, $any($event.target).value)" />
+            </label>
             <span class="muted">
-              {{ item.priceLabel || 'No price' }}
               @if (item.rating !== null) {
                 · ★ {{ item.rating }}
               }
