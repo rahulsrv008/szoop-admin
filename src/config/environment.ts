@@ -1,10 +1,18 @@
+import { isDevMode } from '@angular/core';
+import { ENV } from './env.generated';
+
+/** Through the dev-server proxy in `npm start`, straight to the API otherwise. */
+const viaDevProxy = ENV.devProxy && isDevMode();
+
 /**
- * Runtime configuration. All admin environments talk to the deployed Nest API.
+ * Runtime configuration. The API comes from admin-panel/.env (see scripts/env.mjs).
  */
 export const ENVIRONMENT = {
-  production: false,
+  production: !isDevMode(),
   appName: 'ClearIt Admin',
-  apiBaseUrl: 'https://clearit-be.vercel.app/api/v1',
+  apiBaseUrl: viaDevProxy ? new URL(ENV.apiUrl).pathname : ENV.apiUrl,
+  /** Where requests end up, for display. */
+  apiTarget: ENV.apiUrl,
   /** Auto-refresh interval for live screens (dashboard, live bookings). */
   livePollIntervalMs: 30_000,
 };

@@ -19,7 +19,7 @@ npm start
 
 Open http://localhost:4200 and sign in with the seeded admin.
 
-API base URL is set in `src/config/environment.ts` (`http://localhost:3000/api/v1`). CORS on the backend must allow `http://localhost:4200`.
+The API base URL comes from `.env` (`API_URL`, default `https://clearit-be.vercel.app/api/v1`; copy `.env.example` to start). `npm start` and `npm run build` turn it into `src/config/env.generated.ts`. With `DEV_PROXY=true`, `npm start` proxies API calls through the dev server, so the backend's CORS list doesn't need your localhost port.
 
 ## Layout
 
