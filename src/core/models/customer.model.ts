@@ -10,6 +10,13 @@ export interface CustomerAddress {
   longitude?: string | number | null;
   addressType?: string | null;
   isDefault?: boolean;
+  serviceAreaId?: string | null;
+  zone?: {
+    id: string;
+    code?: string | null;
+    name: string;
+    city?: string | null;
+  } | null;
 }
 
 export interface CustomerListItem {
@@ -22,6 +29,11 @@ export interface CustomerListItem {
   totalBookings?: number;
   lastBookingDate?: string | null;
   createdAt: string;
+  homeZone?: {
+    id: string;
+    code?: string | null;
+    name: string;
+  } | null;
 }
 
 export interface CustomerDetail extends CustomerListItem {

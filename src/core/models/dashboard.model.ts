@@ -23,6 +23,17 @@ export interface DashboardSummary {
   ratings?: { average?: number; count?: number };
   support?: { open?: number; inProgress?: number; highPriority?: number };
   kyc?: { pendingDocuments?: number };
+  team?: DashboardTeamRow[];
+}
+
+export interface DashboardTeamRow {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  unrestricted?: boolean;
+  zones?: { id: string; name: string; city?: string | null }[];
+  earnings: number;
 }
 
 export interface BookingReportRow {

@@ -7,6 +7,7 @@ import {
   AgentDocumentActionResult,
   AgentListQuery,
   AgentLocationView,
+  ApproveAgentPayload,
   VerifyDocumentPayload,
 } from './agents.model';
 
@@ -26,10 +27,18 @@ export class AgentsService {
     return this.api.get<AgentLocationView>(`admin/agents/${id}/location`);
   }
 
-  approve(id: string, remarks?: string) {
-    return this.api.post<AgentActionResult>(`admin/agents/${id}/approve`, {
-      remarks,
-    });
+  approve(id: string, payload: ApproveAgentPayload) {
+    return this.api.post<AgentActionResult>(`admin/agents/${id}/approve`, payload);
+  }
+
+  assignZones(id: string, payload: ApproveAgentPayload) {
+    return this.api.patch<AgentActionResult>(
+      `admin/agents/${id}/service-locations`,
+      {
+        homeZoneId: payload.homeZoneId,
+        serviceAreaIds: payload.serviceAreaIds,
+      },
+    );
   }
 
   reject(id: string, reason: string) {

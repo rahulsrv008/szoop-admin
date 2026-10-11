@@ -40,7 +40,15 @@ export interface AgentActionResult {
   status: string;
   approvalStatus: string;
   joiningDate?: string | null;
+  homeZoneId?: string | null;
+  serviceAreas?: string[];
   message?: string;
+}
+
+export interface ApproveAgentPayload {
+  serviceAreaIds: string[];
+  homeZoneId?: string | null;
+  remarks?: string;
 }
 
 export interface AgentDocumentActionResult {

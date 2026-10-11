@@ -84,6 +84,50 @@
   />
 </section>
 
+<section class="panel team">
+  <header class="panel__head">
+    <h3>Users and zone earnings</h3>
+    <p>Paid collections in each person’s zones for the selected period</p>
+  </header>
+  @if ((summary().team ?? []).length) {
+    <div class="team__table">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th>Zones</th>
+            <th class="num">Zone earnings</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (person of summary().team ?? []; track person.id) {
+            <tr>
+              <td>
+                <span class="team__name">{{ person.name }}</span>
+                <span class="team__email">{{ person.email }}</span>
+              </td>
+              <td>{{ person.role }}</td>
+              <td>
+                @if (person.unrestricted) {
+                  All zones
+                } @else if (person.zones?.length) {
+                  {{ zoneNames(person) }}
+                } @else {
+                  No zones
+                }
+              </td>
+              <td class="num">{{ person.earnings | inr }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else if (!loading()) {
+    <p class="team__empty">No users to show yet.</p>
+  }
+</section>
+
 <section class="panels">
   <app-status-breakdown
     title="Bookings by status"

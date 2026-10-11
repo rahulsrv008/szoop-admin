@@ -28,6 +28,13 @@ export class Header {
 
   readonly displayName = this.session.displayName;
   readonly role = this.session.role;
+  readonly isSuperAdmin = () => this.session.role() === 'SUPER_ADMIN';
+  readonly zoneLabel = () => {
+    const admin = this.session.admin();
+    if (!admin || admin.unrestricted || admin.role === 'SUPER_ADMIN') return 'All zones';
+    const names = (admin.zones ?? []).map((zone) => zone.name);
+    return names.length ? names.join(', ') : 'No zones assigned';
+  };
   readonly initials = () => {
     const name = this.session.displayName();
     return name ? name.trim().charAt(0).toUpperCase() : 'A';

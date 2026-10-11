@@ -120,6 +120,8 @@
           <div class="detail-item">
             <span class="detail-item__label">Wallet balance</span>
             <span class="detail-item__value">{{ c.wallet?.balance ?? 0 | inr }}</span>
+            <span class="detail-item__label">Home zone</span>
+            <span class="detail-item__value">{{ c.homeZone?.name | orDash }}</span>
           </div>
         </div>
       }
@@ -171,6 +173,9 @@
                 <span class="muted"> · Default</span>
               }
               <p>{{ addressLine(address) }}</p>
+              @if (address.zone?.name) {
+                <p class="muted">Zone: {{ address.zone?.name }}</p>
+              }
             </div>
           </div>
         } @empty {

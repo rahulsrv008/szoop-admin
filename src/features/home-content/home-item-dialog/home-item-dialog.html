@@ -1,0 +1,257 @@
+<h2 mat-dialog-title>{{ heading }}</h2>
+
+<mat-dialog-content>
+  <form class="form" [formGroup]="form" (ngSubmit)="save()">
+    <div class="grid">
+      <mat-form-field class="span-2">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" />
+        @if (form.controls.title.touched && form.controls.title.invalid) {
+          <mat-error>Enter a title (2+ characters)</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="span-2">
+        <mat-label>Subtitle</mat-label>
+        <input matInput formControlName="subtitle" />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Badge</mat-label>
+        <input matInput formControlName="badge" placeholder="e.g. NEW, SAVE 20%" />
+      </mat-form-field>
+
+      @if (kind !== 'category') {
+        <mat-form-field>
+          <mat-label>Price label</mat-label>
+          <input matInput formControlName="priceLabel" placeholder="₹4,999 / month" />
+        </mat-form-field>
+      }
+
+      @if (kind === 'category') {
+        <mat-form-field>
+          <mat-label>Tile colour</mat-label>
+          <input matInput formControlName="tileColor" placeholder="#EDE4F5" />
+          <input
+            matSuffix
+            type="color"
+            class="swatch"
+            [value]="form.controls.tileColor.value || '#EDE4F5'"
+            (input)="form.controls.tileColor.setValue($any($event.target).value)"
+          />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Tile width</mat-label>
+          <mat-select formControlName="layout">
+            @for (entry of layouts; track entry[0]) {
+              <mat-option [value]="entry[0]">{{ entry[1] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>On tap</mat-label>
+          <mat-select formControlName="actionType">
+            @for (entry of actions; track entry[0]) {
+              <mat-option [value]="entry[0]">{{ entry[1] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+
+      @if (kind === 'popular') {
+        <mat-form-field>
+          <mat-label>Rating (0–5)</mat-label>
+          <input matInput formControlName="rating" inputmode="decimal" />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Opens category</mat-label>
+          <mat-select formControlName="categoryId" (selectionChange)="onCategoryChange()">
+            <mat-option value="">— None —</mat-option>
+            @for (category of categories; track category.id) {
+              <mat-option [value]="category.id">{{ category.title }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Opens option</mat-label>
+          <mat-select formControlName="optionId">
+            <mat-option value="">— Whole category —</mat-option>
+            @for (option of linkableOptions(); track option.id) {
+              <mat-option [value]="option.id">{{ option.title }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+
+      <mat-form-field>
+        <mat-label>Sort order</mat-label>
+        <input matInput type="number" formControlName="sortOrder" />
+        <mat-hint>Lower shows first</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="image-row">
+      <div class="preview">
+        @if (isImageRef(form.controls.imageUrl.value)) {
+          <img [src]="form.controls.imageUrl.value" alt="" />
+        } @else {
+          <mat-icon>image</mat-icon>
+        }
+      </div>
+      <div class="image-actions">
+        <span class="label">Image (optional)</span>
+        <div class="row-actions">
+          <label matButton="outlined" class="file-btn">
+            <mat-icon>upload</mat-icon>
+            Upload
+            <input type="file" accept="image/*" hidden (change)="uploadImage($event)" />
+          </label>
+          @if (form.controls.imageUrl.value) {
+            <button matButton type="button" (click)="clearImage()">Remove</button>
+          }
+        </div>
+      </div>
+    </div>
+
+    @if (hasHighlights && !(kind === 'category' && form.controls.actionType.value === 'OPTIONS')) {
+      <section class="highlights">
+        <header>
+          <div>
+            <h3>What our agent can do</h3>
+            <p class="muted">Shown in the popup, 4–5 short lines work best.</p>
+          </div>
+          <button
+            matButton="tonal"
+            type="button"
+            (click)="addHighlight()"
+            [disabled]="highlights.length >= 10"
+          >
+            <mat-icon>add</mat-icon>
+            Add line
+          </button>
+        </header>
+
+        <mat-form-field class="popup-title">
+          <mat-label>Popup heading</mat-label>
+          <input matInput formControlName="popupTitle" placeholder="What our expert will do" />
+        </mat-form-field>
+
+        <datalist id="icon-suggestions">
+          @for (icon of iconSuggestions; track icon) {
+            <option [value]="icon"></option>
+          }
+        </datalist>
+
+        <div formArrayName="highlights" class="lines">
+          @for (group of highlights.controls; track group; let i = $index) {
+            <div class="line" [formGroupName]="i">
+              <div class="icon-preview">
+                @if (isImageRef(group.controls.icon.value)) {
+                  <img [src]="group.controls.icon.value" alt="" />
+                } @else {
+                  <span>{{ group.controls.icon.value || '•' }}</span>
+                }
+              </div>
+
+              <mat-form-field class="line-text">
+                <mat-label>Line {{ i + 1 }}</mat-label>
+                <input matInput formControlName="text" />
+              </mat-form-field>
+
+              <mat-form-field class="line-icon">
+                <mat-label>Icon name</mat-label>
+                <input
+                  matInput
+                  list="icon-suggestions"
+                  [value]="isImageRef(group.controls.icon.value) ? '(uploaded image)' : group.controls.icon.value"
+                  (input)="group.controls.icon.setValue($any($event.target).value)"
+                />
+              </mat-form-field>
+
+              <label matIconButton class="file-btn" title="Upload icon image">
+                <mat-icon>add_photo_alternate</mat-icon>
+                <input type="file" accept="image/*" hidden (change)="uploadIcon(i, $event)" />
+              </label>
+              <button matIconButton type="button" title="Move up" (click)="moveHighlight(i, -1)">
+                <mat-icon>arrow_upward</mat-icon>
+              </button>
+              <button matIconButton type="button" title="Remove" (click)="removeHighlight(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          } @empty {
+            <p class="muted empty">No lines yet — add what the agent will do.</p>
+          }
+        </div>
+      </section>
+    }
+
+    @if (kind === 'option' || (kind === 'category' && form.controls.actionType.value === 'POPUP')) {
+      <section class="highlights">
+        <header>
+          <div>
+            <h3>{{ kind === 'option' ? 'Shifts & monthly price' : 'Durations & price' }}</h3>
+            <p class="muted">
+              @if (kind === 'option') {
+                Customers pick one on the booking page, e.g. Morning 07:00 / Evening 17:00 / Both.
+              } @else {
+                Customers pick one on the booking page, e.g. 45 min, 1 hr … 3 hrs.
+              }
+            </p>
+          </div>
+          <button matButton="tonal" type="button" (click)="addTier()" [disabled]="pricing.length >= 12">
+            <mat-icon>add</mat-icon>
+            Add
+          </button>
+        </header>
+
+        <div formArrayName="pricing" class="lines">
+          @for (tier of pricing.controls; track tier; let i = $index) {
+            <div class="line tier" [formGroupName]="i">
+              <mat-form-field class="tier-label">
+                <mat-label>Label</mat-label>
+                <input matInput formControlName="label" [placeholder]="kind === 'option' ? 'Morning' : '90 min'" />
+              </mat-form-field>
+              @if (kind === 'option') {
+                <mat-form-field class="tier-sub">
+                  <mat-label>Timing text</mat-label>
+                  <input matInput formControlName="subtitle" placeholder="7 AM – 11 AM" />
+                </mat-form-field>
+                <mat-form-field class="tier-small">
+                  <mat-label>Starts</mat-label>
+                  <input matInput type="time" formControlName="startTime" />
+                </mat-form-field>
+              }
+              <mat-form-field class="tier-small">
+                <mat-label>Minutes</mat-label>
+                <input matInput type="number" formControlName="minutes" min="15" />
+              </mat-form-field>
+              <mat-form-field class="tier-small">
+                <mat-label>Price ₹</mat-label>
+                <input matInput type="number" formControlName="price" min="1" />
+              </mat-form-field>
+              <button matIconButton type="button" title="Remove" (click)="removeTier(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          } @empty {
+            <p class="muted empty">No options yet — customers can’t book until you add at least one.</p>
+          }
+        </div>
+      </section>
+    }
+
+    <mat-slide-toggle formControlName="isActive">Visible in customer app</mat-slide-toggle>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton type="button" (click)="cancel()">Cancel</button>
+  <button matButton="filled" type="button" [disabled]="uploading()" (click)="save()">
+    {{ isEdit ? 'Save' : 'Create' }}
+  </button>
+</mat-dialog-actions>

@@ -32,14 +32,26 @@ export interface ServicePricing {
   createdAt?: string;
 }
 
+export interface ServiceZoneCluster {
+  area: string;
+  pincode: string;
+  buildingsCover?: string[];
+}
+
 export interface ServiceArea {
   id: string;
+  code?: string | null;
   name: string;
   city?: string | null;
+  region?: string | null;
   state?: string | null;
   pincode?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  serviceRadiusKm?: number | null;
   isActive: boolean;
   createdAt?: string;
+  areas?: ServiceZoneCluster[];
 }
 
 export interface Society {

@@ -1,34 +1,94 @@
-<h2 mat-dialog-title>{{ isEdit ? 'Edit area' : 'New service area' }}</h2>
+<h2 mat-dialog-title>{{ isEdit ? 'Edit zone' : 'New service zone' }}</h2>
 
 <mat-dialog-content>
   <form class="stack" [formGroup]="form" (ngSubmit)="save()">
-    <mat-form-field>
-      <mat-label>Name</mat-label>
-      <input matInput formControlName="name" />
-      @if (form.controls.name.touched && form.controls.name.invalid) {
-        <mat-error>Enter an area name</mat-error>
-      }
-    </mat-form-field>
+    <div class="grid">
+      <mat-form-field>
+        <mat-label>Zone name</mat-label>
+        <input matInput formControlName="name" />
+        @if (form.controls.name.touched && form.controls.name.invalid) {
+          <mat-error>Enter a zone name</mat-error>
+        }
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>City</mat-label>
-      <input matInput formControlName="city" />
-    </mat-form-field>
+      <mat-form-field>
+        <mat-label>Zone code</mat-label>
+        <input matInput formControlName="code" placeholder="NOI_N1" />
+      </mat-form-field>
+    </div>
+
+    <div class="grid">
+      <mat-form-field>
+        <mat-label>City</mat-label>
+        <input matInput formControlName="city" />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Region</mat-label>
+        <input matInput formControlName="region" placeholder="NCR_EAST" />
+      </mat-form-field>
+    </div>
 
     <mat-form-field>
       <mat-label>State</mat-label>
       <input matInput formControlName="state" />
     </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Pincode</mat-label>
-      <input matInput formControlName="pincode" maxlength="6" />
-      @if (form.controls.pincode.touched && form.controls.pincode.invalid) {
-        <mat-error>Enter a valid 6-digit pincode</mat-error>
-      }
-    </mat-form-field>
+    <div class="grid grid--3">
+      <mat-form-field>
+        <mat-label>Latitude</mat-label>
+        <input matInput type="number" step="0.0001" formControlName="latitude" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Longitude</mat-label>
+        <input matInput type="number" step="0.0001" formControlName="longitude" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Radius (km)</mat-label>
+        <input matInput type="number" min="1" max="50" formControlName="serviceRadiusKm" />
+      </mat-form-field>
+    </div>
 
     <mat-slide-toggle formControlName="isActive">Active</mat-slide-toggle>
+
+    <div class="clusters">
+      <div class="clusters__head">
+        <h3>Covered areas</h3>
+        <button matButton type="button" (click)="addArea()">
+          <mat-icon>add</mat-icon>
+          Add area
+        </button>
+      </div>
+
+      <div formArrayName="areas">
+        @for (group of areas.controls; track $index; let i = $index) {
+          <div class="cluster" [formGroupName]="i">
+            <div class="grid">
+              <mat-form-field>
+                <mat-label>Area</mat-label>
+                <input matInput formControlName="area" placeholder="Sector 74" />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Pincode</mat-label>
+                <input matInput formControlName="pincode" maxlength="6" />
+              </mat-form-field>
+            </div>
+            <mat-form-field>
+              <mat-label>Buildings / societies covered</mat-label>
+              <textarea
+                matInput
+                rows="2"
+                formControlName="buildingsCover"
+                placeholder="One per line"
+              ></textarea>
+            </mat-form-field>
+            <button matButton type="button" (click)="removeArea(i)">
+              Remove area
+            </button>
+          </div>
+        }
+      </div>
+    </div>
   </form>
 </mat-dialog-content>
 

@@ -63,6 +63,12 @@ export class CustomerList {
     { key: 'name', label: 'Customer', sortable: true, fallback: 'Unnamed' },
     { key: 'mobile', label: 'Mobile' },
     { key: 'email', label: 'Email' },
+    {
+      key: 'homeZone',
+      label: 'Zone',
+      fallback: '—',
+      value: (row) => row.homeZone?.name || '—',
+    },
     { key: 'totalBookings', label: 'Bookings', type: 'number', align: 'right' },
     { key: 'lastBookingDate', label: 'Last booking', type: 'date' },
     { key: 'isActive', label: 'Active', type: 'boolean', align: 'center' },

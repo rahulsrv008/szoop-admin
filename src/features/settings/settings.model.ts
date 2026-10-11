@@ -32,6 +32,7 @@ export interface CreateAdminPayload {
   firstName?: string;
   lastName?: string;
   role?: string;
+  zoneIds?: string[];
 }
 
 export interface UpdateAdminPayload {
@@ -40,6 +41,7 @@ export interface UpdateAdminPayload {
   lastName?: string;
   role?: string;
   password?: string;
+  zoneIds?: string[];
 }
 
 export type AdminProfileRow = AdminUser;
@@ -70,18 +72,18 @@ export const ROLE_CATALOGUE: RoleCatalogueEntry[] = [
   {
     role: 'SUPER_ADMIN',
     label: 'Super admin',
-    intent: 'Full platform ownership — users, settings, money and catalog.',
+    intent: 'Sees every zone. Creates staff and assigns the zones they can open.',
     typicalAccess: [
-      'Admin users CRUD',
+      'Admin users and zone assignment',
       'System settings',
-      'All operational screens',
-      'Reports & exports',
+      'All zones, bookings, agents and customers',
+      'Reports',
     ],
   },
   {
     role: 'ADMIN',
     label: 'Admin',
-    intent: 'Day-to-day operations lead with broad console access.',
+    intent: 'Day-to-day lead for the zones assigned to this account.',
     typicalAccess: [
       'Bookings & live board',
       'Customers & agents',
@@ -92,7 +94,7 @@ export const ROLE_CATALOGUE: RoleCatalogueEntry[] = [
   {
     role: 'OPS',
     label: 'Operations',
-    intent: 'Dispatch and field coordination.',
+    intent: 'Dispatch and field coordination inside assigned zones.',
     typicalAccess: [
       'Live bookings',
       'Agent attendance',
@@ -103,7 +105,7 @@ export const ROLE_CATALOGUE: RoleCatalogueEntry[] = [
   {
     role: 'SUPPORT',
     label: 'Support',
-    intent: 'Customer care and ticket resolution.',
+    intent: 'Customer care for the zones assigned to this account.',
     typicalAccess: [
       'Complaints',
       'Customer profiles (read/update)',
@@ -114,7 +116,7 @@ export const ROLE_CATALOGUE: RoleCatalogueEntry[] = [
   {
     role: 'FINANCE',
     label: 'Finance',
-    intent: 'Payments, earnings and commercial reporting.',
+    intent: 'Payments, earnings and reports for assigned zones.',
     typicalAccess: [
       'Payments',
       'Earnings & incentives',

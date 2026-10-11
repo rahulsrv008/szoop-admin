@@ -2,6 +2,40 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-width: 360px;
+  min-width: 560px;
   padding-top: 8px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.grid--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.clusters {
+  margin-top: 8px;
+}
+
+.clusters__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.clusters__head h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cluster {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
 }

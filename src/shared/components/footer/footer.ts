@@ -9,5 +9,5 @@ import { ENVIRONMENT } from '@config/environment';
 export class Footer {
   readonly appName = ENVIRONMENT.appName;
   readonly year = new Date().getFullYear();
-  readonly apiBaseUrl = ENVIRONMENT.apiBaseUrl;
+  readonly apiBaseUrl = ENVIRONMENT.apiTarget;
 }

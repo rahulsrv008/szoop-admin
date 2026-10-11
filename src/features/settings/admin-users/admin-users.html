@@ -34,6 +34,18 @@
             }
           </mat-select>
         </mat-form-field>
+        @if (editForm.controls.role.value !== 'SUPER_ADMIN') {
+          <mat-form-field appearance="outline">
+            <mat-label>Zones</mat-label>
+            <mat-select formControlName="zoneIds" multiple>
+              @for (zone of zones(); track zone.id) {
+                <mat-option [value]="zone.id">
+                  {{ zone.name }}{{ zone.city ? ' · ' + zone.city : '' }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
       </div>
       <div class="form__row">
         <mat-form-field appearance="outline">
@@ -93,6 +105,18 @@
           }
         </mat-select>
       </mat-form-field>
+      @if (createForm.controls.role.value !== 'SUPER_ADMIN') {
+        <mat-form-field appearance="outline">
+          <mat-label>Zones they can see</mat-label>
+          <mat-select formControlName="zoneIds" multiple>
+            @for (zone of zones(); track zone.id) {
+              <mat-option [value]="zone.id">
+                {{ zone.name }}{{ zone.city ? ' · ' + zone.city : '' }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
       <button matButton="filled" type="submit" [disabled]="creating()">
         {{ creating() ? 'Creating…' : 'Create admin' }}
       </button>
