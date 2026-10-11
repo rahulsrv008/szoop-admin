@@ -35,7 +35,7 @@ export class ReportBookings {
       (this.data()?.series ?? []).map((row) => ({
         label: row.date,
         value: row.total,
-        hint: `${row.completed} done · ${row.cancelled} cancelled`,
+        hint: `${row.completed} done · ${row.cancelled} cancelled · ${row.expired} expired`,
       })),
     ),
   );

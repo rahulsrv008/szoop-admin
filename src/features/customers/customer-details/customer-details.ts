@@ -182,6 +182,14 @@ export class CustomerDetails implements OnInit {
     void this.router.navigate(['/bookings', booking.id]);
   }
 
+  walletReason(reason: string) {
+    if (reason === 'BOOKING_CANCELLED') return 'Refund · booking cancelled';
+    if (reason === 'BOOKING_EXPIRED') return 'Refund · booking expired';
+    if (reason === 'UNPAID_BOOKING') return 'Due · customer did not pay';
+    if (reason === 'DUE_PAID') return 'Due paid';
+    return reason;
+  }
+
   addressLine(address: CustomerAddress) {
     return [
       address.addressLine1,

@@ -55,6 +55,7 @@ export class BookingHistory {
   readonly statusOptions: SelectOption[] = [
     { value: 'completed', label: 'Completed' },
     { value: 'cancelled', label: 'Cancelled' },
+    { value: 'expired', label: 'Expired' },
   ];
 
   readonly columns: TableColumn<BookingListItem>[] = [

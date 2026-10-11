@@ -117,6 +117,10 @@
             <span class="detail-item__label">Total bookings</span>
             <span class="detail-item__value">{{ c.counts?.totalBookings ?? 0 }}</span>
           </div>
+          <div class="detail-item">
+            <span class="detail-item__label">Wallet balance</span>
+            <span class="detail-item__value">{{ c.wallet?.balance ?? 0 | inr }}</span>
+          </div>
         </div>
       }
     </section>
@@ -131,6 +135,27 @@
           </div>
         } @empty {
           <p class="muted">No bookings yet</p>
+        }
+      </div>
+    </section>
+
+    <section class="card-panel">
+      <h3 class="card-panel__title">Wallet</h3>
+      <div class="recent-list">
+        @for (tx of c.wallet?.recentTransactions ?? []; track tx.id) {
+          <div class="recent-row">
+            <div>
+              <strong>{{ walletReason(tx.reason) }}</strong>
+              <p class="muted">
+                {{ tx.bookingNumber | orDash }} · {{ tx.createdAt | date: 'dd MMM yyyy, h:mm a' }}
+              </p>
+            </div>
+            <div class="recent-row__meta">
+              <span>{{ tx.type === 'CREDIT' ? '+' : '−' }}{{ tx.amount | inr }}</span>
+            </div>
+          </div>
+        } @empty {
+          <p class="muted">No wallet activity</p>
         }
       </div>
     </section>

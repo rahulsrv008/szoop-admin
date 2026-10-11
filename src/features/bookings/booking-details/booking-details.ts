@@ -83,13 +83,13 @@ export class BookingDetails implements OnInit {
   canReassign() {
     const booking = this.booking();
     if (!booking) return false;
-    return !!booking.agent?.agentId && !['completed', 'cancelled'].includes(booking.status);
+    return !!booking.agent?.agentId && !['completed', 'cancelled', 'expired'].includes(booking.status);
   }
 
   canCancel() {
     const booking = this.booking();
     if (!booking) return false;
-    return !['completed', 'cancelled'].includes(booking.status);
+    return !['completed', 'cancelled', 'expired'].includes(booking.status);
   }
 
   openAssign(reassign: boolean) {

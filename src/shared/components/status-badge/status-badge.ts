@@ -14,6 +14,7 @@ const TONES: Record<string, Tone> = {
   ongoing: 'progress',
   completed: 'success',
   cancelled: 'danger',
+  expired: 'warning',
   // payments
   PENDING: 'warning',
   PAID: 'success',

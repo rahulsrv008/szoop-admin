@@ -30,6 +30,7 @@ export interface BookingReportRow {
   total: number;
   completed: number;
   cancelled: number;
+  expired: number;
   revenue: number;
 }
 

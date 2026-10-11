@@ -31,7 +31,7 @@
       icon="event_note"
       tone="blue"
       [value]="report.bookings.total"
-      [hint]="report.bookings.completed + ' completed · ' + report.bookings.cancelled + ' cancelled'"
+      [hint]="report.bookings.completed + ' completed · ' + report.bookings.cancelled + ' cancelled · ' + report.bookings.expired + ' expired'"
       link="/reports/bookings"
     />
     <app-stat-card
