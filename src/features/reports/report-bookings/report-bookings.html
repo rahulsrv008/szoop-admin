@@ -1,7 +1,7 @@
 <header class="page-head">
   <div>
     <h2 class="page-head__title">Bookings report</h2>
-    <p class="page-head__sub">Daily volume, completions, cancellations and revenue</p>
+    <p class="page-head__sub">Daily volume, completions, cancellations, expiries and revenue</p>
   </div>
   <div class="page-head__actions">
     <app-date-filter (rangeChange)="onRangeChange($event)" />
@@ -37,6 +37,10 @@
     <div class="card-panel total">
       <span class="total__label">Cancelled</span>
       <strong>{{ report.totals.cancelled }}</strong>
+    </div>
+    <div class="card-panel total">
+      <span class="total__label">Expired (no agent found)</span>
+      <strong>{{ report.totals.expired }}</strong>
     </div>
     <div class="card-panel total">
       <span class="total__label">Completed revenue</span>

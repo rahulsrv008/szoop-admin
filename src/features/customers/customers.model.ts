@@ -16,6 +16,17 @@ export interface CustomerRecentBooking {
   totalAmount: number;
 }
 
+/** One wallet ledger row: refunds for cancelled or expired bookings. */
+export interface CustomerWalletTransaction {
+  id: string;
+  type: 'CREDIT' | 'DEBIT';
+  reason: string;
+  amount: number;
+  bookingId: string | null;
+  bookingNumber: string | null;
+  createdAt: string;
+}
+
 /**
  * GET admin/customers/:id nests its booking counts under `counts.bookings`,
  * which is narrower than the shared CustomerDetail contract.
@@ -28,6 +39,7 @@ export interface CustomerDetailView
     totalSpent?: number;
   };
   recentBookings?: CustomerRecentBooking[];
+  wallet?: { balance: number; recentTransactions: CustomerWalletTransaction[] };
   updatedAt?: string;
 }
 

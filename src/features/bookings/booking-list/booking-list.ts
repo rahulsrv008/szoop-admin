@@ -106,7 +106,7 @@ export class BookingList {
       label: 'Reassign',
       icon: 'swap_horiz',
       hidden: (row) =>
-        !row.agentId || ['completed', 'cancelled'].includes(row.status),
+        !row.agentId || ['completed', 'cancelled', 'expired'].includes(row.status),
     },
   ];
 

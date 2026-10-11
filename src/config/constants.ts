@@ -14,6 +14,7 @@ export const BOOKING_STATUSES = [
   'ongoing',
   'completed',
   'cancelled',
+  'expired',
 ] as const;
 
 export const BOOKING_STATUS_LABELS: Record<string, string> = {
@@ -24,6 +25,7 @@ export const BOOKING_STATUS_LABELS: Record<string, string> = {
   ongoing: 'Service in progress',
   completed: 'Completed',
   cancelled: 'Cancelled',
+  expired: 'Expired — no agent found',
 };
 
 /** Statuses that belong on the "live bookings" board. */

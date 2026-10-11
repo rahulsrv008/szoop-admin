@@ -14,6 +14,7 @@ export interface BookingSeriesPoint {
   total: number;
   completed: number;
   cancelled: number;
+  expired: number;
   revenue: number;
 }
 
@@ -24,6 +25,7 @@ export interface BookingsReport {
     total: number;
     completed: number;
     cancelled: number;
+    expired: number;
     revenue: number;
   };
 }
@@ -102,6 +104,7 @@ export interface ReportsOverview {
     total: number;
     completed: number;
     cancelled: number;
+    expired: number;
     completedRevenue: number;
     days: number;
   };
