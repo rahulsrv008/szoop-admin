@@ -1,0 +1,113 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Missed jobs</h2>
+    <p class="page-head__sub">
+      Agents who accepted a job and didn't do it
+      @if (summary()?.range; as range) {
+        · {{ range.from }} → {{ range.to }}
+      }
+    </p>
+  </div>
+  <div class="page-head__actions">
+    <app-date-filter
+      label="Period"
+      initialPreset="last30"
+      (rangeChange)="onRangeChange($event)"
+    />
+  </div>
+</header>
+
+@if (summary(); as s) {
+  <section class="summary">
+    <div class="summary__card">
+      <span class="summary__label">Missed jobs</span>
+      <strong>{{ s.totals.missed }}</strong>
+    </div>
+    <div class="summary__card">
+      <span class="summary__label">Agents</span>
+      <strong>{{ s.totals.agents }}</strong>
+    </div>
+    <div class="summary__card" [class.summary__card--alert]="s.totals.notWarned > 0">
+      <span class="summary__label">Not warned yet</span>
+      <strong>{{ s.totals.notWarned }}</strong>
+    </div>
+  </section>
+}
+
+<details class="legend">
+  <summary>What each reason means</summary>
+  <dl>
+    @for (item of help; track item.reason) {
+      <dt>{{ reasonLabel(item.reason) }}</dt>
+      <dd>{{ item.text }}</dd>
+    }
+  </dl>
+</details>
+
+<section class="section">
+  <div class="section__head">
+    <h3>By agent</h3>
+    <mat-form-field class="section__search" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Search</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Name or mobile" />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <app-data-table
+    [columns]="agentColumns"
+    [rows]="agents()"
+    [actions]="agentActions"
+    [loading]="agentsLoading()"
+    [total]="agents().length"
+    [page]="1"
+    [limit]="agents().length || 20"
+    [clickableRows]="true"
+    emptyMessage="No missed jobs in this period"
+    (rowClick)="onAgentRowClick($event)"
+    (actionClick)="onAgentAction($event)"
+  />
+</section>
+
+<section class="section">
+  <div class="section__head">
+    <h3>
+      Missed bookings
+      @if (selectedAgent(); as agent) {
+        <span class="chip">
+          {{ agent.agentName }}
+          <button
+            mat-icon-button
+            class="chip__clear"
+            aria-label="Show all agents"
+            (click)="selectAgent(null)"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </span>
+      }
+    </h3>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>What happened</mat-label>
+      <mat-select [value]="reason()" (selectionChange)="onReasonChange($event.value)">
+        <mat-option value="">All reasons</mat-option>
+        @for (item of help; track item.reason) {
+          <mat-option [value]="item.reason">{{ reasonLabel(item.reason) }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <app-data-table
+    [columns]="jobColumns"
+    [rows]="jobs()"
+    [actions]="jobActions"
+    [loading]="jobsLoading()"
+    [total]="jobsTotal()"
+    [page]="page()"
+    [limit]="limit()"
+    emptyMessage="No missed bookings"
+    (pageChange)="onJobsPage($event)"
+    (actionClick)="onJobAction($event)"
+  />
+</section>

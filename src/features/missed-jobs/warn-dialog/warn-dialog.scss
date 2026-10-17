@@ -1,0 +1,21 @@
+.hint {
+  margin: 0 0 16px;
+  color: #546e7a;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.message {
+  width: 100%;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.send {
+  --mat-button-filled-container-color: #c62828;
+  --mat-button-filled-label-text-color: #fff;
+}

@@ -24,6 +24,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: 'Bookings', icon: 'event_note', path: '/bookings' },
       { label: 'Live bookings', icon: 'sensors', path: '/bookings/live' },
       { label: 'Attendance', icon: 'how_to_reg', path: '/attendance' },
+      { label: 'Missed jobs', icon: 'event_busy', path: '/missed-jobs' },
     ],
   },
   {
