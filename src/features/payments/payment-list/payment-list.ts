@@ -68,6 +68,7 @@ export class PaymentList {
   readonly columns: TableColumn<PaymentListItem>[] = [
     { key: 'bookingNumber', label: 'Booking' },
     { key: 'customerName', label: 'Customer', fallback: '—' },
+    { key: 'transactionId', label: 'Transaction ID', fallback: '—' },
     { key: 'amount', label: 'Amount', type: 'currency', align: 'right' },
     { key: 'paymentMethod', label: 'Method', fallback: '—' },
     { key: 'paymentStatus', label: 'Status', type: 'badge' },

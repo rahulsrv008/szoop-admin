@@ -12,6 +12,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULTS = {
   API_URL: 'https://clearit-be.vercel.app/api/v1',
   DEV_PROXY: 'true',
+  GOOGLE_MAPS_API_KEY: '',
 };
 
 function parseDotenv(file) {
@@ -35,7 +36,11 @@ export function loadEnv() {
   const pick = (key) => process.env[key] ?? fromFile[key] ?? DEFAULTS[key];
   const apiUrl = pick('API_URL').replace(/\/+$/, '');
   new URL(apiUrl); // fail fast on a typo rather than at the first request
-  return { apiUrl, devProxy: pick('DEV_PROXY') !== 'false' };
+  return {
+    apiUrl,
+    devProxy: pick('DEV_PROXY') !== 'false',
+    googleMapsApiKey: pick('GOOGLE_MAPS_API_KEY'),
+  };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

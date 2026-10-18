@@ -55,7 +55,12 @@
     icon="people"
     tone="blue"
     [value]="summary().customers?.total ?? 0"
-    [hint]="(summary().customers?.newInRange ?? 0) + ' new · ' + (summary().customers?.blocked ?? 0) + ' blocked'"
+    [hint]="
+      (summary().customers?.newInRange ?? 0) +
+      ' new · ' +
+      (summary().customers?.blocked ?? 0) +
+      ' blocked'
+    "
     link="/customers"
   />
   <app-stat-card
@@ -83,6 +88,8 @@
     link="/complaints"
   />
 </section>
+
+<app-live-map />
 
 <section class="panel team">
   <header class="panel__head">
@@ -144,9 +151,7 @@
         {{ (summary().ratings?.average ?? 0).toFixed(1) }}
         <mat-icon>star</mat-icon>
       </div>
-      <p class="rating__count">
-        from {{ summary().ratings?.count ?? 0 }} customer ratings
-      </p>
+      <p class="rating__count">from {{ summary().ratings?.count ?? 0 }} customer ratings</p>
       <a matButton="outlined" href="/ratings">Review ratings</a>
     </div>
   </div>

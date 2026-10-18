@@ -15,6 +15,7 @@ export interface PaymentListItem {
   amount: string | number;
   paymentMethod?: string | null;
   paymentStatus: string;
+  transactionId?: string | null;
   paidAt?: string | null;
   createdAt: string;
 }

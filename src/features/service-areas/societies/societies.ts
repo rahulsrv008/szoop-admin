@@ -147,9 +147,7 @@ export class Societies {
           : this.areas.createSociety(payload);
         request.subscribe({
           next: () => {
-            this.notifications.success(
-              society ? 'Society updated' : 'Society created',
-            );
+            this.notifications.success(society ? 'Society updated' : 'Society created');
             this.load();
           },
           error: () => this.loading.set(false),

@@ -3,7 +3,8 @@
     <mat-progress-bar mode="indeterminate" />
   }
 
-  <table mat-table [dataSource]="rows()" matSort (matSortChange)="onSort($event)">
+  <div class="table-scroll">
+    <table mat-table [dataSource]="rows()" matSort (matSortChange)="onSort($event)">
     @for (column of columns(); track column.key) {
       <ng-container [matColumnDef]="column.key">
         @if (column.sortable) {
@@ -63,6 +64,22 @@
                 }
               </span>
             }
+            @case ('image') {
+              @if (imageUrl(row, column); as url) {
+                <a
+                  class="table-photo-link"
+                  [href]="url"
+                  target="_blank"
+                  rel="noopener"
+                  [attr.aria-label]="'Open ' + column.label"
+                  (click)="$event.stopPropagation()"
+                >
+                  <img class="table-photo" [src]="url" [alt]="column.label" />
+                </a>
+              } @else {
+                <span class="muted">{{ column.fallback ?? 'No photo' }}</span>
+              }
+            }
             @default {
               {{ text(row, column) }}
             }
@@ -100,7 +117,8 @@
       [class.clickable]="clickableRows()"
       (click)="onRowClick(row)"
     ></tr>
-  </table>
+    </table>
+  </div>
 
   @if (!rows().length && !loading()) {
     <div class="empty">

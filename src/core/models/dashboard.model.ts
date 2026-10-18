@@ -26,6 +26,41 @@ export interface DashboardSummary {
   team?: DashboardTeamRow[];
 }
 
+export interface DashboardLiveMap {
+  zones: DashboardMapZone[];
+  customers: DashboardMapCustomer[];
+  agents: DashboardMapAgent[];
+  generatedAt: string;
+}
+
+export interface DashboardMapZone {
+  id: string;
+  name: string;
+  city: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  serviceRadiusKm: number;
+}
+
+export interface DashboardMapCustomer {
+  id: string;
+  bookingId: string;
+  zoneId: string | null;
+  name: string;
+  status: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface DashboardMapAgent {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  zoneIds: string[];
+  recordedAt: string;
+}
+
 export interface DashboardTeamRow {
   id: string;
   name: string;

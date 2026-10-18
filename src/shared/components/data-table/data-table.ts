@@ -101,6 +101,11 @@ export class DataTable {
     return !!this.cell(row, column);
   }
 
+  imageUrl(row: unknown, column: TableColumn): string | null {
+    const value = this.cell(row, column);
+    return typeof value === 'string' && value ? value : null;
+  }
+
   visibleActions(row: unknown) {
     return this.actions().filter((action) => !action.hidden?.(row));
   }

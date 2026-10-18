@@ -38,6 +38,7 @@ export interface AgentListItem {
   mobile: string;
   status: string;
   approvalStatus: string;
+  profileImage?: string | null;
   documentsVerified?: number;
   averageRating?: number;
   completedBookings?: number;

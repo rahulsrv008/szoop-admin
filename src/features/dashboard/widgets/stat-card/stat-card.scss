@@ -85,3 +85,37 @@ a.stat:hover {
   border-color: #c5d4ea;
   box-shadow: 0 2px 10px rgba(16, 35, 63, 0.06);
 }
+
+@media (max-width: 720px) {
+  .stat {
+    gap: 10px;
+    padding: 12px;
+
+    &__icon {
+      width: 36px;
+      height: 36px;
+
+      mat-icon {
+        font-size: 20px;
+      }
+    }
+
+    &__label {
+      font-size: 10px;
+      line-height: 1.25;
+    }
+
+    &__value {
+      font-size: 19px;
+    }
+
+    &__hint {
+      font-size: 11px;
+      line-height: 1.25;
+    }
+
+    &__chevron {
+      display: none;
+    }
+  }
+}

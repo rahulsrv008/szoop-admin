@@ -62,3 +62,25 @@
     display: none;
   }
 }
+
+@media (max-width: 520px) {
+  .header {
+    padding-right: 4px;
+
+    &__title {
+      max-width: 42vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 16px;
+    }
+
+    &__profile {
+      padding: 0 4px;
+
+      mat-icon {
+        display: none;
+      }
+    }
+  }
+}

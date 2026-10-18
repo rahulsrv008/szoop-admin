@@ -20,6 +20,10 @@
 }
 
 @media (max-width: 720px) {
+  .shell__nav {
+    width: min(84vw, 280px);
+  }
+
   .shell__main {
     padding: 16px 12px 24px;
   }

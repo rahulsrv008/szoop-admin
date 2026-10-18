@@ -7,6 +7,7 @@ import { InrPipe } from '@shared/pipes/inr.pipe';
 import { DateFilter } from '@shared/components/date-filter/date-filter';
 import { DateRange } from '@shared/models/filter.model';
 import { DashboardService } from './dashboard.service';
+import { LiveMap } from './live-map/live-map';
 import { StatCard } from './widgets/stat-card/stat-card';
 import { StatusBreakdown } from './widgets/status-breakdown/status-breakdown';
 
@@ -18,6 +19,7 @@ import { StatusBreakdown } from './widgets/status-breakdown/status-breakdown';
     MatProgressBarModule,
     InrPipe,
     DateFilter,
+    LiveMap,
     StatCard,
     StatusBreakdown,
   ],

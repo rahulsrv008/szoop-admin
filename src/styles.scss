@@ -155,3 +155,47 @@ body {
   --mdc-snackbar-container-color: #10233f;
   --mdc-snackbar-supporting-text-color: #fff;
 }
+
+@media (max-width: 720px) {
+  .page-head {
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 14px;
+
+    &__title {
+      font-size: 18px;
+    }
+
+    &__actions {
+      width: 100%;
+      gap: 8px;
+
+      > * {
+        flex: 1 1 auto;
+      }
+    }
+  }
+
+  .filters {
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px;
+
+    mat-form-field,
+    .filters__search {
+      min-width: 100%;
+      width: 100%;
+      flex: 1 1 100%;
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .card-panel,
+  .panel {
+    border-radius: 10px;
+    padding: 14px;
+  }
+}
