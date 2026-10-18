@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Send warning to {{ data.agentName }}</h2>
+
+<mat-dialog-content>
+  @if (loading()) {
+    <div class="loading"><mat-spinner diameter="28" /></div>
+  } @else {
+    <p class="hint">
+      They get a push notification and see it in the agent app's notifications.
+      @if (notWarned() > 0) {
+        It covers the {{ notWarned() }} missed
+        {{ notWarned() === 1 ? 'job' : 'jobs' }} they haven't been warned about yet.
+      } @else {
+        They've already been warned about every missed job.
+      }
+    </p>
+
+    <mat-form-field appearance="outline" class="message">
+      <mat-label>Message</mat-label>
+      <textarea
+        matInput
+        rows="6"
+        maxlength="1000"
+        [(ngModel)]="message"
+        cdkFocusInitial
+      ></textarea>
+      <mat-hint align="end">{{ message.length }} / 1000</mat-hint>
+    </mat-form-field>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton (click)="cancel()" [disabled]="sending()">Cancel</button>
+  <button matButton="filled" class="send" (click)="send()" [disabled]="!canSend">
+    {{ sending() ? 'Sending…' : 'Send warning' }}
+  </button>
+</mat-dialog-actions>

@@ -36,6 +36,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'missed-jobs',
+        loadChildren: () =>
+          import('@features/missed-jobs/missed-jobs.routes').then(
+            (m) => m.MISSED_JOBS_ROUTES,
+          ),
+      },
+      {
         path: 'bookings',
         loadChildren: () =>
           import('@features/bookings/bookings.routes').then(
