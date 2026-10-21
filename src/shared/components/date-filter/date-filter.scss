@@ -1,18 +1,41 @@
+:host {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+}
+
 .date-filter {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 12px;
   flex-wrap: wrap;
+  width: 100%;
+  min-width: 0;
 }
 
-.preset {
-  min-width: 180px;
-}
-
+.preset,
 .date {
-  min-width: 160px;
+  min-width: 0;
+  flex: 1 1 160px;
 }
 
-mat-form-field {
-  margin-bottom: -18px;
+.mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .date-filter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .preset,
+  .date {
+    width: 100%;
+    flex: none;
+  }
+
+  button {
+    width: 100%;
+  }
 }

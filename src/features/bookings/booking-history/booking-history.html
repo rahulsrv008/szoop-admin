@@ -12,7 +12,7 @@
 </header>
 
 <section class="filters">
-  <mat-form-field class="filters__search" appearance="outline">
+  <mat-form-field class="filters__search" appearance="outline" subscriptSizing="dynamic">
     <mat-label>Search</mat-label>
     <input
       matInput
@@ -22,7 +22,7 @@
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 
-  <mat-form-field appearance="outline">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
     <mat-label>Status</mat-label>
     <mat-select
       [value]="status()"

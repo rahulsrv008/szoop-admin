@@ -40,7 +40,7 @@
     tone="green"
     [value]="summary().revenue?.inRange ?? 0 | inr"
     [hint]="'Today ' + (summary().revenue?.today ?? 0 | inr)"
-    link="/payments"
+    [link]="isSuperAdmin() ? '/payments' : null"
   />
   <app-stat-card
     label="Pending collection"
@@ -48,7 +48,7 @@
     tone="amber"
     [value]="summary().revenue?.pendingCollection ?? 0 | inr"
     hint="Unpaid bookings"
-    link="/payments"
+    [link]="isSuperAdmin() ? '/payments' : null"
   />
   <app-stat-card
     label="Customers"

@@ -22,11 +22,16 @@ export class Sidebar {
   /** Hides sections the current role cannot open. */
   readonly sections = computed<NavSection[]>(() => {
     const role = this.session.role();
-    return NAV_SECTIONS.map((section) => ({
-      ...section,
-      items: section.items.filter(
-        (item) => !item.roles?.length || (role && item.roles.includes(role)),
-      ),
-    })).filter((section) => section.items.length);
+    return NAV_SECTIONS.filter(
+      (section) =>
+        !section.roles?.length || (role && section.roles.includes(role)),
+    )
+      .map((section) => ({
+        ...section,
+        items: section.items.filter(
+          (item) => !item.roles?.length || (role && item.roles.includes(role)),
+        ),
+      }))
+      .filter((section) => section.items.length);
   });
 }

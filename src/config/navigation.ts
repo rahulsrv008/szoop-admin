@@ -12,6 +12,8 @@ export interface NavItem {
 export interface NavSection {
   title: string;
   items: NavItem[];
+  /** Empty means every signed-in admin can see the section. */
+  roles?: string[];
 }
 
 /** Drives the sidebar. Keep the order product-first, not alphabetical. */
@@ -45,6 +47,7 @@ export const NAV_SECTIONS: NavSection[] = [
   },
   {
     title: 'Catalog',
+    roles: ['SUPER_ADMIN'],
     items: [
       { label: 'Customer app', icon: 'phone_iphone', path: '/home-content' },
       { label: 'Services', icon: 'home_repair_service', path: '/services' },
@@ -54,6 +57,7 @@ export const NAV_SECTIONS: NavSection[] = [
   },
   {
     title: 'Money',
+    roles: ['SUPER_ADMIN'],
     items: [
       { label: 'Payments', icon: 'payments', path: '/payments' },
       { label: 'Earnings', icon: 'savings', path: '/earnings' },
