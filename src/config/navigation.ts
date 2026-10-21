@@ -5,6 +5,8 @@ export interface NavItem {
   /** Empty means every signed-in admin can see it. */
   roles?: string[];
   exact?: boolean;
+  /** Shows the booking monitor's live alert count next to the item. */
+  monitorBadge?: boolean;
 }
 
 export interface NavSection {
@@ -22,6 +24,12 @@ export const NAV_SECTIONS: NavSection[] = [
     title: 'Operations',
     items: [
       { label: 'Bookings', icon: 'event_note', path: '/bookings' },
+      {
+        label: 'Booking monitor',
+        icon: 'monitor_heart',
+        path: '/bookings/monitor',
+        monitorBadge: true,
+      },
       { label: 'Live bookings', icon: 'sensors', path: '/bookings/live' },
       { label: 'Attendance', icon: 'how_to_reg', path: '/attendance' },
       { label: 'Missed jobs', icon: 'event_busy', path: '/missed-jobs' },

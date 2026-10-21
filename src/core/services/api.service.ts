@@ -1,7 +1,8 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ENVIRONMENT } from '@config/environment';
+import { SILENT_ERRORS } from '@core/interceptors/error.interceptor';
 
 type ParamValue = string | number | boolean | undefined | null;
 
@@ -13,8 +14,16 @@ type ParamValue = string | number | boolean | undefined | null;
 export class ApiService {
   private readonly http = inject(HttpClient);
 
-  get<T>(path: string, params?: Record<string, ParamValue | ParamValue[]>): Observable<T> {
-    return this.http.get<T>(this.url(path), { params: this.toParams(params) });
+  /** `silent`: no error toast (background polling). */
+  get<T>(
+    path: string,
+    params?: Record<string, ParamValue | ParamValue[]>,
+    options: { silent?: boolean } = {},
+  ): Observable<T> {
+    return this.http.get<T>(this.url(path), {
+      params: this.toParams(params),
+      context: new HttpContext().set(SILENT_ERRORS, !!options.silent),
+    });
   }
 
   post<T>(path: string, body?: unknown): Observable<T> {

@@ -16,6 +16,13 @@ export const BOOKINGS_ROUTES: Routes = [
       import('./booking-live/booking-live').then((m) => m.BookingLive),
   },
   {
+    path: 'monitor',
+    title: 'Booking monitor · ClearIt Admin',
+    data: { title: 'Booking monitor' },
+    loadComponent: () =>
+      import('./booking-monitor/booking-monitor').then((m) => m.BookingMonitor),
+  },
+  {
     path: 'history',
     title: 'Booking history · ClearIt Admin',
     data: { title: 'Booking history' },

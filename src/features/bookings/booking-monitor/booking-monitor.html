@@ -1,0 +1,358 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Booking monitor</h2>
+    <p class="page-head__sub">
+      Every live job, timed against its next step
+      @if (updatedAgo(); as ago) {
+        · updated {{ ago }}
+      }
+      @if (failed()) {
+        <span class="stale">· can't reach the API, showing the last update</span>
+      }
+    </p>
+  </div>
+  <div class="page-head__actions">
+    <button
+      matButton="outlined"
+      (click)="toggleSound()"
+      [matTooltip]="soundOn() ? 'Beeps when a job or agent turns red' : 'No beep when something turns red'"
+    >
+      <mat-icon>{{ soundOn() ? 'volume_up' : 'volume_off' }}</mat-icon>
+      {{ soundOn() ? 'Sound on' : 'Sound off' }}
+    </button>
+    @if (isSuperAdmin()) {
+      <button matButton="outlined" (click)="editRules()" [disabled]="!rules()">
+        <mat-icon>tune</mat-icon>
+        Timings
+      </button>
+    }
+    <button matButton="filled" (click)="refresh()" [disabled]="loading()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+</header>
+
+@if (loading() && !board()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+@if (banner(); as text) {
+  <div class="banner" role="alert">
+    <mat-icon>warning</mat-icon>
+    <span>{{ text }}</span>
+  </div>
+}
+
+<section class="summary">
+  <button
+    type="button"
+    class="summary__card summary__card--red"
+    [class.is-active]="severityFilter() === 'red'"
+    (click)="toggleSeverity('red')"
+  >
+    <span class="summary__label">Critical</span>
+    <strong>{{ counts().red }}</strong>
+    <span class="summary__hint">red · act now</span>
+  </button>
+  <button
+    type="button"
+    class="summary__card summary__card--orange"
+    [class.is-active]="severityFilter() === 'orange'"
+    (click)="toggleSeverity('orange')"
+  >
+    <span class="summary__label">Running late</span>
+    <strong>{{ counts().orange }}</strong>
+    <span class="summary__hint">orange · keep an eye</span>
+  </button>
+  <button
+    type="button"
+    class="summary__card summary__card--ok"
+    [class.is-active]="severityFilter() === 'ok'"
+    (click)="toggleSeverity('ok')"
+  >
+    <span class="summary__label">On track</span>
+    <strong>{{ counts().ok }}</strong>
+    <span class="summary__hint">green</span>
+  </button>
+  <div
+    class="summary__card summary__card--agents"
+    [class.summary__card--warn]="counts().agentRed + counts().agentOrange > 0"
+  >
+    <span class="summary__label">Agents online</span>
+    <strong>{{ counts().online }} <small>/ {{ counts().agents }}</small></strong>
+    <span class="summary__hint">
+      {{ counts().busy }} on a job
+      @if (counts().agentRed + counts().agentOrange; as offline) {
+        · {{ offline }} offline with work today
+      }
+    </span>
+  </div>
+</section>
+
+<div class="toolbar">
+  <nav class="steps" aria-label="Filter by step">
+    <button type="button" class="chip" [class.is-active]="!stepFilter()" (click)="stepFilter.set(null)">
+      All
+      <span class="chip__count">{{ counts().red + counts().orange + counts().ok }}</span>
+    </button>
+    @for (step of steps; track step) {
+      @let count = stepCounts().get(step);
+      <button
+        type="button"
+        class="chip"
+        [class.is-active]="stepFilter() === step"
+        (click)="stepFilter.set(stepFilter() === step ? null : step)"
+      >
+        <mat-icon>{{ meta[step].icon }}</mat-icon>
+        {{ meta[step].label }}
+        <span class="chip__count" [class.chip__count--alert]="!!count?.alerts">{{ count?.total ?? 0 }}</span>
+      </button>
+    }
+  </nav>
+  <label class="search">
+    <mat-icon>search</mat-icon>
+    <input
+      type="search"
+      placeholder="Booking, customer, agent or area"
+      [value]="search()"
+      (input)="search.set($any($event.target).value)"
+    />
+  </label>
+</div>
+
+<div class="layout">
+  <section class="jobs" aria-label="Live jobs">
+    @for (job of visibleJobs(); track job.id) {
+      <article
+        class="job"
+        [class.job--red]="job.live.severity === 'red'"
+        [class.job--orange]="job.live.severity === 'orange'"
+        [class.job--ok]="job.live.severity === 'ok'"
+        [class.job--upcoming]="!job.live.running"
+      >
+        <div class="job__head">
+          <div class="job__title">
+            <span class="dot" [class]="'dot dot--' + job.live.severity"></span>
+            <a class="job__number" [routerLink]="['/bookings', job.id]">{{ job.bookingNumber }}</a>
+            <span class="tag" [class.tag--instant]="job.mode === 'INSTANT'">{{ kind(job) }}</span>
+            <span class="job__service">{{ job.service }}</span>
+          </div>
+          <div class="job__clock">
+            <span class="job__clock-label">{{ clockLabel(job) }}</span>
+            <strong class="job__timer">{{ duration(job.live.ms) }}</strong>
+          </div>
+        </div>
+
+        <div class="job__step">
+          <mat-icon>{{ meta[job.step].icon }}</mat-icon>
+          <strong>{{ meta[job.step].label }}</strong>
+          @if (job.note) {
+            <span class="muted">· {{ job.note }}</span>
+          }
+          <span class="muted">· slot {{ job.slot | date: 'EEE d MMM, h:mm a' }}</span>
+          @if (thresholdText(job); as threshold) {
+            <span
+              class="job__threshold"
+              [class.job__threshold--red]="job.live.severity === 'red'"
+              [class.job__threshold--orange]="job.live.severity === 'orange'"
+            >
+              · {{ threshold.label }} {{ threshold.at | date: 'h:mm a' }}
+            </span>
+          }
+        </div>
+
+        @if (job.live.running) {
+          <div class="bar" aria-hidden="true">
+            <div class="bar__fill" [style.width.%]="progress(job)"></div>
+            <div class="bar__mark" [style.left.%]="orangeMark(job)"></div>
+          </div>
+        }
+
+        <div class="job__people">
+          <div class="person">
+            <mat-icon>person</mat-icon>
+            <span>{{ job.customer.name }}</span>
+            @if (job.customer.mobile; as mobile) {
+              <a class="tel" [href]="'tel:' + mobile">{{ mobile }}</a>
+            }
+            @if (job.area) {
+              <span class="muted">· {{ job.area.name }}</span>
+            }
+          </div>
+          @if (job.agent; as agent) {
+            <div class="person">
+              <span
+                class="presence"
+                [class]="'presence presence--' + agent.presence"
+                [matTooltip]="presenceText(agent.presence)"
+              ></span>
+              <a [routerLink]="['/agents', agent.id]">{{ agent.name }}</a>
+              @if (agent.mobile; as mobile) {
+                <a class="tel" [href]="'tel:' + mobile">{{ mobile }}</a>
+              }
+              <span class="muted">· {{ lastSeen(agent.lastSeenAt) }}</span>
+            </div>
+          } @else {
+            <div class="person muted">
+              <mat-icon>person_off</mat-icon>
+              No agent yet
+            </div>
+          }
+        </div>
+
+        @if (job.flags.length) {
+          <div class="flags">
+            @for (flag of job.flags; track flag.code + flag.label) {
+              <span class="flag" [class]="'flag flag--' + flag.tone">{{ flag.label }}</span>
+            }
+          </div>
+        }
+
+        <div class="job__foot">
+          @if (job.nextAction; as next) {
+            <span class="next" matTooltip="What the system does on its own if nothing changes">
+              <mat-icon>smart_toy</mat-icon>
+              {{ next.label }} at {{ next.at | date: 'h:mm a' }} ({{ relative(next.at) }})
+            </span>
+          }
+          <span class="spacer"></span>
+          @if (canAssign(job)) {
+            <button matButton="filled" (click)="assign(job, false)">
+              <mat-icon>person_add</mat-icon>
+              Assign agent
+            </button>
+          }
+          @if (job.agent) {
+            <button matButton="outlined" (click)="nudgeForJob(job)">
+              <mat-icon>notifications_active</mat-icon>
+              Nudge agent
+            </button>
+          }
+          @if (canReassign(job)) {
+            <button matButton (click)="assign(job, true)">
+              <mat-icon>swap_horiz</mat-icon>
+              Reassign
+            </button>
+          }
+          <a matButton [routerLink]="['/bookings', job.id]">Open</a>
+        </div>
+      </article>
+    } @empty {
+      <div class="empty">
+        <mat-icon>{{ board() ? 'task_alt' : 'hourglass_empty' }}</mat-icon>
+        @if (!board()) {
+          <p>Loading live jobs…</p>
+        } @else if (search() || stepFilter() || severityFilter()) {
+          <p>No live jobs match these filters.</p>
+        } @else {
+          <p>No live jobs right now. Paid, assigned and in-progress jobs show up here.</p>
+        }
+      </div>
+    }
+  </section>
+
+  <aside class="agents" aria-label="Agents">
+    <div class="agents__head">
+      <h3>Agents</h3>
+      <div class="segmented">
+        <button type="button" [class.is-active]="agentFilter() === 'active'" (click)="agentFilter.set('active')">
+          Online or with work
+        </button>
+        <button type="button" [class.is-active]="agentFilter() === 'all'" (click)="agentFilter.set('all')">
+          All
+        </button>
+      </div>
+    </div>
+
+    @for (agent of visibleAgents(); track agent.id) {
+      <div
+        class="agent"
+        [class.agent--red]="agent.live.severity === 'red'"
+        [class.agent--orange]="agent.live.severity === 'orange'"
+        [class.agent--idle]="agent.live.severity === 'idle'"
+      >
+        <span class="presence" [class]="'presence presence--' + agent.presence" [matTooltip]="presenceText(agent.presence)"></span>
+        <div class="agent__body">
+          <div class="agent__name">
+            <a [routerLink]="['/agents', agent.id]">{{ agent.name }}</a>
+            @if (agent.zone) {
+              <span class="muted">· {{ agent.zone }}</span>
+            }
+          </div>
+          <div class="agent__line">{{ agentLine(agent) }}</div>
+          @if (agent.alert) {
+            <div class="agent__alert">{{ agent.alert.reason }}</div>
+          }
+          <div class="agent__meta muted">
+            {{ presenceText(agent.presence) }} · {{ lastSeen(agent.lastSeenAt) }}
+            @if (agent.jobsToday) {
+              · {{ agent.jobsToday }} {{ agent.jobsToday === 1 ? 'job' : 'jobs' }} today
+            }
+          </div>
+        </div>
+        @if (agent.alert) {
+          <button
+            matIconButton
+            matTooltip="Nudge to go online"
+            [attr.aria-label]="'Nudge ' + agent.name + ' to go online'"
+            (click)="nudgeAgent(agent)"
+          >
+            <mat-icon>notifications_active</mat-icon>
+          </button>
+        }
+      </div>
+    } @empty {
+      <p class="muted agents__empty">
+        {{ agentFilter() === 'active' ? 'No agents online right now.' : 'No approved agents in your zones.' }}
+      </p>
+    }
+  </aside>
+</div>
+
+@if (rules(); as r) {
+  <details class="legend">
+    <summary>How the colours work</summary>
+    <dl>
+      <dt>Tracking</dt>
+      <dd>
+        Starts when the job is broadcast to agents: right after payment for "Right now" jobs and plans,
+        and {{ board()?.dispatchLeadMinutes }} min before the start for scheduled jobs (on the next dispatch
+        run). A job isn't shown before that. Zone admins only see jobs and agents in their zones.
+      </dd>
+      <dt>Waiting for an agent</dt>
+      <dd>
+        Timer starts at the broadcast (and again whenever an agent gives the job back). Orange after
+        {{ r.waitingOrangeMinutes }} min, red after {{ r.waitingRedMinutes }} min. Orange straight away when
+        no agent is online in its zone or dispatch found nobody free; red if it was due to go out and
+        didn't, or its start time has passed.
+      </dd>
+      <dt>Agent hasn't set off</dt>
+      <dd>
+        Timer starts when the agent picks the job. Orange after {{ r.setOffOrangeMinutes }} min, red after
+        {{ r.setOffRedMinutes }} min. Orange straight away if the agent isn't online. Plan visits aren't
+        broadcast one by one, so their timer starts {{ r.setOffLeadMinutes }} min before each visit.
+      </dd>
+      <dt>Agent on the way</dt>
+      <dd>
+        Timer starts at the start time ("Right now": {{ r.instantArrivalMinutes }} min after setting off).
+        Orange after {{ r.arrivalOrangeMinutes }} min, red after {{ r.arrivalRedMinutes }} min.
+      </dd>
+      <dt>Work in progress</dt>
+      <dd>
+        Timer starts when the booked time ends. Orange after {{ r.overrunOrangeMinutes }} min, red after
+        {{ r.overrunRedMinutes }} min.
+      </dd>
+      <dt>Agents</dt>
+      <dd>
+        Orange when they have a job today and aren't online in the agent app; red once they should be
+        heading to it.
+      </dd>
+      <dt><mat-icon class="legend__icon">smart_toy</mat-icon> Next</dt>
+      <dd>
+        What the system does on its own if nothing changes: expire a "Right now" job, hand a job to
+        another agent, or cancel and refund.
+      </dd>
+    </dl>
+  </details>
+}

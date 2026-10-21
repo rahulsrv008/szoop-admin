@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ActivatedRouteSnapshot,
@@ -13,6 +13,7 @@ import { Header } from '@shared/components/header/header';
 import { Sidebar } from '@shared/components/sidebar/sidebar';
 import { Footer } from '@shared/components/footer/footer';
 import { AuthService } from '@core/services/auth.service';
+import { BookingMonitorService } from '@core/services/booking-monitor.service';
 
 /** Shell for every authenticated screen: sidebar + header + content + footer. */
 @Component({
@@ -33,6 +34,11 @@ export class AdminLayout {
 
   constructor() {
     this.auth.loadProfile().subscribe();
+
+    // The header pill and sidebar badge watch live bookings on every screen.
+    const monitor = inject(BookingMonitorService);
+    monitor.start();
+    inject(DestroyRef).onDestroy(() => monitor.stop());
 
     effect(() => {
       if (this.isMobile()) this.sidebarOpen.set(false);

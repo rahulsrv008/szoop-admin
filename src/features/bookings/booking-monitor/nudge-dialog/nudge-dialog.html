@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>Nudge {{ data.agentName }}</h2>
+
+<mat-dialog-content>
+  <p class="hint">They get a push notification and see it in the agent app.</p>
+
+  <mat-form-field class="field">
+    <mat-label>Title</mat-label>
+    <input matInput maxlength="200" [(ngModel)]="title" />
+  </mat-form-field>
+
+  <mat-form-field class="field">
+    <mat-label>Message</mat-label>
+    <textarea matInput rows="4" maxlength="2000" [(ngModel)]="message" cdkFocusInitial></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton mat-dialog-close [disabled]="sending()">Cancel</button>
+  <button matButton="filled" (click)="send()" [disabled]="!canSend">
+    {{ sending() ? 'Sending…' : 'Send nudge' }}
+  </button>
+</mat-dialog-actions>
