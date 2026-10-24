@@ -1,0 +1,405 @@
+.loader {
+  margin-bottom: 12px;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.rule-editor {
+  margin-bottom: 20px;
+  border-left: 4px solid #3b82f6;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+}
+
+.presets-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  margin-bottom: 18px;
+
+  .presets-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #334155;
+    margin-right: 4px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #6366f1;
+    }
+  }
+
+  button {
+    font-size: 12px;
+  }
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.form-span-2 {
+  grid-column: span 2;
+}
+
+.section-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+
+  .section-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .section-hint {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+.services-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+
+  button {
+    border-radius: 20px;
+
+    &.selected-pill {
+      font-weight: 600;
+    }
+  }
+}
+
+.conditions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.match-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .match-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+  }
+
+  .match-radio-group {
+    display: flex;
+    gap: 12px;
+  }
+}
+
+.conditions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.condition-row {
+  display: grid;
+  grid-template-columns: 36px 1.8fr 1.3fr 1.2fr 1fr 1.2fr 44px;
+  gap: 8px;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+
+  .condition-index {
+    font-weight: 700;
+    font-size: 13px;
+    color: #64748b;
+    text-align: center;
+  }
+
+  mat-form-field {
+    margin-bottom: -1.25em; // Angular Material outline subscript margin collapse
+  }
+
+  .remove-cond-btn {
+    align-self: center;
+  }
+}
+
+.add-cond-btn {
+  align-self: flex-start;
+  margin-top: 6px;
+}
+
+.active-toggle-row {
+  padding-top: 8px;
+}
+
+.panel-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  .search-box {
+    flex: 1;
+    max-width: 400px;
+
+    .search-field {
+      width: 100%;
+      margin-bottom: -1.25em;
+    }
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.rules-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    background-color: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+
+  tr:hover td {
+    background-color: #fafbfc;
+  }
+
+  .actions-col {
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
+.status-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+
+  &-active {
+    background-color: #dcfce7;
+    color: #15803d;
+  }
+
+  &-inactive {
+    background-color: #f1f5f9;
+    color: #64748b;
+  }
+}
+
+.rule-title-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .rule-name {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 14px;
+  }
+
+  .rule-desc {
+    font-size: 12px;
+    color: #64748b;
+  }
+}
+
+.services-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  .service-pill {
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    background-color: #ede9fe;
+    color: #6d28d9;
+
+    &[data-svc='CLEANING'] {
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+
+    &[data-svc='COOKING'] {
+      background-color: #fef3c7;
+      color: #b45309;
+    }
+
+    &[data-svc='SALON'] {
+      background-color: #fce7f3;
+      color: #be185d;
+    }
+  }
+}
+
+.match-pill {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+
+  &.match-and {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  &.match-or {
+    background-color: #ffedd5;
+    color: #c2410c;
+  }
+}
+
+.conditions-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 380px;
+
+  .cond-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #334155;
+
+    .cond-dot {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      color: #10b981;
+    }
+  }
+}
+
+.linked-count {
+  font-size: 12px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 16px;
+
+  .empty-icon {
+    font-size: 44px;
+    width: 44px;
+    height: 44px;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+  }
+
+  .empty-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #334155;
+    margin: 0 0 4px;
+  }
+
+  .empty-sub {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0 0 16px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .condition-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    .condition-index {
+      grid-column: span 2;
+      text-align: left;
+    }
+
+    .remove-cond-btn {
+      grid-column: span 2;
+      justify-self: end;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-span-2 {
+    grid-column: span 1;
+  }
+
+  .conditions-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

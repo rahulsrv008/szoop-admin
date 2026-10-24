@@ -22,7 +22,10 @@ import {
   percentValidator,
   positiveNumberValidator,
 } from '@shared/validators/form.validators';
+import { CustomersService } from '../../customers/customers.service';
 import { CouponsService } from '../coupons.service';
+import { CouponSettingsService } from '../../settings/coupon-settings/coupon-settings.service';
+import { CouponEligibilityRule } from '../../settings/coupon-settings/coupon-settings.model';
 
 function toDateInput(value?: string | null): Date | null {
   if (!value) return null;
@@ -57,6 +60,8 @@ function toIso(value: Date | string | null | undefined): string | null {
 export class CouponForm {
   private readonly formBuilder = inject(FormBuilder);
   private readonly coupons = inject(CouponsService);
+  private readonly customers = inject(CustomersService);
+  private readonly couponRules = inject(CouponSettingsService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationService);
@@ -64,15 +69,22 @@ export class CouponForm {
   readonly loading = signal(false);
   readonly submitting = signal(false);
   readonly notFound = signal(false);
+  readonly customersList = signal<{ id: string; label: string }[]>([]);
+  readonly rulesList = signal<CouponEligibilityRule[]>([]);
 
   readonly couponId = computed(() => this.route.snapshot.paramMap.get('id'));
   readonly isEdit = computed(() => !!this.couponId());
 
   readonly typeOptions: SelectOption[] = toOptions(DISCOUNT_TYPES);
+  readonly targetOptions = [
+    { value: 'ALL', label: 'All Customers (Public)' },
+    { value: 'SPECIFIC', label: 'Specific Customer(s)' },
+  ];
 
   readonly form = this.formBuilder.group(
     {
       code: ['', [Validators.required, Validators.minLength(3)]],
+      description: [''],
       discountType: [
         'PERCENT' as 'PERCENT' | 'FLAT',
         Validators.required,
@@ -84,6 +96,10 @@ export class CouponForm {
       maxDiscount: [null as number | null, [positiveNumberValidator()]],
       minOrderAmount: [null as number | null, [positiveNumberValidator()]],
       usageLimit: [null as number | null, [positiveNumberValidator()]],
+      perCustomerLimit: [1 as number | null, [positiveNumberValidator()]],
+      targetType: ['ALL' as 'ALL' | 'SPECIFIC', Validators.required],
+      customerIds: [[] as string[]],
+      eligibilityRuleId: [null as string | null],
       validFrom: [null as Date | null],
       validUntil: [null as Date | null],
       isActive: [true],
@@ -114,6 +130,24 @@ export class CouponForm {
       valueCtrl.updateValueAndValidity({ emitEvent: false });
     });
 
+    this.customers.list({ limit: 100 }).subscribe({
+      next: (res) => {
+        const items = (res.items ?? []).map((c) => ({
+          id: c.customerId,
+          label: `${c.name || 'Customer'} (${c.mobile})`,
+        }));
+        this.customersList.set(items);
+      },
+      error: () => {},
+    });
+
+    this.couponRules.list({ isActive: true, limit: 100 }).subscribe({
+      next: (res) => {
+        this.rulesList.set(res.items ?? []);
+      },
+      error: () => {},
+    });
+
     if (this.isEdit()) {
       this.loadCoupon(this.couponId()!);
     } else {
@@ -136,8 +170,12 @@ export class CouponForm {
     }
 
     const raw = this.form.getRawValue();
+    const isSpecific = raw.targetType === 'SPECIFIC';
+    const selectedCustomers = isSpecific ? (raw.customerIds ?? []) : [];
+
     const payload = {
       code: String(raw.code ?? '').trim().toUpperCase(),
+      description: raw.description ? String(raw.description).trim() : null,
       discountType: raw.discountType as 'PERCENT' | 'FLAT',
       discountValue: Number(raw.discountValue),
       maxDiscount:
@@ -147,6 +185,11 @@ export class CouponForm {
       minOrderAmount:
         raw.minOrderAmount == null ? null : Number(raw.minOrderAmount),
       usageLimit: raw.usageLimit == null ? null : Number(raw.usageLimit),
+      perCustomerLimit:
+        raw.perCustomerLimit == null ? 1 : Number(raw.perCustomerLimit),
+      customerId: selectedCustomers[0] ?? null,
+      customerIds: selectedCustomers,
+      eligibilityRuleId: raw.eligibilityRuleId || null,
       validFrom: toIso(raw.validFrom),
       validUntil: toIso(raw.validUntil),
       isActive: !!raw.isActive,
@@ -178,8 +221,16 @@ export class CouponForm {
           this.notFound.set(true);
           return;
         }
+
+        const ids = coupon.assignedCustomerIds?.length
+          ? coupon.assignedCustomerIds
+          : coupon.customerId
+            ? [coupon.customerId]
+            : [];
+
         this.form.patchValue({
           code: coupon.code,
+          description: coupon.description ?? '',
           discountType: coupon.discountType as 'PERCENT' | 'FLAT',
           discountValue: Number(coupon.discountValue),
           maxDiscount:
@@ -189,6 +240,10 @@ export class CouponForm {
               ? null
               : Number(coupon.minOrderAmount),
           usageLimit: coupon.usageLimit ?? null,
+          perCustomerLimit: coupon.perCustomerLimit ?? 1,
+          targetType: ids.length > 0 ? 'SPECIFIC' : 'ALL',
+          customerIds: ids,
+          eligibilityRuleId: coupon.eligibilityRuleId ?? null,
           validFrom: toDateInput(coupon.validFrom),
           validUntil: toDateInput(coupon.validUntil),
           isActive: coupon.isActive,
