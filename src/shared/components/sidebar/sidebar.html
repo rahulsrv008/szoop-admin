@@ -16,6 +16,11 @@
         >
           <mat-icon>{{ item.icon }}</mat-icon>
           <span>{{ item.label }}</span>
+          @if (item.monitorBadge && attention().total) {
+            <span class="nav__badge" [class.nav__badge--red]="attention().red > 0">
+              {{ attention().total }}
+            </span>
+          }
         </a>
       }
     </div>

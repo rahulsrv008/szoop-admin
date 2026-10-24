@@ -1,4 +1,5 @@
 import {
+  HttpContextToken,
   HttpErrorResponse,
   HttpEvent,
   HttpHandlerFn,
@@ -8,6 +9,9 @@ import { inject } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { ApiErrorBody } from '@core/models';
 import { NotificationService } from '@core/services/notification.service';
+
+/** Background polls set this so a failure doesn't toast every few seconds; the caller shows its own state. */
+export const SILENT_ERRORS = new HttpContextToken<boolean>(() => false);
 
 function readMessage(error: HttpErrorResponse): string {
   if (error.status === 0) {
@@ -33,7 +37,11 @@ export function errorInterceptor(
 
   return next(request).pipe(
     catchError((error: unknown) => {
-      if (error instanceof HttpErrorResponse && error.status !== 401) {
+      if (
+        error instanceof HttpErrorResponse &&
+        error.status !== 401 &&
+        !request.context.get(SILENT_ERRORS)
+      ) {
         notifications.error(readMessage(error));
       }
       return throwError(() => error);

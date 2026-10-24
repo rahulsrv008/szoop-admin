@@ -52,6 +52,30 @@
   <div class="stack">
     <section class="card-panel">
       <h3 class="card-panel__title">Profile</h3>
+      @if (a.profileImage) {
+        <div class="agent-photo-actions">
+          <a
+            [href]="a.profileImage"
+            target="_blank"
+            rel="noopener"
+            [attr.aria-label]="'Open ' + (a.name | orDash: 'agent') + ' profile photo'"
+          >
+            <img
+              class="agent-photo"
+              [src]="a.profileImage"
+              [alt]="(a.name | orDash: 'Agent') + ' profile photo'"
+            />
+          </a>
+          <a
+            matButton="outlined"
+            [href]="a.profileImage"
+            [attr.download]="'agent-' + a.agentId + '-profile-photo'"
+          >
+            <mat-icon>download</mat-icon>
+            Download photo
+          </a>
+        </div>
+      }
       <div class="detail-grid">
         <div class="detail-item">
           <span class="detail-item__label">Approval</span>

@@ -1,9 +1,10 @@
 <mat-sidenav-container class="shell" autosize>
   <mat-sidenav
     class="shell__nav"
-    mode="side"
+    [mode]="isMobile() ? 'over' : 'side'"
     [opened]="sidebarOpen()"
-    disableClose
+    [disableClose]="!isMobile()"
+    (openedChange)="sidebarOpen.set($event)"
   >
     <app-sidebar />
   </mat-sidenav>

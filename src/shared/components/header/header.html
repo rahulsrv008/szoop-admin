@@ -11,6 +11,34 @@
   <span class="header__title">{{ title() }}</span>
   <span class="header__spacer"></span>
 
+  @if (monitorReady()) {
+    <a
+      class="monitor-pill"
+      routerLink="/bookings/monitor"
+      [class.monitor-pill--red]="attention().red > 0"
+      [class.monitor-pill--orange]="!attention().red && attention().orange > 0"
+      [matTooltip]="monitorTip()"
+    >
+      <span class="monitor-pill__dot"></span>
+      @if (attention().total) {
+        <span class="monitor-pill__text">
+          @if (attention().red) {
+            {{ attention().red }} critical
+          }
+          @if (attention().red && attention().orange) {
+            ·
+          }
+          @if (attention().orange) {
+            {{ attention().orange }} late
+          }
+        </span>
+        <span class="monitor-pill__short">{{ attention().total }}</span>
+      } @else {
+        <span class="monitor-pill__text">All on track</span>
+      }
+    </a>
+  }
+
   <button matIconButton aria-label="Send notification" routerLink="/notifications">
     <mat-icon>campaign</mat-icon>
   </button>

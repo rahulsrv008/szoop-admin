@@ -11,7 +11,8 @@ export interface TableColumn<T = any> {
     | 'datetime'
     | 'badge'
     | 'boolean'
-    | 'chips';
+    | 'chips'
+    | 'image';
   /** Custom accessor when the value is not a top-level property. */
   value?: (row: T) => unknown;
   sortable?: boolean;

@@ -149,6 +149,16 @@ export const PERMISSION_CATALOGUE: PermissionCatalogueEntry[] = [
     notes: 'Read-only catalogue; no API yet.',
   },
   {
+    area: 'Catalog',
+    intent: 'Customer app home, services, pricing and service areas.',
+    notes: 'SUPER_ADMIN only. Hidden and route-blocked for every other role.',
+  },
+  {
+    area: 'Money',
+    intent: 'Payments, earnings and coupons.',
+    notes: 'SUPER_ADMIN only. Hidden and route-blocked for every other role.',
+  },
+  {
     area: 'Reports',
     intent: 'Aggregated bookings, revenue, agent and customer insights.',
     notes: 'Open to all admins; FINANCE is the primary consumer.',

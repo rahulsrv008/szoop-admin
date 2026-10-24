@@ -53,6 +53,7 @@ export class AgentPending {
   readonly searchControl = new FormControl('', { nonNullable: true });
 
   readonly columns: TableColumn<AgentListItem>[] = [
+    { key: 'profileImage', label: 'Photo', type: 'image', width: '72px' },
     { key: 'name', label: 'Applicant', sortable: true, fallback: 'Unnamed' },
     { key: 'mobile', label: 'Mobile' },
     { key: 'approvalStatus', label: 'Approval', type: 'badge' },

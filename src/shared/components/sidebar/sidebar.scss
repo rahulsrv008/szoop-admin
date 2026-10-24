@@ -72,4 +72,21 @@
       font-weight: 600;
     }
   }
+
+  &__badge {
+    margin-left: auto;
+    min-width: 22px;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: #ef6c00;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 20px;
+    text-align: center;
+
+    &--red {
+      background: #e53935;
+    }
+  }
 }

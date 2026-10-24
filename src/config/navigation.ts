@@ -5,11 +5,15 @@ export interface NavItem {
   /** Empty means every signed-in admin can see it. */
   roles?: string[];
   exact?: boolean;
+  /** Shows the booking monitor's live alert count next to the item. */
+  monitorBadge?: boolean;
 }
 
 export interface NavSection {
   title: string;
   items: NavItem[];
+  /** Empty means every signed-in admin can see the section. */
+  roles?: string[];
 }
 
 /** Drives the sidebar. Keep the order product-first, not alphabetical. */
@@ -22,6 +26,12 @@ export const NAV_SECTIONS: NavSection[] = [
     title: 'Operations',
     items: [
       { label: 'Bookings', icon: 'event_note', path: '/bookings' },
+      {
+        label: 'Booking monitor',
+        icon: 'monitor_heart',
+        path: '/bookings/monitor',
+        monitorBadge: true,
+      },
       { label: 'Live bookings', icon: 'sensors', path: '/bookings/live' },
       { label: 'Attendance', icon: 'how_to_reg', path: '/attendance' },
       { label: 'Missed jobs', icon: 'event_busy', path: '/missed-jobs' },
@@ -37,6 +47,7 @@ export const NAV_SECTIONS: NavSection[] = [
   },
   {
     title: 'Catalog',
+    roles: ['SUPER_ADMIN'],
     items: [
       { label: 'Customer app', icon: 'phone_iphone', path: '/home-content' },
       { label: 'Services', icon: 'home_repair_service', path: '/services' },
@@ -46,6 +57,7 @@ export const NAV_SECTIONS: NavSection[] = [
   },
   {
     title: 'Money',
+    roles: ['SUPER_ADMIN'],
     items: [
       { label: 'Payments', icon: 'payments', path: '/payments' },
       { label: 'Earnings', icon: 'savings', path: '/earnings' },

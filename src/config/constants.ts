@@ -25,7 +25,7 @@ export const BOOKING_STATUS_LABELS: Record<string, string> = {
   ongoing: 'Service in progress',
   completed: 'Completed',
   cancelled: 'Cancelled',
-  expired: 'Expired — no agent found',
+  expired: 'Expired — no agent found within 60 min',
 };
 
 /** Statuses that belong on the "live bookings" board. */

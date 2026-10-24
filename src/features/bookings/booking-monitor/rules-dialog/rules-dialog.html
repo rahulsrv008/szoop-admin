@@ -1,0 +1,64 @@
+<h2 mat-dialog-title>Monitor timings</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="save()" id="rules-form">
+    <p class="hint">
+      Each step has a timer. The job turns orange, then red, this many minutes after the timer
+      starts. Whole minutes.
+    </p>
+
+    @for (step of steps; track step.label) {
+      <div class="step">
+        <div class="step__name">
+          <strong>{{ step.label }}</strong>
+          <span>{{ step.hint }}</span>
+        </div>
+        <mat-form-field class="step__field step__field--orange">
+          <mat-label>Orange after</mat-label>
+          <input matInput type="number" min="0" max="1440" [formControlName]="step.orange" />
+          <span matTextSuffix>min</span>
+        </mat-form-field>
+        <mat-form-field class="step__field step__field--red">
+          <mat-label>Red after</mat-label>
+          <input matInput type="number" min="0" max="1440" [formControlName]="step.red" />
+          <span matTextSuffix>min</span>
+        </mat-form-field>
+      </div>
+    }
+
+    @if (invertedStep(); as step) {
+      <p class="error">{{ step }}: red can't come before orange.</p>
+    }
+
+    <h3 class="section">When the timers start</h3>
+    <div class="step">
+      <div class="step__name">
+        <strong>Plan visits</strong>
+        <span>not broadcast one by one: the agent should be on the way this long before each visit</span>
+      </div>
+      <mat-form-field class="step__field">
+        <mat-label>Before visit</mat-label>
+        <input matInput type="number" min="0" max="1440" formControlName="setOffLeadMinutes" />
+        <span matTextSuffix>min</span>
+      </mat-form-field>
+    </div>
+    <div class="step">
+      <div class="step__name">
+        <strong>"Right now" travel time</strong>
+        <span>after setting off, the agent should have started the job within</span>
+      </div>
+      <mat-form-field class="step__field">
+        <mat-label>Travel time</mat-label>
+        <input matInput type="number" min="0" max="1440" formControlName="instantArrivalMinutes" />
+        <span matTextSuffix>min</span>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton mat-dialog-close [disabled]="saving()">Cancel</button>
+  <button matButton="filled" type="submit" form="rules-form" [disabled]="saving()">
+    {{ saving() ? 'Saving…' : 'Save timings' }}
+  </button>
+</mat-dialog-actions>

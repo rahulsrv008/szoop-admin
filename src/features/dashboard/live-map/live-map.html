@@ -1,0 +1,74 @@
+<section class="panel live-map">
+  <header class="live-map__head">
+    <div>
+      <h3>Live zone map</h3>
+      <p>
+        Your assigned zones, customers with active bookings, and agents available today with a
+        recent GPS update.
+      </p>
+    </div>
+    <div class="live-map__actions">
+      <span class="live-map__updated">
+        @if (lastUpdated(); as updated) {
+          Updated {{ updated | date: 'h:mm:ss a' }}
+        } @else {
+          Live refresh every 30 seconds
+        }
+      </span>
+      <button matButton="outlined" (click)="fitMap()" [disabled]="!data()">
+        <mat-icon>center_focus_strong</mat-icon>
+        Fit map
+      </button>
+      <button matButton="outlined" (click)="load()" [disabled]="loading()">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="live-map__error" role="alert">{{ error() }}</p>
+  }
+  @if (loading() && !data()) {
+    <p class="live-map__message">Loading live zone data…</p>
+  }
+  @if (data(); as mapData) {
+    <div class="live-map__summary" aria-label="Map marker counts">
+      <span
+        ><i class="live-map__legend live-map__legend--zone"></i
+        >{{ mapData.zones.length }} zones</span
+      >
+      <span
+        ><i class="live-map__legend live-map__legend--customer"></i
+        >{{ mapData.customers.length }} active customers</span
+      >
+      <span
+        ><i class="live-map__legend live-map__legend--agent"></i
+        >{{ mapData.agents.length }} available agents</span
+      >
+    </div>
+  }
+
+  <div
+    #mapCanvas
+    class="live-map__canvas"
+    role="application"
+    aria-label="Map of assigned service zones, active customers, and agents"
+  ></div>
+
+  @if (data(); as mapData) {
+    @if (!mapData.zones.length) {
+      <p class="live-map__message">No active service zones are assigned to your account.</p>
+    } @else if (!hasZoneCoordinates(mapData.zones)) {
+      <p class="live-map__message">
+        Zone map centers are not configured yet. Live customer and agent locations are still shown
+        when available.
+      </p>
+    }
+    <p class="live-map__note">
+      Agent markers are available today and have GPS updates from the last 5 minutes. Customer
+      markers show the service address for each active booking; zone circles use each service area's
+      configured center and radius.
+    </p>
+  }
+</section>

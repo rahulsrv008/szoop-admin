@@ -4,6 +4,8 @@ import { permissionGuard } from '@core/guards/permission.guard';
 import { AdminLayout } from '@layouts/admin-layout/admin-layout';
 import { AuthLayout } from '@layouts/auth-layout/auth-layout';
 
+const SUPER_ADMIN_ONLY = { roles: ['SUPER_ADMIN'] };
+
 /**
  * Two shells: AuthLayout for the public screens, AdminLayout for everything
  * behind the session. Feature areas own their own child route files.
@@ -58,6 +60,7 @@ export const routes: Routes = [
       },
       {
         path: 'coupons',
+        data: SUPER_ADMIN_ONLY,
         loadChildren: () =>
           import('@features/coupons/coupons.routes').then(
             (m) => m.COUPONS_ROUTES,
@@ -79,6 +82,7 @@ export const routes: Routes = [
       },
       {
         path: 'earnings',
+        data: SUPER_ADMIN_ONLY,
         loadChildren: () =>
           import('@features/earnings/earnings.routes').then(
             (m) => m.EARNINGS_ROUTES,
@@ -86,6 +90,7 @@ export const routes: Routes = [
       },
       {
         path: 'home-content',
+        data: SUPER_ADMIN_ONLY,
         loadChildren: () =>
           import('@features/home-content/home-content.routes').then(
             (m) => m.HOME_CONTENT_ROUTES,
@@ -100,6 +105,7 @@ export const routes: Routes = [
       },
       {
         path: 'payments',
+        data: SUPER_ADMIN_ONLY,
         loadChildren: () =>
           import('@features/payments/payments.routes').then(
             (m) => m.PAYMENTS_ROUTES,
@@ -107,6 +113,7 @@ export const routes: Routes = [
       },
       {
         path: 'pricing',
+        data: SUPER_ADMIN_ONLY,
         loadChildren: () =>
           import('@features/pricing/pricing.routes').then(
             (m) => m.PRICING_ROUTES,
@@ -128,6 +135,7 @@ export const routes: Routes = [
       },
       {
         path: 'service-areas',
+        data: SUPER_ADMIN_ONLY,
         loadChildren: () =>
           import('@features/service-areas/service-areas.routes').then(
             (m) => m.SERVICE_AREAS_ROUTES,
@@ -135,6 +143,7 @@ export const routes: Routes = [
       },
       {
         path: 'services',
+        data: SUPER_ADMIN_ONLY,
         loadChildren: () =>
           import('@features/services/services.routes').then(
             (m) => m.SERVICES_ROUTES,
@@ -142,6 +151,7 @@ export const routes: Routes = [
       },
       {
         path: 'settings',
+        data: SUPER_ADMIN_ONLY,
         loadChildren: () =>
           import('@features/settings/settings.routes').then(
             (m) => m.SETTINGS_ROUTES,

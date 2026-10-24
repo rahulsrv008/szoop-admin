@@ -13,10 +13,30 @@
             }
           </p>
           @if (doc.documentUrl) {
-            <a matButton [href]="doc.documentUrl" target="_blank" rel="noopener">
-              <mat-icon>open_in_new</mat-icon>
-              Open file
+            <a
+              class="doc-preview"
+              [href]="doc.documentUrl"
+              target="_blank"
+              rel="noopener"
+              [attr.aria-label]="'Open ' + label(doc.documentType) + ' document'"
+            >
+              <img [src]="doc.documentUrl" [alt]="label(doc.documentType) + ' document'" />
+              <span>Open full size in new tab</span>
             </a>
+            <div class="doc-file-actions">
+              <a matButton [href]="doc.documentUrl" target="_blank" rel="noopener">
+                <mat-icon>open_in_new</mat-icon>
+                Open file
+              </a>
+              <a
+                matButton="outlined"
+                [href]="doc.documentUrl"
+                [attr.download]="label(doc.documentType) + '-' + doc.id"
+              >
+                <mat-icon>download</mat-icon>
+                Download
+              </a>
+            </div>
           }
         </div>
         <div class="doc-row__actions">
