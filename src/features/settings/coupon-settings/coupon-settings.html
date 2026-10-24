@@ -1,0 +1,304 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Coupon Settings</h2>
+    <p class="page-head__sub">
+      Configure dynamic customer eligibility rules for Cleaning, Cooking, and Salon service coupons
+    </p>
+  </div>
+  <div class="page-head__actions">
+    @if (!editingRule() && !isCreating()) {
+      <button matButton="filled" (click)="startNewRule()">
+        <mat-icon>add</mat-icon>
+        New Eligibility Rule
+      </button>
+    }
+  </div>
+</header>
+
+<nav class="tabs">
+  <a matButton routerLink="/settings/general">General</a>
+  <a matButton routerLink="/settings/users">Users</a>
+  <a matButton routerLink="/settings/roles">Roles & permissions</a>
+  <a matButton="tonal" routerLink="/settings/coupons" routerLinkActive="active">Coupon Settings</a>
+</nav>
+
+@if (loading() || saving()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+<!-- Editor Drawer / Card -->
+@if (editingRule() || isCreating()) {
+  <section class="card-panel rule-editor">
+    <div class="rule-editor__header">
+      <div>
+        <h3 class="card-panel__title">
+          {{ editingRule() ? 'Edit Rule: ' + editingRule()!.name : 'Create Coupon Eligibility Rule' }}
+        </h3>
+        <p class="muted">Define automated qualification criteria evaluated against customer booking history</p>
+      </div>
+
+      <div class="rule-editor__actions">
+        <button matButton="outlined" type="button" (click)="cancelEdit()">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Presets -->
+    <div class="presets-bar">
+      <span class="presets-label"><mat-icon>auto_fix_high</mat-icon> Quick Presets:</span>
+      <button matButton="tonal" type="button" (click)="applyPreset('loyal_cleaning')">Loyal Cleaning (>= 5)</button>
+      <button matButton="tonal" type="button" (click)="applyPreset('loyal_cooking')">Loyal Cooking (>= 4)</button>
+      <button matButton="tonal" type="button" (click)="applyPreset('inactive_salon')">Inactive Salon (>= 60d)</button>
+      <button matButton="tonal" type="button" (click)="applyPreset('new_customer')">New Customers (0 Bookings)</button>
+      <button matButton="tonal" type="button" (click)="applyPreset('cross_service')">Cross-Service Loyalty</button>
+    </div>
+
+    <form [formGroup]="ruleForm" (ngSubmit)="saveRule()" class="form-stack">
+      <div class="form-grid">
+        <mat-form-field appearance="outline" class="form-span-2">
+          <mat-label>Rule Name</mat-label>
+          <input matInput formControlName="name" placeholder="e.g. Loyal Cleaning Customers" />
+          @if (ruleForm.controls.name.touched && ruleForm.controls.name.invalid) {
+            <mat-error>Rule name is required (min 3 characters)</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-span-2">
+          <mat-label>Description (Optional)</mat-label>
+          <input matInput formControlName="description" placeholder="e.g. Eligible for 10% off cleaning after 5 completed bookings" />
+        </mat-form-field>
+      </div>
+
+      <!-- Applicable Services Selection -->
+      <div class="section-group">
+        <label class="section-label">Applicable Services for this Rule:</label>
+        <p class="section-hint">Select the services where coupons with this rule can be applied:</p>
+        <div class="services-selector">
+          @for (svc of serviceOptions; track svc.value) {
+            <button
+              type="button"
+              matButton
+              [attr.matButton]="isServiceSelected(svc.value) ? 'tonal' : 'outlined'"
+              [class.selected-pill]="isServiceSelected(svc.value)"
+              (click)="toggleService(svc.value)"
+            >
+              @if (isServiceSelected(svc.value)) {
+                <mat-icon>check</mat-icon>
+              }
+              {{ svc.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Conditions Logic (AND / OR) -->
+      <div class="section-group">
+        <div class="conditions-header">
+          <div>
+            <label class="section-label">Customer Eligibility Conditions</label>
+            <p class="section-hint">Backend verifies actual completed bookings; cancelled/unpaid are excluded</p>
+          </div>
+
+          <div class="match-selector">
+            <span class="match-label">Match Logic:</span>
+            <mat-radio-group formControlName="matchType" class="match-radio-group">
+              <mat-radio-button value="AND">All conditions must be met (AND)</mat-radio-button>
+              <mat-radio-button value="OR">Any condition can be met (OR)</mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </div>
+
+        <!-- Dynamic Conditions Rows -->
+        <div formArrayName="conditions" class="conditions-list">
+          @for (condGroup of conditionsArray.controls; track $index; let i = $index) {
+            <div [formGroupName]="i" class="condition-row">
+              <span class="condition-index">#{{ i + 1 }}</span>
+
+              <mat-form-field appearance="outline" class="cond-type">
+                <mat-label>Condition</mat-label>
+                <mat-select formControlName="type">
+                  @for (opt of conditionTypeOptions; track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="cond-service">
+                <mat-label>Service Filter</mat-label>
+                <mat-select formControlName="service">
+                  @for (svc of serviceOptions; track svc.value) {
+                    <mat-option [value]="svc.value">{{ svc.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="cond-operator">
+                <mat-label>Operator</mat-label>
+                <mat-select formControlName="operator">
+                  @for (op of operatorOptions; track op.value) {
+                    <mat-option [value]="op.value">{{ op.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="cond-value">
+                <mat-label>Threshold Value</mat-label>
+                <input matInput type="number" formControlName="value" min="0" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="cond-window">
+                <mat-label>Time Window (Days)</mat-label>
+                <input matInput type="number" formControlName="windowDays" min="1" placeholder="All time" />
+                <mat-hint>Optional (e.g. past 30 days)</mat-hint>
+              </mat-form-field>
+
+              <button
+                matIconButton
+                type="button"
+                color="warn"
+                class="remove-cond-btn"
+                (click)="removeCondition(i)"
+                matTooltip="Remove condition"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+
+        <button matButton="outlined" type="button" class="add-cond-btn" (click)="addCondition()">
+          <mat-icon>add</mat-icon>
+          Add Another Condition
+        </button>
+      </div>
+
+      <div class="active-toggle-row">
+        <mat-slide-toggle formControlName="isActive">
+          Rule Active (Eligible coupons can be redeemed by matching customers)
+        </mat-slide-toggle>
+      </div>
+
+      <div class="row-actions">
+        <button matButton="filled" type="submit" [disabled]="saving()">
+          <mat-icon>save</mat-icon>
+          {{ saving() ? 'Saving…' : editingRule() ? 'Update Rule' : 'Save Rule' }}
+        </button>
+        <button matButton="outlined" type="button" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+  </section>
+}
+
+<!-- Rules List Table -->
+<section class="card-panel">
+  <div class="panel-top">
+    <div class="search-box">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search rules</mat-label>
+        <input matInput [formControl]="searchControl" placeholder="Search by name or description…" />
+        <mat-icon matIconPrefix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <button matButton="outlined" type="button" (click)="loadRules()" [disabled]="loading()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+
+  <div class="table-container">
+    <table class="rules-table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Rule Name</th>
+          <th>Applicable Services</th>
+          <th>Match</th>
+          <th>Configured Conditions</th>
+          <th>Linked Coupons</th>
+          <th class="actions-col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (rule of rules(); track rule.id) {
+          <tr>
+            <td>
+              <button
+                type="button"
+                class="status-toggle-btn"
+                (click)="toggleActive(rule)"
+                [matTooltip]="rule.isActive ? 'Click to deactivate' : 'Click to activate'"
+              >
+                <span class="badge" [class.badge-active]="rule.isActive" [class.badge-inactive]="!rule.isActive">
+                  {{ rule.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </button>
+            </td>
+
+            <td>
+              <div class="rule-title-cell">
+                <span class="rule-name">{{ rule.name }}</span>
+                @if (rule.description) {
+                  <span class="rule-desc">{{ rule.description }}</span>
+                }
+              </div>
+            </td>
+
+            <td>
+              <div class="services-chips">
+                @for (svc of rule.applicableServices; track svc) {
+                  <span class="service-pill" [attr.data-svc]="svc">{{ svc }}</span>
+                }
+              </div>
+            </td>
+
+            <td>
+              <span class="match-pill" [class.match-and]="rule.matchType === 'AND'" [class.match-or]="rule.matchType === 'OR'">
+                {{ rule.matchType }}
+              </span>
+            </td>
+
+            <td>
+              <div class="conditions-preview">
+                @for (c of rule.conditions; track $index) {
+                  <div class="cond-item">
+                    <mat-icon class="cond-dot">check_circle</mat-icon>
+                    <span>{{ formatCondition(c) }}</span>
+                  </div>
+                } @empty {
+                  <span class="muted">No conditions set</span>
+                }
+              </div>
+            </td>
+
+            <td>
+              <span class="linked-count">
+                {{ rule.linkedCouponsCount || 0 }} coupon(s)
+              </span>
+            </td>
+
+            <td class="actions-col">
+              <button matIconButton (click)="editRule(rule)" matTooltip="Edit rule">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button matIconButton color="warn" (click)="confirmDelete(rule)" matTooltip="Delete rule">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="empty-state">
+              <mat-icon class="empty-icon">loyalty</mat-icon>
+              <p class="empty-title">No coupon eligibility rules configured yet</p>
+              <p class="empty-sub">Create rules to dynamically qualify customers for coupons based on their booking history.</p>
+              <button matButton="tonal" (click)="startNewRule()">Create First Rule</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

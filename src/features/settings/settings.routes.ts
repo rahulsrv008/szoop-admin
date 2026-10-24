@@ -27,4 +27,13 @@ export const SETTINGS_ROUTES: Routes = [
         (m) => m.RolesPermissions,
       ),
   },
+  {
+    path: 'coupons',
+    title: 'Coupon Settings · ClearIt Admin',
+    data: { title: 'Coupon Settings' },
+    loadComponent: () =>
+      import('./coupon-settings/coupon-settings').then(
+        (m) => m.CouponSettingsComponent,
+      ),
+  },
 ];

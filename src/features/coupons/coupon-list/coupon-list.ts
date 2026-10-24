@@ -91,6 +91,28 @@ export class CouponList {
           ? `${row.usedCount}`
           : `${row.usedCount} / ${row.usageLimit}`,
     },
+    {
+      key: 'perCustomerLimit',
+      label: 'Per User',
+      value: (row) => `${row.perCustomerLimit ?? 1}x`,
+      align: 'center',
+    },
+    {
+      key: 'customerName',
+      label: 'Target',
+      value: (row) => {
+        if (row.customerName) return row.customerName;
+        if (row.assignedCustomerIds && row.assignedCustomerIds.length > 0) {
+          return `${row.assignedCustomerIds.length} customer(s)`;
+        }
+        return 'All';
+      },
+    },
+    {
+      key: 'eligibilityRuleName',
+      label: 'Eligibility Rule',
+      value: (row) => row.eligibilityRuleName || '—',
+    },
     { key: 'validFrom', label: 'Valid from', type: 'date' },
     { key: 'validUntil', label: 'Valid until', type: 'date' },
     { key: 'isActive', label: 'Active', type: 'boolean', align: 'center' },

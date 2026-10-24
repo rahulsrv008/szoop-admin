@@ -1,14 +1,21 @@
 export interface Coupon {
   id: string;
   code: string;
+  description?: string | null;
   discountType: string;
   discountValue: string | number;
   maxDiscount?: string | number | null;
   minOrderAmount?: string | number | null;
   usageLimit?: number | null;
   usedCount: number;
+  perCustomerLimit?: number;
+  customerId?: string | null;
+  customerName?: string | null;
+  assignedCustomerIds?: string[];
   validFrom?: string | null;
   validUntil?: string | null;
+  eligibilityRuleId?: string | null;
+  eligibilityRuleName?: string | null;
   isActive: boolean;
   createdAt?: string;
 }
