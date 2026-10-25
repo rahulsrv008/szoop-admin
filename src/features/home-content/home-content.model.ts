@@ -27,6 +27,8 @@ export interface HomeCategoryOption {
   imageUrl: string | null;
   popupTitle: string | null;
   highlights: HomeHighlight[];
+  /** What the option doesn't cover; the customer app shows it in the popup and at checkout. */
+  exclusions?: string[];
   pricing: HomePricingTier[];
   sortOrder: number;
   isActive: boolean;
@@ -43,6 +45,8 @@ export interface HomeCategory {
   actionType: HomeCategoryAction;
   popupTitle: string | null;
   highlights: HomeHighlight[];
+  /** What the category doesn't cover; the customer app shows it in the popup and at checkout. */
+  exclusions?: string[];
   pricing: HomePricingTier[];
   sortOrder: number;
   isActive: boolean;

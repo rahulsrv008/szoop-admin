@@ -118,6 +118,8 @@ export class HomeItemDialog {
     highlights: this.formBuilder.array<HighlightGroup>(
       (this.source.highlights ?? []).map((item) => this.highlightGroup(item)),
     ),
+    /** One "not included" item per line. */
+    exclusions: [(this.source.exclusions ?? []).join('\n')],
     pricing: this.formBuilder.array<TierGroup>(
       (this.source.pricing ?? []).map((tier) => this.tierGroup(tier)),
     ),
@@ -233,6 +235,11 @@ export class HomeItemDialog {
     const highlights: HomeHighlight[] = raw.highlights
       .map((item) => ({ text: item.text.trim(), icon: text(item.icon) }))
       .filter((item) => item.text);
+    const exclusions = raw.exclusions
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(0, 6);
 
     if (this.kind === 'category') {
       this.dialogRef.close({
@@ -242,6 +249,7 @@ export class HomeItemDialog {
         actionType: raw.actionType,
         popupTitle: text(raw.popupTitle),
         highlights,
+        exclusions,
         pricing,
       });
       return;
@@ -253,6 +261,7 @@ export class HomeItemDialog {
         priceLabel: text(raw.priceLabel),
         popupTitle: text(raw.popupTitle),
         highlights,
+        exclusions,
         pricing,
       });
       return;
