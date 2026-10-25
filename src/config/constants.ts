@@ -39,6 +39,26 @@ export const PAYMENT_STATUSES = [
   'VOIDED',
 ] as const;
 
+/** Codes written by the backend after Razorpay checkout (plus older UPI_* rows). */
+export const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  UPI: 'UPI',
+  UPI_GPAY: 'Google Pay',
+  UPI_PHONEPE: 'PhonePe',
+  UPI_PAYTM: 'Paytm',
+  UPI_OTHER: 'UPI',
+  CARD: 'Card',
+  NETBANKING: 'Net banking',
+  WALLET: 'Wallet',
+  RAZORPAY: 'Razorpay',
+  razorpay: 'Razorpay',
+  CASH: 'Cash',
+};
+
+export function paymentMethodLabel(method?: string | null): string {
+  if (!method?.trim()) return '—';
+  return PAYMENT_METHOD_LABELS[method] ?? method;
+}
+
 export const AGENT_APPROVAL_STATUSES = ['PENDING', 'APPROVED', 'REJECTED'] as const;
 
 export const AGENT_STATUSES = ['PENDING', 'ACTIVE', 'SUSPENDED'] as const;

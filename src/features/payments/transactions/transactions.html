@@ -35,7 +35,7 @@
       <div class="detail-item">
         <span class="detail-item__label">Method</span>
         <span class="detail-item__value">
-          {{ payment()!.paymentMethod || '—' }}
+          {{ payment()!.paymentMethod | paymentMethod }}
         </span>
       </div>
       <div class="detail-item">

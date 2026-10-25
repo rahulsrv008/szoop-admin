@@ -9,6 +9,7 @@ import { DataTable } from '@shared/components/data-table/data-table';
 import { StatusBadge } from '@shared/components/status-badge/status-badge';
 import { TableColumn } from '@shared/models/table.model';
 import { InrPipe } from '@shared/pipes/inr.pipe';
+import { PaymentMethodPipe } from '@shared/pipes/payment-method.pipe';
 import {
   PaymentDetailView,
   PaymentTransactionRow,
@@ -25,6 +26,7 @@ import { PaymentsService } from '../payments.service';
     MatExpansionModule,
     DatePipe,
     InrPipe,
+    PaymentMethodPipe,
     StatusBadge,
     DataTable,
   ],

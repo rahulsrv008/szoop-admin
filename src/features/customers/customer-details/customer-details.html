@@ -104,8 +104,8 @@
             <span class="detail-item__label">Account</span>
             <span class="detail-item__value">
               <app-status-badge
-                [status]="c.isActive ? 'ACTIVE' : 'SUSPENDED'"
-                [label]="c.isActive ? 'Active' : 'Blocked'"
+                [status]="c.deletedAt ? 'cancelled' : c.isActive ? 'ACTIVE' : 'SUSPENDED'"
+                [label]="c.deletedAt ? 'Deleted' : c.isActive ? 'Active' : 'Blocked'"
               />
             </span>
           </div>

@@ -26,6 +26,7 @@ export interface CustomerListItem {
   mobile: string;
   email?: string | null;
   isActive: boolean;
+  deletedAt?: string | null;
   totalBookings?: number;
   lastBookingDate?: string | null;
   createdAt: string;

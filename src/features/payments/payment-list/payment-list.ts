@@ -9,7 +9,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Router, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { DEFAULT_PAGE_SIZE, PAYMENT_STATUSES } from '@config/constants';
+import {
+  DEFAULT_PAGE_SIZE,
+  PAYMENT_STATUSES,
+  paymentMethodLabel,
+} from '@config/constants';
 import { PaymentListItem, PaymentTotals } from '@core/models';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DateFilter } from '@shared/components/date-filter/date-filter';
@@ -70,7 +74,12 @@ export class PaymentList {
     { key: 'customerName', label: 'Customer', fallback: '—' },
     { key: 'transactionId', label: 'Transaction ID', fallback: '—' },
     { key: 'amount', label: 'Amount', type: 'currency', align: 'right' },
-    { key: 'paymentMethod', label: 'Method', fallback: '—' },
+    {
+      key: 'paymentMethod',
+      label: 'Method',
+      fallback: '—',
+      value: (row) => paymentMethodLabel(row.paymentMethod),
+    },
     { key: 'paymentStatus', label: 'Status', type: 'badge' },
     { key: 'paidAt', label: 'Paid at', type: 'datetime' },
     { key: 'createdAt', label: 'Created', type: 'datetime' },

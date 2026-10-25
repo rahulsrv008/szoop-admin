@@ -71,7 +71,13 @@ export class CustomerList {
     },
     { key: 'totalBookings', label: 'Bookings', type: 'number', align: 'right' },
     { key: 'lastBookingDate', label: 'Last booking', type: 'date' },
-    { key: 'isActive', label: 'Active', type: 'boolean', align: 'center' },
+    {
+      key: 'accountStatus',
+      label: 'Status',
+      align: 'center',
+      value: (row) =>
+        row.deletedAt ? 'Deleted' : row.isActive ? 'Active' : 'Blocked',
+    },
     { key: 'createdAt', label: 'Joined', type: 'date' },
   ];
 

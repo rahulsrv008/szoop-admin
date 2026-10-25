@@ -10,6 +10,7 @@ import { ConfirmService } from '@shared/components/confirmation-dialog/confirm.s
 import { StatusBadge } from '@shared/components/status-badge/status-badge';
 import { InrPipe } from '@shared/pipes/inr.pipe';
 import { OrDashPipe } from '@shared/pipes/empty.pipe';
+import { PaymentMethodPipe } from '@shared/pipes/payment-method.pipe';
 import {
   AssignAgentDialog,
   AssignAgentDialogData,
@@ -29,6 +30,7 @@ import { BookingsService } from '../bookings.service';
     StatusBadge,
     InrPipe,
     OrDashPipe,
+    PaymentMethodPipe,
   ],
   templateUrl: './booking-details.html',
   styleUrl: './booking-details.scss',
