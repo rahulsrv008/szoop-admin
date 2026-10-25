@@ -188,6 +188,20 @@
           }
         </div>
       </section>
+
+      <section class="highlights">
+        <header>
+          <div>
+            <h3>Not included</h3>
+            <p class="muted">Shown in the popup and at checkout. One item per line, up to 6.</p>
+          </div>
+        </header>
+
+        <mat-form-field class="exclusions">
+          <mat-label>What this service doesn't cover</mat-label>
+          <textarea matInput formControlName="exclusions" rows="3" placeholder="Bathrooms and washrooms"></textarea>
+        </mat-form-field>
+      </section>
     }
 
     @if (kind === 'option' || (kind === 'category' && form.controls.actionType.value === 'POPUP')) {
