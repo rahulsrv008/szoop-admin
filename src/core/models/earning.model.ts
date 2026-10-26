@@ -47,6 +47,8 @@ export interface SalaryRow {
   year: number;
   fixedSalary: string | number;
   incentive: string | number;
+  /** Referral rewards attached to this salary. */
+  referralBonus?: string | number;
   deductions: string | number;
   netSalary: string | number;
   status: string;

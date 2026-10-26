@@ -14,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { SalaryRow } from '@core/models';
+import { InrPipe } from '@shared/pipes/inr.pipe';
 import { SelectOption, toOptions } from '@shared/models/filter.model';
 import { positiveNumberValidator } from '@shared/validators/form.validators';
 import { SalaryUpdatePayload } from '../earnings.model';
@@ -33,6 +34,7 @@ export interface SalaryDialogData {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    InrPipe,
   ],
   templateUrl: './salary-dialog.html',
   styleUrl: './salary-dialog.scss',
@@ -45,6 +47,7 @@ export class SalaryDialog {
   readonly data = inject<SalaryDialogData>(MAT_DIALOG_DATA);
 
   readonly statusOptions: SelectOption[] = toOptions(SALARY_STATUSES);
+  readonly referralBonus = Number(this.data.row.referralBonus ?? 0);
 
   readonly form = this.formBuilder.nonNullable.group({
     status: [this.data.row.status, Validators.required],

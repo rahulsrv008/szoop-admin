@@ -11,3 +11,4 @@ export * from './feedback.model';
 export * from './dashboard.model';
 export * from './settings.model';
 export * from './monitor.model';
+export * from './referral.model';

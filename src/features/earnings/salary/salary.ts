@@ -90,6 +90,12 @@ export class Salary {
       align: 'right',
     },
     {
+      key: 'referralBonus',
+      label: 'Referral bonus',
+      type: 'currency',
+      align: 'right',
+    },
+    {
       key: 'deductions',
       label: 'Deductions',
       type: 'currency',

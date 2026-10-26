@@ -1,0 +1,206 @@
+<section class="card-panel">
+  <div class="head">
+    <h3 class="card-panel__title">Referrals</h3>
+    <button matIconButton type="button" (click)="load()" [disabled]="loading()" matTooltip="Refresh" aria-label="Refresh referrals">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  @if (loading() && !view()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (view(); as v) {
+    <div class="identity">
+      <div class="identity__item">
+        <span class="detail-item__label">Employee ID / referral code</span>
+        @if (v.employeeId) {
+          <span class="code">
+            {{ v.employeeId }}
+            <button matIconButton type="button" (click)="copyCode(v.employeeId)" matTooltip="Copy" aria-label="Copy employee ID">
+              <mat-icon>content_copy</mat-icon>
+            </button>
+          </span>
+        } @else {
+          <span class="muted">Given when the agent is approved</span>
+        }
+      </div>
+      <div class="identity__item">
+        <span class="detail-item__label">Invited by</span>
+        @if (v.referredBy; as by) {
+          <a class="link" [routerLink]="['/agents', by.agentId]">{{ by.name }} · {{ by.employeeId }}</a>
+        } @else {
+          <span class="muted">Joined without a code</span>
+        }
+      </div>
+    </div>
+
+    <div class="tiles">
+      <div class="tile">
+        <span class="tile__label">Invites used</span>
+        <span class="tile__value">{{ v.invites.used }} <small>of {{ v.invites.max }}</small></span>
+      </div>
+      <div class="tile tile--wide">
+        <span class="tile__label">Earned from referrals</span>
+        <span class="tile__value">{{ v.totals.earned | inr }} <small>of {{ v.totals.limit | inr }} limit</small></span>
+        <mat-progress-bar mode="determinate" [value]="earnedPercent()" />
+      </div>
+      <div class="tile tile--good">
+        <span class="tile__label">Paid</span>
+        <span class="tile__value">{{ v.totals.paid | inr }}</span>
+      </div>
+      <div class="tile tile--wait">
+        <span class="tile__label">Next salary</span>
+        <span class="tile__value">{{ v.totals.pending | inr }}</span>
+      </div>
+      <div class="tile tile--bad">
+        <span class="tile__label">Missed</span>
+        <span class="tile__value">{{ v.totals.missed | inr }} <small>({{ v.totals.missedCount }})</small></span>
+      </div>
+    </div>
+
+    @if (v.activity.applies) {
+      <p class="activity" [class.activity--locked]="!v.activity.unlocked">
+        <mat-icon>{{ v.activity.unlocked ? 'lock_open' : 'lock' }}</mat-icon>
+        @if (v.activity.unlocked) {
+          Team rewards unlocked: {{ v.activity.jobsDone }} jobs in the last {{ v.activity.windowDays }} days
+          (needs {{ v.activity.jobsRequired }}).
+        } @else {
+          Team rewards locked: {{ v.activity.jobsDone }} of {{ v.activity.jobsRequired }} jobs in the last
+          {{ v.activity.windowDays }} days. Rewards from deeper levels are missed until they are active again.
+        }
+      </p>
+    }
+
+    @if (v.joiningBonus; as bonus) {
+      <p class="joining">
+        <mat-icon>card_giftcard</mat-icon>
+        Joining bonus {{ bonus.amount | inr }}
+        <app-status-badge [status]="bonus.status" [label]="statusLabel(bonus)" />
+        @if (bonus.reason) {
+          <span class="reason">{{ bonus.reason }}</span>
+        }
+      </p>
+    }
+
+    <h4 class="sub">Earnings by level</h4>
+    <div class="table-wrap">
+      <table class="levels">
+        <thead>
+          <tr>
+            <th>Level</th>
+            <th class="num">Team</th>
+            <th class="num">Finished {{ v.jobsToQualify }} jobs</th>
+            <th class="num">Earned</th>
+            <th class="num">Paid</th>
+            <th class="num">Next salary</th>
+            <th class="num">Missed</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of v.levels; track row.level) {
+            <tr>
+              <td>{{ levelLabel(row.level) }}</td>
+              <td class="num">{{ row.people }}</td>
+              <td class="num">{{ row.qualified }}</td>
+              <td class="num strong">{{ row.earned | inr }}</td>
+              <td class="num">{{ row.paid | inr }}</td>
+              <td class="num">{{ row.pending | inr }}</td>
+              <td class="num" [class.bad]="row.missed > 0">{{ row.missed | inr }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="history-head">
+      <h4 class="sub">Reward history</h4>
+      <div class="filters-row" role="group" aria-label="Filter rewards">
+        @for (option of filters; track option.id) {
+          <button
+            type="button"
+            class="pill"
+            [class.pill--active]="filter() === option.id"
+            [attr.aria-pressed]="filter() === option.id"
+            (click)="filter.set(option.id)"
+          >
+            {{ option.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="history">
+      @for (row of history(); track row.id) {
+        <div class="reward" [class.reward--missed]="row.status === 'MISSED' || row.status === 'REVERSED'">
+          <div class="reward__main">
+            <span class="reward__date">{{ row.createdAt | date: 'd MMM yyyy' }}</span>
+            <span>
+              <a class="link" [routerLink]="['/agents', row.from.agentId]">{{ row.from.name }}</a>
+              <span class="muted"> · {{ row.from.employeeId }} · {{ typeLabel(row) }}</span>
+            </span>
+            @if (row.reason) {
+              <span class="reason">{{ row.reason }}</span>
+            }
+          </div>
+          <div class="reward__side">
+            <span class="reward__amount">
+              {{ row.amount | inr }}
+              @if (row.intendedAmount !== row.amount) {
+                <s class="muted">{{ row.intendedAmount | inr }}</s>
+              }
+            </span>
+            <app-status-badge [status]="row.status" [label]="statusLabel(row)" />
+            @if (row.canReverse) {
+              <button matButton type="button" class="reverse" (click)="reverse(row)">Reverse</button>
+            }
+          </div>
+        </div>
+      } @empty {
+        <p class="muted">
+          {{ filter() === 'ALL' ? 'No rewards yet. They appear when someone in the team finishes ' + v.jobsToQualify + ' jobs.' : 'No rewards here.' }}
+        </p>
+      }
+    </div>
+
+    <div class="team-head">
+      <h4 class="sub">Team ({{ teamSize() }}{{ v.team.truncated ? '+' : '' }})</h4>
+      @if (teamSize()) {
+        <button matButton type="button" (click)="showTeam.set(!showTeam())">
+          <mat-icon>{{ showTeam() ? 'expand_less' : 'account_tree' }}</mat-icon>
+          {{ showTeam() ? 'Hide team' : 'View team tree' }}
+        </button>
+      }
+    </div>
+    @if (!teamSize()) {
+      <p class="muted">Hasn't invited anyone yet.</p>
+    }
+    @if (showTeam()) {
+      <ng-container *ngTemplateOutlet="tree; context: { $implicit: v.team.members }" />
+      @if (v.team.truncated) {
+        <p class="muted">Showing the first 200 people.</p>
+      }
+    }
+
+    <ng-template #tree let-members>
+      <ul class="tree">
+        @for (member of members; track member.agentId) {
+          <li>
+            <div class="tree__node">
+              <span class="tree__level">L{{ member.level }}</span>
+              <a class="link" [routerLink]="['/agents', member.agentId]">{{ member.name }}</a>
+              <span class="muted">{{ member.employeeId ?? 'Not approved yet' }}</span>
+              <app-status-badge [status]="member.referralStatus" [label]="teamStatus(member, v.jobsToQualify)" />
+              @if (member.accountStatus === 'SUSPENDED') {
+                <app-status-badge status="SUSPENDED" />
+              }
+            </div>
+            @if (member.team.length) {
+              <ng-container *ngTemplateOutlet="tree; context: { $implicit: member.team }" />
+            }
+          </li>
+        }
+      </ul>
+    </ng-template>
+  }
+</section>
