@@ -36,4 +36,13 @@ export const SETTINGS_ROUTES: Routes = [
         (m) => m.CouponSettingsComponent,
       ),
   },
+  {
+    path: 'referrals',
+    title: 'Referral program · ClearIt Admin',
+    data: { title: 'Referral program' },
+    loadComponent: () =>
+      import('./referral-settings/referral-settings').then(
+        (m) => m.ReferralSettingsPage,
+      ),
+  },
 ];

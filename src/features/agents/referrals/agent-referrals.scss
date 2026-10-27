@@ -1,0 +1,308 @@
+:host {
+  display: block;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .card-panel__title {
+    margin: 0;
+  }
+}
+
+.identity {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 40px;
+  margin: 4px 0 14px;
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+.code {
+  display: inline-flex;
+  align-items: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #16233a;
+}
+
+.link {
+  color: #1565c0;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid #e3e7ec;
+  border-radius: 10px;
+  border-top-width: 3px;
+
+  &--wide {
+    grid-column: span 2;
+  }
+
+  &--good {
+    border-top-color: #2e7d32;
+  }
+
+  &--wait {
+    border-top-color: #f9a825;
+  }
+
+  &--bad {
+    border-top-color: #c62828;
+  }
+
+  &__label {
+    font-size: 12px;
+    color: #78889c;
+  }
+
+  &__value {
+    font-size: 18px;
+    font-weight: 600;
+    color: #16233a;
+
+    small {
+      font-size: 12px;
+      font-weight: 400;
+      color: #78889c;
+    }
+  }
+}
+
+.activity,
+.joining {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.activity {
+  background: #e8f5e9;
+  color: #1b5e20;
+
+  &--locked {
+    background: #fff3e0;
+    color: #8a4b00;
+  }
+}
+
+.joining {
+  background: #f4f7fb;
+  color: #26313f;
+}
+
+.sub {
+  margin: 18px 0 8px;
+  font-size: 14px;
+  color: #16233a;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.levels {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th,
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eef2f7;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  th {
+    font-size: 12px;
+    font-weight: 500;
+    color: #78889c;
+  }
+
+  .num {
+    text-align: right;
+  }
+
+  .strong {
+    font-weight: 600;
+  }
+
+  .bad {
+    color: #c62828;
+  }
+}
+
+.history-head,
+.team-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.pill {
+  padding: 4px 12px;
+  border: 1px solid #d5dce4;
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  color: #37474f;
+  cursor: pointer;
+
+  &--active {
+    border-color: #1565c0;
+    background: #e3f2fd;
+    color: #0d47a1;
+  }
+}
+
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reward {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e3e7ec;
+  border-radius: 10px;
+
+  &--missed {
+    background: #fcfcfd;
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    font-size: 14px;
+  }
+
+  &__date {
+    font-size: 12px;
+    color: #78889c;
+  }
+
+  &__side {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  &__amount {
+    font-weight: 600;
+    color: #16233a;
+
+    s {
+      margin-left: 4px;
+      font-weight: 400;
+    }
+  }
+}
+
+.reason {
+  font-size: 13px;
+  color: #b23c17;
+}
+
+.reverse {
+  --mat-button-text-label-text-color: #c62828;
+}
+
+.tree {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  // Each level down is indented, with a line back to its parent.
+  .tree {
+    margin-left: 8px;
+    padding-left: 16px;
+    border-left: 1px dashed #cfd8dc;
+  }
+
+  li {
+    margin: 6px 0;
+  }
+
+  &__node {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    font-size: 14px;
+  }
+
+  &__level {
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: #eceff1;
+    font-size: 11px;
+    font-weight: 600;
+    color: #546e7a;
+  }
+}
+
+@media (max-width: 720px) {
+  .tile--wide {
+    grid-column: auto;
+  }
+
+  .reward {
+    flex-direction: column;
+
+    &__side {
+      flex-wrap: wrap;
+    }
+  }
+}

@@ -76,6 +76,7 @@ export class AgentList {
 
   readonly columns: TableColumn<AgentListItem>[] = [
     { key: 'name', label: 'Agent', sortable: true, fallback: 'Unnamed' },
+    { key: 'employeeId', label: 'Employee ID', fallback: '—' },
     { key: 'mobile', label: 'Mobile' },
     { key: 'approvalStatus', label: 'Approval', type: 'badge' },
     { key: 'status', label: 'Status', type: 'badge' },

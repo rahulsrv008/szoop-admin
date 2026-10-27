@@ -12,6 +12,7 @@ import { InrPipe } from '@shared/pipes/inr.pipe';
 import { OrDashPipe } from '@shared/pipes/empty.pipe';
 import { AgentBankDetails } from '../bank-details/bank-details';
 import { AgentDocuments } from '../documents/documents';
+import { AgentReferrals } from '../referrals/agent-referrals';
 import {
   AgentAvailabilitySlot,
   AgentDetailView,
@@ -33,6 +34,7 @@ import { openAgentZoneDialog } from '../agent-zone-dialog/agent-zone-dialog';
     OrDashPipe,
     AgentDocuments,
     AgentBankDetails,
+    AgentReferrals,
   ],
   templateUrl: './agent-details.html',
   styleUrl: './agent-details.scss',

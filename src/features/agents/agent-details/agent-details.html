@@ -6,7 +6,12 @@
   <header class="page-head">
     <div>
       <h2 class="page-head__title">{{ a.name | orDash: 'Unnamed agent' }}</h2>
-      <p class="page-head__sub">{{ a.mobile }} · {{ a.email | orDash }}</p>
+      <p class="page-head__sub">
+        @if (a.employeeId) {
+          <strong>{{ a.employeeId }}</strong> ·
+        }
+        {{ a.mobile }} · {{ a.email | orDash }}
+      </p>
     </div>
 
     <div class="page-head__actions row-actions">
@@ -77,6 +82,10 @@
         </div>
       }
       <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-item__label">Employee ID</span>
+          <span class="detail-item__value">{{ a.employeeId ?? 'Given on approval' }}</span>
+        </div>
         <div class="detail-item">
           <span class="detail-item__label">Approval</span>
           <span class="detail-item__value">
@@ -160,6 +169,8 @@
     />
 
     <app-agent-bank-details [bankAccount]="a.bankAccount" />
+
+    <app-agent-referrals [agentId]="a.agentId" />
 
     <section class="card-panel">
       <h3 class="card-panel__title">Recent bookings</h3>

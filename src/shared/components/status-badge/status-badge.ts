@@ -34,6 +34,11 @@ const TONES: Record<string, Tone> = {
   HIGH: 'danger',
   NORMAL: 'info',
   LOW: 'neutral',
+  // referrals
+  JOINED: 'info',
+  QUALIFIED: 'success',
+  MISSED: 'danger',
+  REVERSED: 'neutral',
 };
 
 @Component({

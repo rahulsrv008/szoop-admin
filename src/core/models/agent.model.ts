@@ -34,6 +34,8 @@ export interface AgentCurrentLocation {
 export interface AgentListItem {
   agentId: string;
   userId?: string;
+  /** SZ26-K7M4P: also the agent's referral code. Set on approval. */
+  employeeId?: string | null;
   name: string | null;
   mobile: string;
   status: string;
@@ -50,6 +52,8 @@ export interface AgentListItem {
 }
 
 export interface AgentDetail extends AgentListItem {
+  /** Whose referral code the agent signed up with. */
+  referredBy?: { agentId: string; name: string; employeeId: string | null } | null;
   firstName?: string | null;
   lastName?: string | null;
   email?: string | null;

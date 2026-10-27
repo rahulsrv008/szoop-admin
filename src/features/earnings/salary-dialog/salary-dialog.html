@@ -1,10 +1,24 @@
 <h2 mat-dialog-title>Edit salary</h2>
 
 <mat-dialog-content>
-  <p class="muted">
-    {{ data.row.agentName || 'Agent' }} · net currently
-    {{ data.row.netSalary }}
-  </p>
+  <p class="muted">{{ data.row.agentName || 'Agent' }}</p>
+  <dl class="breakdown">
+    <dt>Fixed</dt>
+    <dd>{{ data.row.fixedSalary | inr }}</dd>
+    <dt>Incentive</dt>
+    <dd>{{ data.row.incentive | inr }}</dd>
+    <dt>Referral bonus</dt>
+    <dd>{{ referralBonus | inr }}</dd>
+    <dt>Deductions</dt>
+    <dd>− {{ data.row.deductions | inr }}</dd>
+    <dt class="breakdown__total">Net now</dt>
+    <dd class="breakdown__total">{{ data.row.netSalary | inr }}</dd>
+  </dl>
+  @if (referralBonus > 0) {
+    <p class="muted hint">
+      Marking this salary Paid also marks its referral rewards paid. Rejecting it moves them to the next salary.
+    </p>
+  }
   <form class="stack" [formGroup]="form" (ngSubmit)="save()">
     <mat-form-field>
       <mat-label>Status</mat-label>

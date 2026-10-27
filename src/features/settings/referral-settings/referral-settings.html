@@ -1,0 +1,176 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Referral program</h2>
+    <p class="page-head__sub">
+      Agents share their employee ID as a referral code and earn when the people they bring in start working
+    </p>
+  </div>
+</header>
+
+<nav class="tabs">
+  <a matButton routerLink="/settings/general">General</a>
+  <a matButton routerLink="/settings/users">Users</a>
+  <a matButton routerLink="/settings/roles">Roles & permissions</a>
+  <a matButton routerLink="/settings/coupons">Coupon Settings</a>
+  <a matButton="tonal" routerLink="/settings/referrals" routerLinkActive="active">Referral program</a>
+</nav>
+
+@if (loading() || saving()) {
+  <mat-progress-bar mode="indeterminate" class="loader" />
+}
+
+<form [formGroup]="form" (ngSubmit)="save()" class="stack">
+  <section class="card-panel summary" [class.summary--off]="!form.controls.enabled.value">
+    <div class="summary__toggle">
+      <mat-slide-toggle formControlName="enabled">
+        {{ form.controls.enabled.value ? 'Program is ON' : 'Program is OFF' }}
+      </mat-slide-toggle>
+      <p class="muted">
+        @if (form.controls.enabled.value) {
+          New agents can sign up with a referral code.
+        } @else {
+          Referral codes are not accepted at signup. People who already joined with a code are still rewarded.
+        }
+      </p>
+    </div>
+    <div class="summary__stats">
+      <div class="stat">
+        <span class="stat__value">{{ summary().maxEarning | inr }}</span>
+        <span class="stat__label">
+          Most one agent can earn
+          @if (summary().capped) {
+            <span class="stat__note">(stopped by the lifetime limit)</span>
+          }
+        </span>
+      </div>
+      <div class="stat">
+        <span class="stat__value">≈ {{ summary().costPerAgent | inr }}</span>
+        <span class="stat__label">Cost per new agent who completes {{ form.controls.qualifyJobs.value }} jobs</span>
+      </div>
+      <div class="stat">
+        <span class="stat__value">{{ summary().teamReach }}</span>
+        <span class="stat__label">People who can earn one agent money</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="card-panel">
+    <h3 class="card-panel__title"><span class="step">1</span> New agents</h3>
+    <div class="fields">
+      <mat-form-field appearance="outline">
+        <mat-label>Invites per agent</mat-label>
+        <input matInput type="number" min="1" formControlName="maxPerAgent" />
+        <mat-hint>How many people can use one code, ever</mat-hint>
+        <mat-error>Whole number from 1 to 100</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Jobs to complete</mat-label>
+        <input matInput type="number" min="1" formControlName="qualifyJobs" />
+        <mat-hint>Nobody is rewarded until the new agent finishes these</mat-hint>
+        <mat-error>Whole number from 1 to 1000</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Joining bonus</mat-label>
+        <span matTextPrefix>₹&nbsp;</span>
+        <input matInput type="number" min="0" formControlName="joiningBonus" />
+        <mat-hint>Paid to the new agent, once</mat-hint>
+        <mat-error>Whole rupees, 0 or more</mat-error>
+      </mat-form-field>
+    </div>
+  </section>
+
+  <section class="card-panel">
+    <h3 class="card-panel__title"><span class="step">2</span> Direct rewards</h3>
+    <p class="muted section-hint">
+      Paid to the agent who shared the code, in the order the people they invited finish their jobs.
+    </p>
+    <div class="fields" formArrayName="rewardTiers">
+      @for (control of tiers.controls; track $index; let i = $index) {
+        <mat-form-field appearance="outline">
+          <mat-label>{{ ordinal(i + 1) }} person</mat-label>
+          <span matTextPrefix>₹&nbsp;</span>
+          <input matInput type="number" min="0" [formControlName]="i" />
+          <mat-error>Whole rupees, 0 or more</mat-error>
+        </mat-form-field>
+      }
+    </div>
+  </section>
+
+  <section class="card-panel">
+    <h3 class="card-panel__title"><span class="step">3</span> Team rewards</h3>
+    <p class="muted section-hint">
+      Paid to agents higher up when someone deeper in their team finishes their jobs.
+    </p>
+    <div class="fields">
+      <mat-form-field appearance="outline">
+        <mat-label>Levels to pay</mat-label>
+        <input matInput type="number" min="1" [max]="levelOptions.length" formControlName="maxLevels" />
+        <mat-hint>1 = only the agent who shared the code</mat-hint>
+        <mat-error>Whole number from 1 to {{ levelOptions.length }}</mat-error>
+      </mat-form-field>
+    </div>
+
+    @if (levelRewards.length) {
+      <div class="fields" formArrayName="levelRewards">
+        @for (control of levelRewards.controls; track $index; let i = $index) {
+          <mat-form-field appearance="outline">
+            <mat-label>Level {{ i + 2 }}</mat-label>
+            <span matTextPrefix>₹&nbsp;</span>
+            <input matInput type="number" min="0" [formControlName]="i" />
+            <mat-hint>{{ i === 0 ? 'People invited by their invitees' : 'One level further down' }}</mat-hint>
+            <mat-error>Whole rupees, 0 or more</mat-error>
+          </mat-form-field>
+        }
+      </div>
+
+      <div class="rule">
+        <mat-icon>bolt</mat-icon>
+        <span>Only if the agent completed</span>
+        <mat-form-field appearance="outline" class="rule__field">
+          <input matInput type="number" min="0" formControlName="activeMinJobs" aria-label="Jobs needed" />
+        </mat-form-field>
+        <span>jobs in the last</span>
+        <mat-form-field appearance="outline" class="rule__field">
+          <input matInput type="number" min="1" formControlName="activeWindowDays" aria-label="Days" />
+        </mat-form-field>
+        <span>days. Otherwise the team reward is missed, and the agent is told why.</span>
+      </div>
+      @if (form.controls.activeMinJobs.value === 0) {
+        <p class="muted rule__off">0 jobs: team rewards are always paid.</p>
+      }
+    } @else {
+      <p class="muted">Only the agent who shared the code earns. Nobody is paid for people further down.</p>
+    }
+  </section>
+
+  <section class="card-panel">
+    <h3 class="card-panel__title"><span class="step">4</span> Limit</h3>
+    <div class="fields">
+      <mat-form-field appearance="outline">
+        <mat-label>Lifetime limit per agent</mat-label>
+        <span matTextPrefix>₹&nbsp;</span>
+        <input matInput type="number" min="0" formControlName="maxEarning" />
+        <mat-hint>Direct and team rewards together; the joining bonus is extra</mat-hint>
+        <mat-error>Whole rupees, 0 or more</mat-error>
+      </mat-form-field>
+    </div>
+  </section>
+
+  <footer class="actions">
+    <span class="muted">
+      @if (saved()?.lastChanged; as changed) {
+        Last changed{{ changed.by ? ' by ' + changed.by : '' }} · {{ changed.at | date: 'd MMM yyyy, h:mm a' }}
+      } @else {
+        Using the default values
+      }
+    </span>
+    <div class="row-actions">
+      <button matButton="outlined" type="button" (click)="reset()" [disabled]="form.pristine || saving()">
+        Cancel
+      </button>
+      <button matButton="filled" type="submit" [disabled]="saving() || loading()">
+        {{ saving() ? 'Saving…' : 'Save changes' }}
+      </button>
+    </div>
+  </footer>
+</form>
