@@ -39,8 +39,9 @@ testem.log
 /typings
 __screenshots__/
 
-# Local config (copy .env.example)
+# Local config
 .env
+.env.local
 
 # System files
 .DS_Store

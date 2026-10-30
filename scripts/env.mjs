@@ -1,18 +1,28 @@
 /**
- * Angular has no .env support, so `npm start` / `npm run build` run this first:
- * it reads admin-panel/.env (shell variables win) and writes
- * src/config/env.generated.ts, which src/config/environment.ts imports.
+ * Angular has no .env support, so start/build scripts run this first:
+ * it copies .env.development / .env.uat / .env.production onto .env
+ * and writes src/config/env.generated.ts.
  */
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const DEFAULTS = {
-  API_URL: 'https://clearit-be.vercel.app/api/v1',
+  API_URL: 'http://localhost:3000/api/v1',
   DEV_PROXY: 'true',
   GOOGLE_MAPS_API_KEY: '',
+};
+
+const MODE = {
+  dev: 'development',
+  development: 'development',
+  uat: 'uat',
+  stg: 'uat',
+  staging: 'uat',
+  prod: 'production',
+  production: 'production',
 };
 
 function parseDotenv(file) {
@@ -31,12 +41,29 @@ function parseDotenv(file) {
   return values;
 }
 
-export function loadEnv() {
-  const fromFile = parseDotenv(resolve(root, '.env'));
+function resolveMode(modeArg) {
+  const raw = (modeArg || process.env.APP_ENV || 'development').toLowerCase();
+  return MODE[raw] || 'development';
+}
+
+function fileFor(mode) {
+  if (mode === 'uat') return 'uat';
+  if (mode === 'production') return 'production';
+  return 'development';
+}
+
+export function loadEnv(modeArg) {
+  const mode = resolveMode(modeArg);
+  const fileName = `.env.${fileFor(mode)}`;
+  const fromFile = {
+    ...parseDotenv(resolve(root, fileName)),
+    ...parseDotenv(resolve(root, '.env')),
+  };
   const pick = (key) => process.env[key] ?? fromFile[key] ?? DEFAULTS[key];
   const apiUrl = pick('API_URL').replace(/\/+$/, '');
-  new URL(apiUrl); // fail fast on a typo rather than at the first request
+  new URL(apiUrl);
   return {
+    appEnv: mode,
     apiUrl,
     devProxy: pick('DEV_PROXY') !== 'false',
     googleMapsApiKey: pick('GOOGLE_MAPS_API_KEY'),
@@ -44,12 +71,19 @@ export function loadEnv() {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const env = loadEnv();
+  const mode = resolveMode(process.argv[2]);
+  const src = resolve(root, `.env.${fileFor(mode)}`);
+  if (!existsSync(src)) {
+    console.error(`Missing ${src}`);
+    process.exit(1);
+  }
+  copyFileSync(src, resolve(root, '.env'));
+  const env = loadEnv(mode);
   const out = resolve(root, 'src/config/env.generated.ts');
   writeFileSync(
     out,
-    `// Generated from .env by scripts/env.mjs. Edit .env, not this file.\n` +
+    `// Generated from .env.${fileFor(mode)} by scripts/env.mjs. Edit the env file, not this file.\n` +
       `export const ENV = ${JSON.stringify(env, null, 2)} as const;\n`,
   );
-  console.log(`[env] API_URL=${env.apiUrl} DEV_PROXY=${env.devProxy}`);
+  console.log(`[env] ${env.appEnv} API_URL=${env.apiUrl} DEV_PROXY=${env.devProxy}`);
 }
