@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { ENVIRONMENT } from '@config/environment';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
 import { AutofocusDirective } from '@shared/directives/autofocus.directive';
@@ -35,6 +36,8 @@ export class Login {
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationService);
 
+  readonly versionLabel = ENVIRONMENT.versionLabel;
+  readonly builtAt = ENVIRONMENT.builtAt;
   readonly submitting = signal(false);
   readonly hidePassword = signal(true);
 

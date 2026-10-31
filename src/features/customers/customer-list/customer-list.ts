@@ -178,7 +178,7 @@ export class CustomerList {
     this.confirm
       .askDanger(
         'Block customer',
-        `${row.name ?? row.mobile} loses access to the ClearIt app immediately.`,
+        `${row.name ?? row.mobile} loses access to the Szoop app immediately.`,
         {
           confirmLabel: 'Block customer',
           requireReason: true,

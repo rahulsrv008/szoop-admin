@@ -4,7 +4,7 @@ export const SETTINGS_ROUTES: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'general' },
   {
     path: 'general',
-    title: 'Settings · ClearIt Admin',
+    title: 'Settings · Szoop Admin',
     data: { title: 'Settings' },
     loadComponent: () =>
       import('./general-settings/general-settings').then(
@@ -13,14 +13,14 @@ export const SETTINGS_ROUTES: Routes = [
   },
   {
     path: 'users',
-    title: 'Admin users · ClearIt Admin',
+    title: 'Admin users · Szoop Admin',
     data: { title: 'Admin users' },
     loadComponent: () =>
       import('./admin-users/admin-users').then((m) => m.AdminUsers),
   },
   {
     path: 'roles',
-    title: 'Roles & permissions · ClearIt Admin',
+    title: 'Roles & permissions · Szoop Admin',
     data: { title: 'Roles & permissions' },
     loadComponent: () =>
       import('./roles-permissions/roles-permissions').then(
@@ -29,7 +29,7 @@ export const SETTINGS_ROUTES: Routes = [
   },
   {
     path: 'coupons',
-    title: 'Coupon Settings · ClearIt Admin',
+    title: 'Coupon Settings · Szoop Admin',
     data: { title: 'Coupon Settings' },
     loadComponent: () =>
       import('./coupon-settings/coupon-settings').then(
@@ -38,7 +38,7 @@ export const SETTINGS_ROUTES: Routes = [
   },
   {
     path: 'referrals',
-    title: 'Referral program · ClearIt Admin',
+    title: 'Referral program · Szoop Admin',
     data: { title: 'Referral program' },
     loadComponent: () =>
       import('./referral-settings/referral-settings').then(

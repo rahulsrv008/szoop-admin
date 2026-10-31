@@ -135,7 +135,7 @@ export class CustomerDetails implements OnInit {
     this.confirm
       .askDanger(
         'Block customer',
-        `${customer.name ?? customer.mobile} loses access to the ClearIt app immediately.`,
+        `${customer.name ?? customer.mobile} loses access to the Szoop app immediately.`,
         {
           confirmLabel: 'Block customer',
           requireReason: true,

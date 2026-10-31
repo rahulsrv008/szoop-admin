@@ -1,4 +1,5 @@
 <footer class="footer">
   <span>© {{ year }} {{ appName }}</span>
+  <span class="footer__version" [attr.title]="'Built ' + builtAt">{{ versionLabel }}</span>
   <span class="footer__api">API: {{ apiBaseUrl }}</span>
 </footer>

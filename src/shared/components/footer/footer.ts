@@ -10,4 +10,6 @@ export class Footer {
   readonly appName = ENVIRONMENT.appName;
   readonly year = new Date().getFullYear();
   readonly apiBaseUrl = ENVIRONMENT.apiTarget;
+  readonly versionLabel = ENVIRONMENT.versionLabel;
+  readonly builtAt = ENVIRONMENT.builtAt;
 }

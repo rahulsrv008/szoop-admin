@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 export const PRICING_ROUTES: Routes = [
   {
     path: '',
-    title: 'Pricing · ClearIt Admin',
+    title: 'Pricing · Szoop Admin',
     data: { title: 'Pricing' },
     loadComponent: () =>
       import('./service-pricing/service-pricing').then(
@@ -12,7 +12,7 @@ export const PRICING_ROUTES: Routes = [
   },
   {
     path: 'areas',
-    title: 'Area pricing · ClearIt Admin',
+    title: 'Area pricing · Szoop Admin',
     data: { title: 'Area pricing' },
     loadComponent: () =>
       import('./area-pricing/area-pricing').then((m) => m.AreaPricing),

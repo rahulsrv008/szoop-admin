@@ -5,7 +5,7 @@
 
   <mat-card-header class="card__header">
     <mat-card-title>Sign in</mat-card-title>
-    <mat-card-subtitle>Admin access to the ClearIt operations console</mat-card-subtitle>
+    <mat-card-subtitle>Admin access to the Szoop operations console</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
@@ -18,7 +18,7 @@
           formControlName="email"
           autocomplete="username"
           appAutofocus
-          placeholder="admin@clearit.in"
+          placeholder="admin@szoop.in"
         />
         <mat-icon matIconPrefix>mail</mat-icon>
         @if (form.controls.email.touched && form.controls.email.invalid) {
@@ -58,6 +58,7 @@
       </button>
 
       <a class="forgot" routerLink="/auth/forgot-password">Forgot password?</a>
+      <p class="version" [attr.title]="'Built ' + builtAt">{{ versionLabel }}</p>
     </form>
   </mat-card-content>
 </mat-card>

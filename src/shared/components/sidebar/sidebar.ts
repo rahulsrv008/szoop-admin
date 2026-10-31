@@ -17,6 +17,8 @@ export class Sidebar {
   private readonly session = inject(SessionStore);
 
   readonly appName = ENVIRONMENT.appName;
+  readonly versionLabel = ENVIRONMENT.versionLabel;
+  readonly builtAt = ENVIRONMENT.builtAt;
   readonly attention = inject(BookingMonitorService).attention;
 
   /** Hides sections the current role cannot open. */

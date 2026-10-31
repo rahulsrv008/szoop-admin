@@ -3,6 +3,7 @@
  * it copies .env.development / .env.uat / .env.production onto .env
  * and writes src/config/env.generated.ts.
  */
+import { execSync } from 'node:child_process';
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -52,6 +53,27 @@ function fileFor(mode) {
   return 'development';
 }
 
+/** Baked in at build time so the running panel shows which commit is deployed. */
+function buildIdentity() {
+  let version = '0.0.0';
+  try {
+    version = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')).version || version;
+  } catch {
+    /* keep the fallback */
+  }
+  let commit = 'unknown';
+  try {
+    commit = execSync('git rev-parse --short HEAD', {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    /* no git metadata in this build */
+  }
+  return { version, commit, builtAt: new Date().toISOString() };
+}
+
 export function loadEnv(modeArg) {
   const mode = resolveMode(modeArg);
   const fileName = `.env.${fileFor(mode)}`;
@@ -67,6 +89,7 @@ export function loadEnv(modeArg) {
     apiUrl,
     devProxy: pick('DEV_PROXY') !== 'false',
     googleMapsApiKey: pick('GOOGLE_MAPS_API_KEY'),
+    ...buildIdentity(),
   };
 }
 
