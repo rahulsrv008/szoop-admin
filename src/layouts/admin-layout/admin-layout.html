@@ -12,6 +12,14 @@
   <mat-sidenav-content class="shell__content">
     <app-header [title]="pageTitle()" (toggleSidebar)="toggleSidebar()" />
 
+    <div class="app-scope">
+      <label for="app-scope">Operations:</label>
+      <select id="app-scope" [value]="currentApp()" (change)="changeApp($event)">
+        <option value="SZOOP">Szoop</option>
+        <option value="AIRA">Aira Luxury</option>
+      </select>
+    </div>
+
     <main class="shell__main">
       <router-outlet />
     </main>

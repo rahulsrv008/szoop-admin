@@ -14,6 +14,7 @@ import { Sidebar } from '@shared/components/sidebar/sidebar';
 import { Footer } from '@shared/components/footer/footer';
 import { AuthService } from '@core/services/auth.service';
 import { BookingMonitorService } from '@core/services/booking-monitor.service';
+import { AppScope, AppScopeService } from '@core/services/app-scope.service';
 
 /** Shell for every authenticated screen: sidebar + header + content + footer. */
 @Component({
@@ -26,6 +27,8 @@ export class AdminLayout {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly breakpointObserver = inject(BreakpointObserver);
+  private readonly appScope = inject(AppScopeService);
+  readonly currentApp = this.appScope.current;
 
   readonly isMobile = toSignal(
     this.breakpointObserver.observe('(max-width: 720px)').pipe(map(({ matches }) => matches)),
@@ -59,6 +62,17 @@ export class AdminLayout {
 
   toggleSidebar() {
     this.sidebarOpen.update((open) => !open);
+  }
+
+  changeApp(event: Event) {
+    const app = (event.target as HTMLSelectElement).value;
+    if (
+      (app === 'AIRA' || app === 'SZOOP') &&
+      app !== this.currentApp()
+    ) {
+      this.appScope.set(app as AppScope);
+      window.location.reload();
+    }
   }
 
   private resolveTitle(): string {

@@ -150,6 +150,12 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'aira',
+        data: SUPER_ADMIN_ONLY,
+        loadChildren: () =>
+          import('@features/aira/aira.routes').then((m) => m.AIRA_ROUTES),
+      },
+      {
         path: 'settings',
         data: SUPER_ADMIN_ONLY,
         loadChildren: () =>

@@ -1,0 +1,53 @@
+<div class="page-head">
+  <div>
+    <h1 class="page-head__title">Aira app settings</h1>
+    <p class="page-head__sub">
+      Aira is the luxury salon customer app. Sign-in, customers, bookings, payments, and professionals stay on the Szoop backend. This page only changes how Aira presents itself.
+    </p>
+  </div>
+</div>
+
+@if (loading()) {
+  <mat-progress-bar class="loader" mode="indeterminate" />
+}
+
+<form class="card-panel" [formGroup]="form" (ngSubmit)="save()">
+  <div class="switch-row">
+    <div>
+      <strong>App is open</strong>
+      <p>When this is off, Aira still signs in with the same customer account and shows a notice that new visits are paused.</p>
+    </div>
+    <mat-slide-toggle formControlName="enabled" />
+  </div>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Brand name</mat-label>
+    <input matInput formControlName="brandName" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Tagline</mat-label>
+    <input matInput formControlName="tagline" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Home headline</mat-label>
+    <input matInput formControlName="heroTitle" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Home copy</mat-label>
+    <textarea matInput rows="3" formControlName="heroCopy"></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Support email</mat-label>
+    <input matInput formControlName="supportEmail" />
+  </mat-form-field>
+
+  <div class="actions">
+    <button mat-flat-button color="primary" type="submit" [disabled]="saving() || form.invalid">
+      {{ saving() ? 'Saving…' : 'Save Aira settings' }}
+    </button>
+  </div>
+</form>

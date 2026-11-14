@@ -1,8 +1,9 @@
-import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ENVIRONMENT } from '@config/environment';
 import { SILENT_ERRORS } from '@core/interceptors/error.interceptor';
+import { AppScopeService } from './app-scope.service';
 
 type ParamValue = string | number | boolean | undefined | null;
 
@@ -13,6 +14,7 @@ type ParamValue = string | number | boolean | undefined | null;
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private readonly http = inject(HttpClient);
+  private readonly appScope = inject(AppScopeService);
 
   /** `silent`: no error toast (background polling). */
   get<T>(
@@ -22,24 +24,32 @@ export class ApiService {
   ): Observable<T> {
     return this.http.get<T>(this.url(path), {
       params: this.toParams(params),
+      headers: this.headers(),
       context: new HttpContext().set(SILENT_ERRORS, !!options.silent),
     });
   }
 
   post<T>(path: string, body?: unknown): Observable<T> {
-    return this.http.post<T>(this.url(path), body ?? {});
+    return this.http.post<T>(this.url(path), body ?? {}, { headers: this.headers() });
   }
 
   patch<T>(path: string, body?: unknown): Observable<T> {
-    return this.http.patch<T>(this.url(path), body ?? {});
+    return this.http.patch<T>(this.url(path), body ?? {}, { headers: this.headers() });
   }
 
   put<T>(path: string, body?: unknown): Observable<T> {
-    return this.http.put<T>(this.url(path), body ?? {});
+    return this.http.put<T>(this.url(path), body ?? {}, { headers: this.headers() });
   }
 
   delete<T>(path: string, params?: Record<string, ParamValue>): Observable<T> {
-    return this.http.delete<T>(this.url(path), { params: this.toParams(params) });
+    return this.http.delete<T>(this.url(path), {
+      params: this.toParams(params),
+      headers: this.headers(),
+    });
+  }
+
+  private headers() {
+    return new HttpHeaders({ 'X-Client-App': this.appScope.current() });
   }
 
   private url(path: string) {

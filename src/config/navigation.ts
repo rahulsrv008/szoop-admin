@@ -77,6 +77,25 @@ export const NAV_SECTIONS: NavSection[] = [
     items: [{ label: 'Reports', icon: 'insights', path: '/reports' }],
   },
   {
+    title: 'Aira',
+    roles: ['SUPER_ADMIN'],
+    items: [
+      {
+        label: 'Services & menu',
+        icon: 'menu_book',
+        path: '/aira/menu',
+        roles: ['SUPER_ADMIN'],
+      },
+      {
+        label: 'App settings',
+        icon: 'spa',
+        path: '/aira',
+        roles: ['SUPER_ADMIN'],
+        exact: true,
+      },
+    ],
+  },
+  {
     title: 'System',
     items: [
       {

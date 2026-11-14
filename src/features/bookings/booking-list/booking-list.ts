@@ -31,6 +31,7 @@ import {
   AssignAgentDialogResult,
 } from '../assign-agent/assign-agent';
 import { BookingsService } from '../bookings.service';
+import { AppScopeService } from '@core/services/app-scope.service';
 
 @Component({
   selector: 'app-booking-list',
@@ -52,6 +53,7 @@ export class BookingList {
   private readonly bookingsService = inject(BookingsService);
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
+  private readonly appScope = inject(AppScopeService);
 
   readonly loading = signal(false);
   readonly rows = signal<BookingListItem[]>([]);
@@ -111,6 +113,11 @@ export class BookingList {
   ];
 
   constructor() {
+    this.appScope.changed.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.page.set(1);
+      this.load();
+    });
+
     this.searchControl.valueChanges
       .pipe(debounceTime(350), distinctUntilChanged(), takeUntilDestroyed())
       .subscribe((value) => {

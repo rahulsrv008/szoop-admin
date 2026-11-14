@@ -1,0 +1,115 @@
+<div class="page-head">
+  <div>
+    <h1 class="page-head__title">Aira services &amp; menu</h1>
+    <p class="page-head__sub">
+      Groups are the tiles on the Aira home screen. Services are what customers book; the price here is what a booking charges.
+    </p>
+  </div>
+  <div class="head-actions">
+    <button mat-stroked-button type="button" (click)="addGroup()"><mat-icon>add</mat-icon> Add group</button>
+    <button mat-flat-button color="primary" type="button" (click)="addItem()" [disabled]="!menu().groups.length">
+      <mat-icon>add</mat-icon> Add service
+    </button>
+  </div>
+</div>
+
+@if (loading()) {
+  <mat-progress-bar class="loader" mode="indeterminate" />
+}
+
+<section class="card-panel">
+  <header class="panel-head">
+    <h2>Groups</h2>
+    <span class="muted">Tap a group to filter its services</span>
+  </header>
+  <div class="group-grid">
+    @for (group of menu().groups; track group.id) {
+      <article class="group" [class.selected]="selectedGroup() === group.id" [class.hidden]="!group.isActive">
+        <button type="button" class="group__main" (click)="selectGroup(group.id)">
+          <span class="thumb">
+            @if (group.imageUrl) {
+              <img [src]="group.imageUrl" alt="" />
+            } @else {
+              <mat-icon>spa</mat-icon>
+            }
+          </span>
+          <span class="group__text">
+            <strong>{{ group.title }}</strong>
+            <small>{{ group.itemCount }} service(s) · {{ group.segment }}</small>
+          </span>
+        </button>
+        <div class="group__actions">
+          <mat-slide-toggle [checked]="group.isActive" (change)="toggleGroup(group)" matTooltip="Visible in the app" />
+          <button mat-icon-button type="button" (click)="editGroup(group)" matTooltip="Edit"><mat-icon>edit</mat-icon></button>
+          <button mat-icon-button type="button" (click)="removeGroup(group)" matTooltip="Delete"><mat-icon>delete</mat-icon></button>
+        </div>
+      </article>
+    } @empty {
+      <p class="muted">No groups yet. The API adds the starter Aira menu the first time it starts.</p>
+    }
+  </div>
+</section>
+
+<section class="card-panel">
+  <header class="panel-head">
+    <h2>
+      Services
+      @if (selectedGroup(); as groupId) {
+        <span class="muted">in {{ groupTitles().get(groupId) }}</span>
+        <button mat-button type="button" (click)="selectGroup(null)">Show all</button>
+      }
+    </h2>
+    <span class="muted">{{ visibleItems().length }} shown</span>
+  </header>
+
+  <div class="table-wrap">
+    <table class="items">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Group · heading</th>
+          <th class="num">Time</th>
+          <th class="num">Price</th>
+          <th>Visible</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of visibleItems(); track item.id) {
+          <tr [class.hidden]="!item.isActive">
+            <td>
+              <strong>{{ item.title }}</strong>
+              <div class="meta">
+                <code>{{ item.id }}</code>
+                @if (item.kind === 'package') {
+                  <span class="pill">Package</span>
+                }
+                @if (item.badge) {
+                  <span class="pill pill--gold">{{ item.badge }}</span>
+                }
+              </div>
+            </td>
+            <td>
+              {{ groupTitles().get(item.group) ?? item.group }}
+              <div class="meta">{{ item.section }}</div>
+            </td>
+            <td class="num">{{ item.minutes }} min</td>
+            <td class="num">
+              <strong>₹{{ item.price }}</strong>
+              @if (item.originalPrice && discount(item); as off) {
+                <div class="meta"><s>₹{{ item.originalPrice }}</s> · {{ off }}% off</div>
+              }
+            </td>
+            <td><mat-slide-toggle [checked]="item.isActive" (change)="toggleItem(item)" /></td>
+            <td class="row-actions">
+              <button mat-icon-button type="button" (click)="editItem(item)" matTooltip="Edit"><mat-icon>edit</mat-icon></button>
+              <button mat-icon-button type="button" (click)="removeItem(item)" matTooltip="Delete"><mat-icon>delete</mat-icon></button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6" class="muted">No services here yet.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

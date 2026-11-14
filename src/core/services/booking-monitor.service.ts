@@ -12,6 +12,7 @@ import {
 } from '@core/models';
 import { ApiService } from './api.service';
 import { NotificationService } from './notification.service';
+import { AppScopeService } from './app-scope.service';
 
 const POLL_MS = 60_000;
 const SOUND_KEY = 'clearit.admin.monitorSound';
@@ -28,6 +29,8 @@ const RANK: Record<MonitorSeverity, number> = { ok: 0, orange: 1, red: 2 };
 export class BookingMonitorService {
   private readonly api = inject(ApiService);
   private readonly notifications = inject(NotificationService);
+  private readonly appScope = inject(AppScopeService);
+  private scopeSubscription: Subscription | null = null;
 
   private readonly boardSignal = signal<MonitorBoard | null>(null);
   readonly board = this.boardSignal.asReadonly();
@@ -98,6 +101,11 @@ export class BookingMonitorService {
     this.poll = timer(0, POLL_MS)
       .pipe(switchMap(() => this.fetch()))
       .subscribe();
+    this.scopeSubscription = this.appScope.changed.subscribe(() => {
+      this.boardSignal.set(null);
+      this.announced = null;
+      this.refresh();
+    });
     this.ticker = setInterval(() => this.tick(), 1000);
     // Browsers only let a page play sound after the user has interacted with it.
     document.addEventListener('pointerdown', this.unlockAudio, { once: true });
@@ -106,6 +114,8 @@ export class BookingMonitorService {
   stop() {
     this.poll?.unsubscribe();
     this.poll = null;
+    this.scopeSubscription?.unsubscribe();
+    this.scopeSubscription = null;
     if (this.ticker) clearInterval(this.ticker);
     this.ticker = null;
     document.removeEventListener('pointerdown', this.unlockAudio);

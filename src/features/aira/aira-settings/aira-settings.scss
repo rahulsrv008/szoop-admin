@@ -1,0 +1,29 @@
+.loader {
+  margin-bottom: 12px;
+}
+
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+
+  p {
+    margin: 4px 0 0;
+    color: #78889c;
+    font-size: 13px;
+    max-width: 640px;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  max-width: 640px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
