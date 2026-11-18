@@ -104,6 +104,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'partner-inquiries',
+        data: SUPER_ADMIN_ONLY,
+        loadChildren: () =>
+          import('@features/partner-inquiries/partner-inquiries.routes').then(
+            (m) => m.PARTNER_INQUIRIES_ROUTES,
+          ),
+      },
+      {
         path: 'payments',
         data: SUPER_ADMIN_ONLY,
         loadChildren: () =>

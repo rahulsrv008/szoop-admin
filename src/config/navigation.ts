@@ -93,6 +93,12 @@ export const NAV_SECTIONS: NavSection[] = [
         roles: ['SUPER_ADMIN'],
         exact: true,
       },
+      {
+        label: 'Partner inquiries',
+        icon: 'contact_mail',
+        path: '/partner-inquiries',
+        roles: ['SUPER_ADMIN'],
+      },
     ],
   },
   {

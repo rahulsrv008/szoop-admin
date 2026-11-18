@@ -1,0 +1,29 @@
+<header class="page-head">
+  <div>
+    <h2 class="page-head__title">Partner inquiries</h2>
+    <p class="page-head__sub">Aira website requests from prospective partners</p>
+  </div>
+</header>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="filters__search">
+    <mat-label>Search name, phone, email or city</mat-label>
+    <input matInput [formControl]="searchControl" />
+    <mat-icon matIconPrefix>search</mat-icon>
+  </mat-form-field>
+</div>
+
+@if (error()) {
+  <p class="partner-inquiries-error" role="alert">{{ error() }}</p>
+}
+
+<app-data-table
+  [columns]="columns"
+  [rows]="rows()"
+  [loading]="loading()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  emptyMessage="No partner inquiries have been submitted"
+  (pageChange)="onPageChange($event)"
+/>
